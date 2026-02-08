@@ -15,10 +15,10 @@
 | 2 | Skills & Subagents | ~3 min | Team knowledge + fast research |
 | 3 | Plan Mode -- Single Issue | ~8 min | Logging fix: plan, align, execute + model selection |
 | 4 | Plan Mode -- Parallel Agents | ~5 min | SQL error handling: kick off parallel agents |
+| 5 | Council of Agents Review | ~3 min | Kick off multi-agent review of logging changes |
 | -- | Buffer / Q&A | ~3 min | Breathe, take questions |
-| -- | _Colleague browser demo_ | _~10 min_ | _Agents finish in background_ |
-| 5 | Council of Agents Review | ~5 min | Multi-agent review of logging changes |
-| -- | Show parallel agent output | ~2 min | Quick walkthrough of completed work |
+| -- | _Colleague browser demo_ | _~10 min_ | _All agents finish in background_ |
+| -- | Show results | ~4 min | Council review + parallel agent output walkthrough |
 
 ---
 
@@ -181,32 +181,30 @@ Pick one if you need to fill time:
 
 ### Verbal Setup
 
-> Here's issue #10 -- SQL sources are silently swallowing errors. The fix needs to happen in four separate packages: MySQL, PostgreSQL, MSSQL, and Elasticsearch. These are completely independent -- different folders, different files, no shared code. That's the perfect shape for parallel agents.
+> Here's issue #10 -- SQL sources are silently swallowing errors. The fix needs to happen in two areas: the SQL datasources (MySQL, PostgreSQL, MSSQL all have the same pattern) and Elasticsearch. These are completely independent -- different folders, different files, no shared code. That's the perfect shape for parallel agents.
 
 ### Actions in Cursor
 
 1. **Switch to Plan Mode**
 2. **Paste the prompt:**
 
-> Fix issue #10: SQL sources missing error handling. The MySQL, PostgreSQL, and MSSQL datasource macro functions have TODO comments where error handling was never implemented -- errors from regexp.Compile are silently ignored. Also, Elasticsearch responses return generic "unexpected status code" errors instead of extracting the actual error message. Create a plan that splits this into parallel work units -- one per datasource package.
+> Fix issue #10: SQL sources missing error handling. The MySQL, PostgreSQL, and MSSQL datasource macro functions have TODO comments where error handling was never implemented -- errors from regexp.Compile are silently ignored. Also, Elasticsearch responses return generic "unexpected status code" errors instead of extracting the actual error message. Create a plan that splits this into parallel work units -- one for SQL datasources and one for Elasticsearch.
 
-3. **Review the plan** -- should show four parallel tracks:
-   - Track 1: MySQL (`pkg/tsdb/mysql/`)
-   - Track 2: PostgreSQL (`pkg/tsdb/grafana-postgresql-datasource/`)
-   - Track 3: MSSQL (`pkg/tsdb/mssql/`)
-   - Track 4: Elasticsearch (`pkg/tsdb/elasticsearch/`)
+3. **Review the plan** -- should show two parallel tracks:
+   - Track 1: SQL datasources (MySQL, PostgreSQL, MSSQL in `pkg/tsdb/mysql/`, `pkg/tsdb/grafana-postgresql-datasource/`, `pkg/tsdb/mssql/`)
+   - Track 2: Elasticsearch (`pkg/tsdb/elasticsearch/`)
 4. **Kick off parallel agents** -- launch separate agents for each track
 5. **Don't wait for them to finish**
 
 ### What You Say as You Kick Them Off
 
-> Now I'm going to launch separate agents for each track. Each one gets its own slice of the plan and works independently -- four agents, four packages, running at the same time.
+> Now I'm going to launch separate agents for each track. Each one gets its own slice of the plan and works independently -- two agents, two work units, running at the same time.
 >
 > This is where model orchestration really matters. I planned with a deep reasoning model that understood the architecture and decided how to split the work. Now each agent executes with a fast model on a well-scoped task. Plan smart, execute fast -- multiplied across parallel workers.
 
 ### Then Transition
 
-> These will keep running in the background. Let me take any questions while they work, and then we'll hand off to [colleague] for a browser demo.
+> These will keep running in the background. But before we hand off, I want to kick off one more thing.
 
 ### Talk Tracks (use if needed during planning)
 
@@ -225,53 +223,71 @@ Pick one if you need to fill time:
 
 ---
 
-## Colleague Browser Demo (~10 min)
+## Act 5: Council of Agents Review -- Kick Off (~3 min)
 
-_Hand off to colleague. Parallel agents continue running in background._
-
----
-
-## Act 5: Council of Agents Review (~5 min)
-
-**Goal:** Show multi-agent review pattern. Close with the strongest orchestration narrative.
+**Goal:** Show multi-agent review pattern. Kick off the council before the browser demo so everything runs in background.
 
 ### Verbal Setup
 
-> Before we wrap up, I want to show you one more pattern. In the logging change earlier, we used one model to do the deep reasoning and planning, then switched to a different model for fast execution. That's already model orchestration on a single task.
+> Before we hand off, I want to kick off one more thing. In the logging change earlier, we used one model to do the deep reasoning and planning, then switched to a different model for fast execution. That's already model orchestration on a single task.
 >
-> But here's where it gets really interesting. Instead of just asking one model to review, I'm going to use a council approach -- spawning multiple sub-agents to review these changes from different angles simultaneously.
+> But here's where it gets really interesting. Instead of just asking one model to review, I'm going to use a council approach -- spawning custom sub-agents, each pinned to a different model from a different lab, to review these changes from different angles simultaneously.
+>
+> There's a key insight here: models tend to like code that looks like what they generate. Claude wrote this code. If I ask Claude to review it, it's like a writer editing their own work -- blind spots persist. So instead, I've set up four reviewer agents pinned to OpenAI and Google models. Different training data, different reasoning patterns, different blind spots.
 
 ### Actions in Cursor
 
-1. **Ask the agent to review with sub-agents:**
+1. **Briefly show the `.cursor/agents/` folder** -- open one reviewer file to show the YAML frontmatter with the pinned model. Point out that each has a different model.
 
-> Review the structured logging changes we just made. Spawn sub-agents to review from multiple angles: one checking correctness of the logging patterns, one looking for any instances we missed, one checking for edge cases or regressions. Synthesize the findings.
+> These are custom sub-agents. Each one has a specific review mandate and a specific model pinned to it. The correctness reviewer runs on GPT-5.2 from OpenAI. The edge case reviewer runs on Gemini 3 Pro from Google. They're all read-only -- they can analyze but can't modify code. And because they're files in the repo, every engineer on the team gets the same review council.
 
-2. **Watch it fan out** -- multiple task agents launch, each exploring a different facet
-3. **Show the synthesized result**
+2. **Ask the agent to run the council review:**
 
-### What You Say While It Runs
+> Council review the structured logging changes we just made in pkg/api/ and pkg/services/
 
-> What's happening here is the agent is sending out multiple researchers -- each one looking at the changes from a different angle. One is checking if the logging patterns are correct. Another is scanning for instances we might have missed. Another is looking for edge cases.
+3. **Watch it fan out** -- four sub-agents launch in parallel, each pinned to its own model
+4. **Don't wait for results** -- transition to the browser demo
+
+### What You Say as They Launch
+
+> Watch -- four sub-agents just launched, all running at the same time, each with a different model. The correctness reviewer on GPT-5.2, the completeness reviewer on GPT-5.2 Codex, the edge case reviewer on Gemini 3 Pro, and the style reviewer checking codebase conventions.
 >
-> This is the council of agents pattern. Instead of one model reviewing linearly, you get broad coverage fast. And because Cursor works across model providers -- OpenAI, Google, Anthropic -- you can mix models with different strengths. A model from one lab genuinely thinks differently than a model from another. Different training, different reasoning patterns, different blind spots. When they converge on the same conclusion, that's real confidence.
+> This is the council of agents pattern. Claude Opus wrote the code. Now OpenAI and Google models are reviewing it. These will finish in the background along with our parallel agents from earlier. Let's hand off to [colleague] for the browser demo, and we'll come back to the results.
 
-### Show Results
+---
+
+## Colleague Browser Demo (~10 min)
+
+_Hand off to colleague. Parallel agents and council review all running in background._
+
+---
+
+## Show Results (~4 min)
+
+**Goal:** Walk through completed output from both the council review and parallel agents. Close with the strongest orchestration narrative.
+
+### Council Review Results
+
+> Let's check on our council review first.
 
 Walk through the synthesized review. Either outcome is a win:
 
-- **If it found something:** "See -- the sub-agents caught something the original execution missed. That's the whole point."
-- **If it validated:** "Multiple agents, different angles, all agree the changes are solid. That's a much stronger signal than one model checking its own work."
+- **If it found something:** "See -- the sub-agents caught something the original execution missed. Different models, different blind spots. That's the whole point of cross-lab review."
+- **If it validated:** "Four agents, three models, two labs -- all agree the changes are solid. That's a much stronger signal than one model checking its own work."
 
-### Show Parallel Agent Output (~2 min)
+**What to point out:**
+
+> When models from different labs converge on the same conclusion -- that's not one model checking its own work. That's independent verification. That's real confidence.
+
+### Parallel Agent Output
 
 > Now let me check on those parallel agents we kicked off earlier.
 
-Quick walkthrough of the completed SQL error handling work across the four packages.
+Quick walkthrough of the completed SQL error handling work across the SQL datasources and Elasticsearch.
 
 ### Closing Line
 
-> Plan with a reasoning model, execute with a fast model, review with a council of agents. You go from writing code to orchestrating a team of AI specialists. In a 7 million line codebase, that's not just faster -- it's how you maintain quality at scale.
+> Plan with a reasoning model, execute with a fast model, review with a council of agents from different labs. Claude wrote the code, OpenAI and Google reviewed it. You go from writing code to orchestrating a team of AI specialists -- each with a pinned model, a clear mandate, and a genuinely independent perspective. In a 7 million line codebase, that's not just faster -- it's how you maintain quality at scale.
 
 ---
 ---

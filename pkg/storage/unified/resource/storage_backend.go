@@ -1327,13 +1327,13 @@ func (b *kvStorageBackend) ProcessBulk(ctx context.Context, setting BulkSettings
 			events := make([]string, 0)
 			for evtKeyStr, err := range b.eventStore.ListKeysSince(ctx, 1, SortOrderAsc) {
 				if err != nil {
-					b.log.Error("failed to list event", "error", err)
+					b.log.Error("failed to list event: %s", err)
 					return rsp
 				}
 
 				evtKey, err := ParseEventKey(evtKeyStr)
 				if err != nil {
-					b.log.Error("error parsing event key", "error", err)
+					b.log.Error("error parsing event key: %s", err)
 					return rsp
 				}
 
@@ -1345,7 +1345,7 @@ func (b *kvStorageBackend) ProcessBulk(ctx context.Context, setting BulkSettings
 			}
 
 			if err := b.eventStore.batchDelete(ctx, events); err != nil {
-				b.log.Error("failed to delete events", "error", err)
+				b.log.Error("failed to delete events: %s", err)
 				return rsp
 			}
 
@@ -1357,7 +1357,7 @@ func (b *kvStorageBackend) ProcessBulk(ctx context.Context, setting BulkSettings
 				Resource:  key.Resource,
 			}, SortOrderAsc) {
 				if err != nil {
-					b.log.Error("failed to list collection before delete", "error", err)
+					b.log.Error("failed to list collection before delete: %s", err)
 					return rsp
 				}
 
@@ -1366,7 +1366,7 @@ func (b *kvStorageBackend) ProcessBulk(ctx context.Context, setting BulkSettings
 
 			previousCount := int64(len(historyKeys))
 			if err := b.dataStore.batchDelete(ctx, historyKeys); err != nil {
-				b.log.Error("failed to delete collection", "error", err)
+				b.log.Error("failed to delete collection: %s", err)
 				return rsp
 			}
 			summaries[NSGR(key)] = &resourcepb.BulkResponse_Summary{
@@ -1393,7 +1393,7 @@ func (b *kvStorageBackend) ProcessBulk(ctx context.Context, setting BulkSettings
 		// we don't have transactions in the kv store, so we simply delete everything we created
 		err = b.dataStore.batchDelete(ctx, saved)
 		if err != nil {
-			b.log.Error("failed to delete during rollback", "error", err)
+			b.log.Error("failed to delete during rollback: %s", err)
 		}
 	}
 

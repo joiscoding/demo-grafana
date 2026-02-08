@@ -190,7 +190,7 @@ func (ds *distributorServer) RebuildIndexes(ctx context.Context, r *resourcepb.R
 
 	errs := make([]error, 0, len(errorCh))
 	for err := range errorCh {
-		ds.log.Error("rebuild indexes call failed", "error", err)
+		ds.log.Error("rebuild indexes call failed with %w", err)
 		errs = append(errs, err)
 	}
 

@@ -326,7 +326,7 @@ func getDatasourcePlugins(pluginSources sources.Registry) ([]plugins.JSONData, e
 			}
 
 			if _, found := uniquePlugins[p.Primary.JSONData.ID]; found {
-				backend.Logger.Info("Found duplicate plugin when registering API groups", "pluginID", p.Primary.JSONData.ID)
+				backend.Logger.Info("Found duplicate plugin %s when registering API groups.", p.Primary.JSONData.ID)
 				continue
 			}
 

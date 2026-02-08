@@ -538,7 +538,7 @@ func (s *SocialAzureAD) groupsGraphAPIURL(claims *azureClaims, token *oauth2.Tok
 	// First check if an endpoint was specified in the claims
 	if claims.ClaimNames.Groups != "" {
 		endpoint = claims.ClaimSources[claims.ClaimNames.Groups].Endpoint
-		s.log.Debug("endpoint to fetch groups specified in the claims", "endpoint", endpoint)
+		s.log.Debug(fmt.Sprintf("endpoint to fetch groups specified in the claims: %s", endpoint))
 	}
 
 	// If no endpoint was specified or if the endpoints provided in _claim_source is pointing to the deprecated
@@ -561,7 +561,7 @@ func (s *SocialAzureAD) groupsGraphAPIURL(claims *azureClaims, token *oauth2.Tok
 		}
 
 		endpoint = fmt.Sprintf("https://graph.microsoft.com/v1.0/%s/users/%s/getMemberObjects", tenantID, claims.ID)
-		s.log.Debug("handcrafted endpoint to fetch groups", "endpoint", endpoint)
+		s.log.Debug(fmt.Sprintf("handcrafted endpoint to fetch groups: %s", endpoint))
 	}
 	return endpoint, nil
 }

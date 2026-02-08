@@ -103,7 +103,7 @@ func (e *Engine) Test(ctx context.Context, user identity.Requester, rule *models
 	effectiveStrategy := e.jitterStrategy
 	if e.jitterStrategy == schedule.JitterByGroup && (rule.RuleGroup == "" || rule.NamespaceUID == "") ||
 		e.jitterStrategy == schedule.JitterByRule && rule.UID == "" {
-		logger.Warn("Jitter strategy is set but rule group or namespace is not set, ignoring jitter", "jitterStrategy", e.jitterStrategy)
+		logger.Warn(fmt.Sprintf("Jitter strategy is set to %s, but rule group or namespace is not set. Ignore jitter", e.jitterStrategy))
 		warns = append(warns, fmt.Sprintf("Jitter strategy is set to %s, but rule group or namespace is not set. Ignore jitter. The results of testing will be different than real evaluations", e.jitterStrategy))
 		effectiveStrategy = schedule.JitterNever
 	}

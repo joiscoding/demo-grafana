@@ -660,7 +660,7 @@ func addConfigData(frames data.Frames, dl string, unit string, period string, lo
 		if period != "" {
 			err := addInterval(period, frames[i].Fields[0])
 			if err != nil {
-				logger.Error("Failed to add interval", "error", err, "statusSource", backend.ErrorSourceDownstream)
+				logger.Error("Failed to add interval: %s", err, "statusSource", backend.ErrorSourceDownstream)
 			}
 		}
 	}

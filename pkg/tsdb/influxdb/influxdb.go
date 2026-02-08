@@ -106,7 +106,7 @@ func (s *Service) QueryData(ctx context.Context, req *backend.QueryDataRequest) 
 		return nil, err
 	}
 
-	logger.Debug("Making query", "version", dsInfo.Version)
+	logger.Debug(fmt.Sprintf("Making a %s type query", dsInfo.Version))
 
 	switch dsInfo.Version {
 	case influxVersionFlux:

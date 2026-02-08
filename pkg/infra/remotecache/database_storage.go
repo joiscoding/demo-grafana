@@ -71,7 +71,7 @@ func (dc *databaseCache) Get(ctx context.Context, key string) ([]byte, error) {
 			if existedButExpired {
 				err = dc.Delete(ctx, key) // ignore this error since we will return `ErrCacheItemNotFound` anyway
 				if err != nil {
-					dc.log.Debug("Deletion of expired key failed", "error", err)
+					dc.log.Debug("Deletion of expired key failed: %v", err)
 				}
 				return ErrCacheItemNotFound
 			}

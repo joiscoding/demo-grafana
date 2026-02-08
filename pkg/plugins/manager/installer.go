@@ -69,7 +69,7 @@ func (m *PluginInstaller) Add(ctx context.Context, pluginID, version string, opt
 	}
 
 	for _, dep := range archive.Dependencies {
-		m.log.Info("Fetching plugin dependency", "pluginID", pluginID, "dependencyID", dep.ID)
+		m.log.Info(fmt.Sprintf("Fetching %s dependency %s...", pluginID, dep.ID))
 
 		err = m.Add(ctx, dep.ID, "", plugins.NewAddOpts(opts.GrafanaVersion(), opts.OS(), opts.Arch(), ""))
 		if err != nil {

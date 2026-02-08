@@ -551,7 +551,7 @@ func (s *Service) buildSnapshot(
 
 	start := time.Now()
 	defer func() {
-		s.log.Debug("buildSnapshot: method completed", "elapsed_ms", time.Since(start).Milliseconds())
+		s.log.Debug(fmt.Sprintf("buildSnapshot: method completed in %d ms", time.Since(start).Milliseconds()))
 	}()
 
 	publicKey, privateKey, err := box.GenerateKey(cryptoRand.Reader)
@@ -559,7 +559,7 @@ func (s *Service) buildSnapshot(
 		return fmt.Errorf("nacl: generating public and private key: %w", err)
 	}
 
-	s.log.Debug("buildSnapshot: generated keys", "elapsed_ms", time.Since(start).Milliseconds())
+	s.log.Debug(fmt.Sprintf("buildSnapshot: generated keys in %d ms", time.Since(start).Milliseconds()))
 
 	// Use GMS public key + the grafana generated private key to encrypt snapshot files.
 	snapshotWriter, err := snapshot.NewSnapshotWriter(contracts.AssymetricKeys{
@@ -573,14 +573,14 @@ func (s *Service) buildSnapshot(
 		return fmt.Errorf("instantiating snapshot writer: %w", err)
 	}
 
-	s.log.Debug("buildSnapshot: created snapshot writing", "elapsed_ms", time.Since(start).Milliseconds())
+	s.log.Debug(fmt.Sprintf("buildSnapshot: created snapshot writing in %d ms", time.Since(start).Milliseconds()))
 
 	migrationData, err := s.getMigrationDataJSON(ctx, signedInUser, resourceTypes)
 	if err != nil {
 		return fmt.Errorf("fetching migration data: %w", err)
 	}
 
-	s.log.Debug("buildSnapshot: got migration data json", "elapsed_ms", time.Since(start).Milliseconds())
+	s.log.Debug(fmt.Sprintf("buildSnapshot: got migration data json in %d ms", time.Since(start).Milliseconds()))
 
 	localSnapshotResource := make([]cloudmigration.CloudMigrationResource, len(migrationData.Items))
 	resourcesGroupedByType := make(map[cloudmigration.MigrateDataType][]snapshot.MigrateDataRequestItemDTO, 0)
@@ -611,13 +611,13 @@ func (s *Service) buildSnapshot(
 		if err := s.buildSnapshotWithDBStorage(ctx, snapshotMeta.UID, snapshotWriter, resourcesGroupedByType, maxItemsPerPartition); err != nil {
 			return fmt.Errorf("building snapshot with database storage: %w", err)
 		}
-		s.log.Debug("buildSnapshot: wrote data partitions with database storage", "elapsed_ms", time.Since(start).Milliseconds())
+		s.log.Debug(fmt.Sprintf("buildSnapshot: wrote data partitions with database storage in %d ms", time.Since(start).Milliseconds()))
 
 	case cloudmigration.ResourceStorageTypeFs:
 		if err := s.buildSnapshotWithFSStorage(publicKey[:], metadata, snapshotWriter, resourcesGroupedByType, maxItemsPerPartition); err != nil {
 			return fmt.Errorf("building snapshot with file system storage: %w", err)
 		}
-		s.log.Debug("buildSnapshot: wrote data partitions with file system storage", "elapsed_ms", time.Since(start).Milliseconds())
+		s.log.Debug(fmt.Sprintf("buildSnapshot: wrote data partitions with file system storage in %d ms", time.Since(start).Milliseconds()))
 
 	default:
 		return fmt.Errorf("unknown resource storage type, check your configuration and try again: %q", s.cfg.CloudMigration.ResourceStorageType)
@@ -688,7 +688,7 @@ func (s *Service) uploadSnapshot(ctx context.Context, session *cloudmigration.Cl
 
 	start := time.Now()
 	defer func() {
-		s.log.Debug("uploadSnapshot: method completed", "elapsed_ms", time.Since(start).Milliseconds())
+		s.log.Debug(fmt.Sprintf("uploadSnapshot: method completed in %d ms", time.Since(start).Milliseconds()))
 	}()
 
 	switch s.cfg.CloudMigration.ResourceStorageType {
@@ -810,12 +810,12 @@ func (s *Service) uploadSnapshotWithFSStorage(ctx context.Context, session *clou
 
 				return fmt.Errorf("uploading snapshot file using presigned url: %w", err)
 			}
-			s.log.Debug("uploadSnapshot: uploaded file", "fileName", fileName, "elapsed_ms", time.Since(start).Milliseconds())
+			s.log.Debug(fmt.Sprintf("uploadSnapshot: uploaded %s in %d ms", fileName, time.Since(start).Milliseconds()))
 		}
 	}
 	uploadSpan.End()
 
-	s.log.Debug("uploadSnapshot: uploaded all data files", "elapsed_ms", time.Since(start).Milliseconds())
+	s.log.Debug(fmt.Sprintf("uploadSnapshot: uploaded all data files in %d ms", time.Since(start).Milliseconds()))
 
 	uploadCtx, uploadSpan = s.tracer.Start(ctx, "CloudMigrationService.uploadSnapshot.uploadIndex")
 
@@ -839,7 +839,7 @@ func (s *Service) uploadSnapshotWithFSStorage(ctx context.Context, session *clou
 
 	uploadSpan.End()
 
-	s.log.Debug("uploadSnapshot: uploaded index file", "elapsed_ms", time.Since(start).Milliseconds())
+	s.log.Debug(fmt.Sprintf("uploadSnapshot: uploaded index file in %d ms", time.Since(start).Milliseconds()))
 
 	return nil
 }

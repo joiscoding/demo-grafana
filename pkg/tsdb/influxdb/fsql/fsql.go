@@ -51,7 +51,7 @@ func Query(ctx context.Context, dsInfo *models.DatasourceInfo, req backend.Query
 			continue
 		}
 
-		logger.Info("InfluxDB executing SQL", "rawSQL", qm.RawSQL)
+		logger.Info(fmt.Sprintf("InfluxDB executing SQL: %s", qm.RawSQL))
 		info, err := r.client.Execute(ctx, qm.RawSQL)
 		if err != nil {
 			errStr := fmt.Sprintf("flightsql: %s", err)
@@ -87,7 +87,7 @@ func Query(ctx context.Context, dsInfo *models.DatasourceInfo, req backend.Query
 
 		headers, err := reader.Header()
 		if err != nil {
-			logger.Error("Failed to extract headers", "error", err)
+			logger.Error(fmt.Sprintf("Failed to extract headers: %s", err))
 		}
 
 		tRes.Responses[q.RefID] = newQueryDataResponse(reader, *qm.Query, headers)

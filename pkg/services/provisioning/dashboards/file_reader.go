@@ -87,7 +87,7 @@ func (fr *FileReader) pollChanges(ctx context.Context) {
 		if err == nil {
 			return // finished
 		}
-		fr.log.Warn("error watching folder", "error", err)
+		fr.log.Warn("error watching folder: %w", err)
 		interval = 30
 	}
 

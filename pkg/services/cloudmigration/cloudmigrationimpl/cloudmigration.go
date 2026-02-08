@@ -598,7 +598,7 @@ func (s *Service) GetSnapshot(ctx context.Context, query cloudmigration.GetSnaps
 
 		localStatus, ok := gmsStateToLocalStatus[snapshotMeta.State]
 		if !ok {
-			s.log.Error("unexpected GMS snapshot state", "state", snapshotMeta.State)
+			s.log.Error("unexpected GMS snapshot state: %s", snapshotMeta.State)
 			return snapshot, nil
 		}
 		resources := snapshotMeta.Results

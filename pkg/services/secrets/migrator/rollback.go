@@ -66,9 +66,9 @@ func (s simpleSecret) Rollback(
 	}
 
 	if anyFailure {
-		logger.Warn("Column has been rolled back with errors", "column", s.columnName, "table", s.tableName)
+		logger.Warn(fmt.Sprintf("Column %s from %s has been rolled back with errors", s.columnName, s.tableName))
 	} else {
-		logger.Info("Column has been rolled back successfully", "column", s.columnName, "table", s.tableName)
+		logger.Info(fmt.Sprintf("Column %s from %s has been rolled back successfully", s.columnName, s.tableName))
 	}
 
 	return !anyFailure
@@ -141,9 +141,9 @@ func (s b64Secret) Rollback(
 	}
 
 	if anyFailure {
-		logger.Warn("Column has been rolled back with errors", "column", s.columnName, "table", s.tableName)
+		logger.Warn(fmt.Sprintf("Column %s from %s has been rolled back with errors", s.columnName, s.tableName))
 	} else {
-		logger.Info("Column has been rolled back successfully", "column", s.columnName, "table", s.tableName)
+		logger.Info(fmt.Sprintf("Column %s from %s has been rolled back successfully", s.columnName, s.tableName))
 	}
 
 	return !anyFailure
@@ -206,9 +206,9 @@ func (s jsonSecret) Rollback(
 	}
 
 	if anyFailure {
-		logger.Warn("Secure json data secrets have been rolled back with errors", "table", s.tableName)
+		logger.Warn(fmt.Sprintf("Secure json data secrets from %s have been rolled back with errors", s.tableName))
 	} else {
-		logger.Info("Secure json data secrets have been rolled back successfully", "table", s.tableName)
+		logger.Info(fmt.Sprintf("Secure json data secrets from %s have been rolled back successfully", s.tableName))
 	}
 
 	return !anyFailure
