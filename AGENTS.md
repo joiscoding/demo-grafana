@@ -133,3 +133,25 @@ Build a specific plugin: `yarn workspace @grafana-plugins/<name> dev`
 - **Config**: Defaults in `conf/defaults.ini`, overrides in `conf/custom.ini`.
 - **Database migrations**: Live in `pkg/services/sqlstore/migrations/`. Test with `make devenv sources=postgres_tests,mysql_tests` then `make test-go-integration-postgres`.
 - **CI sharding**: Backend tests use `SHARD`/`SHARDS` env vars for parallelization.
+
+## Cursor Cloud specific instructions
+
+### Services overview
+
+| Service | How to start | Notes |
+|---------|-------------|-------|
+| Backend (Go) | `make run` | Hot-reloads via Air; serves API on `:3000`; default login `admin`/`admin` |
+| Frontend (webpack) | `yarn start` | Dev server with HMR; proxies to the backend |
+
+Both must run concurrently for the full dev experience. See `AGENTS.md` commands section and the skill files under `.cursor/skills/` for details.
+
+### Startup caveats
+
+- **First `make run`** compiles the entire Go backend (~3-5 min). Subsequent rebuilds are fast (hot reload via Air).
+- **`yarn start`** first compiles in ~15s (initial webpack), then takes ~45s for the full build. Type-checking runs in the background and logs separately.
+- Wait for backend to log `HTTP Server Listen` and frontend to log `Compiled successfully` before testing.
+- Quick smoke test: `curl -sI http://localhost:3000/` should return `HTTP/1.1 302 Found` with `Location: /login`.
+- The default database is embedded SQLite (no external DB needed). Data files live in `data/grafana.db`.
+- `yarn lint` runs both ESLint and stylelint. For JS/TS-only linting use `npx eslint <file>` directly.
+- Backend tests: `go test ./pkg/services/<name>/` — no external services needed for unit tests.
+- Frontend tests: `yarn test <path>` — runs Jest with React Testing Library.
