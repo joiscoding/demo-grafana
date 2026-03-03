@@ -133,3 +133,26 @@ Build a specific plugin: `yarn workspace @grafana-plugins/<name> dev`
 - **Config**: Defaults in `conf/defaults.ini`, overrides in `conf/custom.ini`.
 - **Database migrations**: Live in `pkg/services/sqlstore/migrations/`. Test with `make devenv sources=postgres_tests,mysql_tests` then `make test-go-integration-postgres`.
 - **CI sharding**: Backend tests use `SHARD`/`SHARDS` env vars for parallelization.
+
+## Cursor Cloud specific instructions
+
+### Services overview
+
+| Service | How to start | Notes |
+|---|---|---|
+| Go backend | `make run` | Hot-reload via `air`. Serves API + static assets on `localhost:3000`. Default login `admin`/`admin`. |
+| Frontend watcher | `yarn start` | Webpack watch mode; writes to `public/build/`. Not a separate HTTP server. |
+
+Both must run for full local dev. No external database needed (SQLite embedded by default).
+
+### Gotchas
+
+- **Node version**: `.nvmrc` requires Node v24.x. Run `nvm use` (or `nvm install $(cat .nvmrc)`) before `yarn install`.
+- **Corepack**: Must run `corepack enable && corepack install` before `yarn install --immutable` so Yarn 4.11.0 is active.
+- **`enableScripts: false`** in `.yarnrc.yml`: native addon packages (e.g. `@swc/core`, `esbuild`) have build scripts disabled. Yarn links pre-built binaries from cache instead; this is intentional and not an error.
+- **`make run` first build**: Initial Go compilation takes ~2-3 minutes. Look for `HTTP Server Listen` in logs to confirm readiness.
+- **`yarn start` type-checking**: After webpack reports "Compiled successfully", type-checking continues in the background. Wait for "No typescript errors found" before treating the frontend as fully ready.
+- **Network-restricted environments**: Grafana logs `ERROR Update check failed` and `Error downloading plugin manifest keys` on startup because it cannot reach `grafana.com`. These are non-fatal and expected in sandboxed/firewalled environments.
+- **Go linter**: `make lint-go` takes ~10 minutes on the full codebase. For faster feedback on specific packages, use `golangci-lint run ./pkg/services/mypackage/...`.
+- **Frontend lint**: `yarn lint` runs ESLint across all frontend code. Pass `--quiet` to suppress warnings and show only errors.
+- **Pre-commit hooks**: Optional. The `.husky/pre-commit` script just prints a message directing you to `make lefthook-install`. No hooks run by default.
