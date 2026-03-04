@@ -97,16 +97,7 @@ function getSelectors() {
       within(sessionsTable()).getByRole('row', {
         name: /now January 1, 2021 localhost chrome on mac os x 11/i,
       }),
-    /**
-     * using queryByTestId instead of getByTestId because the tabs are not always rendered
-     * and getByTestId throws an TestingLibraryElementError error if the element is not found
-     * whereas queryByTestId returns null if the element is not found. There are some test cases
-     * where we'd explicitly like to assert that the tabs are not rendered.
-     */
-    extensionPointTabs: () => screen.queryByTestId(selectors.components.UserProfile.extensionPointTabs),
-    /**
-     * here lets use getByTestId because a specific tab should always be rendered within the tabs container
-     */
+    extensionPointTabs: () => screen.getByTestId(selectors.components.UserProfile.extensionPointTabs),
     extensionPointTab: (tabId: string) =>
       within(screen.getByTestId(selectors.components.UserProfile.extensionPointTabs)).getByTestId(
         selectors.components.UserProfile.extensionPointTab(tabId)
@@ -129,6 +120,7 @@ const _createTabName = (tab: ExtensionPointComponentTabs) => tab;
 const _createTabContent = (tabId: ExtensionPointComponentId) => `this is settings for component ${tabId}`;
 
 const generalTabName = 'General';
+const labsTabName = 'Labs';
 const generalTestId = 'user-profile-edit-page';
 const tabOneName = _createTabName(ExtensionPointComponentTabs.One);
 const tabTwoName = _createTabName(ExtensionPointComponentTabs.Two);
@@ -330,10 +322,13 @@ describe('UserProfileEditPage', () => {
         PluginExtensionPointComponent3,
       ];
 
-      it('should not show tabs when no components are registered', async () => {
+      it('should show default tabs when no plugin components are registered', async () => {
         await getTestContext();
-        const { extensionPointTabs } = getSelectors();
-        expect(extensionPointTabs()).not.toBeInTheDocument();
+        const { extensionPointTabs, extensionPointTab } = getSelectors();
+
+        expect(extensionPointTabs()).toBeInTheDocument();
+        expect(extensionPointTab(generalTabName.toLowerCase())).toHaveAttribute('aria-selected', 'true');
+        expect(extensionPointTab(labsTabName.toLowerCase())).toHaveAttribute('aria-selected', 'false');
       });
 
       it('should group registered components into tabs', async () => {
@@ -348,6 +343,7 @@ describe('UserProfileEditPage', () => {
 
         expect(extensionPointTabs()).toBeInTheDocument();
         _assertTab(generalTabName.toLowerCase(), true);
+        _assertTab(labsTabName.toLowerCase());
         _assertTab(tabOneName.toLowerCase());
         _assertTab(tabTwoName.toLowerCase());
       });

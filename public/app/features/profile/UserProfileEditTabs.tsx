@@ -6,8 +6,11 @@ import { t } from '@grafana/i18n';
 import { Stack, Tab, TabContent, TabsBar } from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 
+import { LabsSettings } from './labs/LabsSettings';
+
 const TAB_QUERY_PARAM = 'tab';
 const GENERAL_SETTINGS_TAB = 'general';
+const LABS_SETTINGS_TAB = 'labs';
 
 type Props = {
   children?: React.ReactNode;
@@ -18,11 +21,6 @@ export function UserProfileEditTabs(props: Props): ReactElement {
   const { children, components } = props;
   const tabsById = useTabInfoById(components, children);
   const [activeTab, setActiveTab] = useActiveTab(tabsById);
-  const showTabs = components.length > 0;
-
-  if (showTabs === false) {
-    return <>{children}</>;
-  }
 
   return (
     <div data-testid={selectors.components.UserProfile.extensionPointTabs}>
@@ -67,6 +65,11 @@ function useTabInfoById(components: Props['components'], general: React.ReactNod
         title: t('user-profile.tabs.general', 'General'),
         tabId: GENERAL_SETTINGS_TAB,
         components: [() => <>{general}</>],
+      },
+      [LABS_SETTINGS_TAB]: {
+        title: t('user-profile.tabs.labs', 'Labs'),
+        tabId: LABS_SETTINGS_TAB,
+        components: [LabsSettings],
       },
     };
 
