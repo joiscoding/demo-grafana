@@ -186,7 +186,7 @@ export function LabsSettings() {
 
 async function loadFeatureDefinitions(): Promise<Record<string, FeatureDefinition>> {
   const client = new ScopedResourceClient<FeatureSpec, object, 'Feature'>(featureResource, false);
-  const featureList = await client.list();
+  const featureList = await client.list({ limit: 1000 });
   const items = Array.isArray(featureList.items) ? featureList.items : [];
 
   return items.reduce<Record<string, FeatureDefinition>>((acc, feature: Resource<FeatureSpec>) => {

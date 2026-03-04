@@ -75,7 +75,14 @@ function useTabInfoById(components: Props['components'], general: React.ReactNod
 
     return components.reduce((acc, component) => {
       const { title } = component.meta;
-      const tabId = convertTitleToTabId(title);
+      let tabId = convertTitleToTabId(title);
+
+      // Prevent plugin tabs from colliding with built-in tabs
+      const reservedTabIds = [GENERAL_SETTINGS_TAB, LABS_SETTINGS_TAB];
+      if (reservedTabIds.includes(tabId)) {
+        // Append suffix to create unique tab ID for plugin
+        tabId = `${tabId}-plugin`;
+      }
 
       if (!acc[tabId]) {
         acc[tabId] = {
