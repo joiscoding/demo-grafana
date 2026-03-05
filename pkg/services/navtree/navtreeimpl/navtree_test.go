@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
+	ac "github.com/grafana/grafana/pkg/services/accesscontrol"
+	accesscontrolmock "github.com/grafana/grafana/pkg/services/accesscontrol/mock"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/dashboards"
 	"github.com/grafana/grafana/pkg/services/navtree"
@@ -175,7 +177,10 @@ func TestBuildLabsNavLink(t *testing.T) {
 			Context: &web.Context{Req: httpReq},
 		}
 
-		service := ServiceImpl{cfg: cfg}
+		service := ServiceImpl{
+			cfg:           cfg,
+			accessControl: accesscontrolmock.New(),
+		}
 		labsSection := service.buildLabsNavLink(reqCtx)
 		require.Nil(t, labsSection)
 	})
@@ -191,7 +196,13 @@ func TestBuildLabsNavLink(t *testing.T) {
 			Context: &web.Context{Req: httpReq},
 		}
 
-		service := ServiceImpl{cfg: cfg}
+		permissions := []ac.Permission{
+			{Action: ac.ActionSettingsRead, Scope: ac.ScopeSettingsAll},
+		}
+		service := ServiceImpl{
+			cfg:           cfg,
+			accessControl: accesscontrolmock.New().WithPermissions(permissions),
+		}
 		labsSection := service.buildLabsNavLink(reqCtx)
 		require.NotNil(t, labsSection)
 		require.Equal(t, navtree.NavIDLabs, labsSection.Id)
