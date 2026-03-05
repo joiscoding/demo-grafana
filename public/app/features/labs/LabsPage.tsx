@@ -57,7 +57,7 @@ export default function LabsPage() {
       <Page.Contents>
         <p className={styles.pageDescription}>Read-only view of feature flags currently active in this Grafana instance.</p>
         {featureToggles.length === 0 ? (
-          <p>No feature flags are enabled.</p>
+          <p>No feature flags are configured.</p>
         ) : (
           <table className={styles.table}>
             <thead>
