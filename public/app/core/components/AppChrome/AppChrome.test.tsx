@@ -14,7 +14,7 @@ import { DashboardQueryResult, QueryResponse } from 'app/features/search/service
 import { Page } from '../Page/Page';
 
 import { AppChrome } from './AppChrome';
-import { MENU_WIDTH } from './MegaMenu/MegaMenu';
+import { APP_TOOLBAR_WIDTH_NARROW, MENU_WIDTH } from './MegaMenu/MegaMenu';
 
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
@@ -118,9 +118,11 @@ describe('AppChrome', () => {
     const chromeHeader = await screen.findByRole('banner');
     expect(chromeHeader).toHaveStyle({
       left: '0px',
-      width: MENU_WIDTH,
       top: '0px',
       bottom: '0px',
     });
+    // Responsive width: narrow (56px) on small screens, full (300px) on md+
+    const width = window.getComputedStyle(chromeHeader).width;
+    expect([APP_TOOLBAR_WIDTH_NARROW, MENU_WIDTH]).toContain(width);
   });
 });

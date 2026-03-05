@@ -20,7 +20,7 @@ import {
   MIN_EXTENSION_SIDEBAR_WIDTH,
 } from './ExtensionSidebar/ExtensionSidebar';
 import { useExtensionSidebarContext } from './ExtensionSidebar/ExtensionSidebarProvider';
-import { MegaMenu, MENU_WIDTH } from './MegaMenu/MegaMenu';
+import { MegaMenu, MENU_WIDTH, APP_TOOLBAR_WIDTH_NARROW } from './MegaMenu/MegaMenu';
 import { useMegaMenuFocusHelper } from './MegaMenu/utils';
 import { ReturnToPrevious } from './ReturnToPrevious/ReturnToPrevious';
 import { SingleTopBar } from './TopBar/SingleTopBar';
@@ -192,9 +192,13 @@ const getStyles = (theme: GrafanaTheme2) => {
       label: 'page-content',
       display: 'flex',
       flexDirection: 'column',
-      paddingLeft: APP_TOOLBAR_WIDTH,
+      paddingLeft: APP_TOOLBAR_WIDTH_NARROW,
       flexGrow: 1,
       height: '100%',
+
+      [theme.breakpoints.up('md')]: {
+        paddingLeft: APP_TOOLBAR_WIDTH,
+      },
     }),
     contentWithSidebar: css({
       height: '100vh',
@@ -221,13 +225,21 @@ const getStyles = (theme: GrafanaTheme2) => {
     }),
     scopesDashboardsContainer: css({
       position: 'fixed',
-      left: APP_TOOLBAR_WIDTH,
+      left: APP_TOOLBAR_WIDTH_NARROW,
       top: 0,
       height: '100%',
       zIndex: 1,
+
+      [theme.breakpoints.up('md')]: {
+        left: APP_TOOLBAR_WIDTH,
+      },
     }),
     scopesDashboardsContainerDocked: css({
-      left: `calc(${APP_TOOLBAR_WIDTH} + ${MENU_WIDTH})`,
+      left: `calc(${APP_TOOLBAR_WIDTH_NARROW} + ${MENU_WIDTH})`,
+
+      [theme.breakpoints.up('md')]: {
+        left: `calc(${APP_TOOLBAR_WIDTH} + ${MENU_WIDTH})`,
+      },
     }),
     topNav: css({
       display: 'flex',
@@ -236,11 +248,15 @@ const getStyles = (theme: GrafanaTheme2) => {
       top: 0,
       bottom: 0,
       left: 0,
-      width: APP_TOOLBAR_WIDTH,
+      width: APP_TOOLBAR_WIDTH_NARROW,
       background: theme.colors.background.primary,
       flexDirection: 'column',
       borderRight: `1px solid ${theme.colors.border.weak}`,
       overflowY: 'auto',
+
+      [theme.breakpoints.up('md')]: {
+        width: APP_TOOLBAR_WIDTH,
+      },
     }),
     panes: css({
       display: 'flex',
@@ -254,10 +270,18 @@ const getStyles = (theme: GrafanaTheme2) => {
       position: 'relative',
     }),
     pageContainerMenuDocked: css({
-      paddingLeft: MENU_WIDTH,
+      paddingLeft: `calc(${APP_TOOLBAR_WIDTH_NARROW} + ${MENU_WIDTH})`,
+
+      [theme.breakpoints.up('md')]: {
+        paddingLeft: `calc(${APP_TOOLBAR_WIDTH} + ${MENU_WIDTH})`,
+      },
     }),
     pageContainerMenuDockedScopes: css({
-      paddingLeft: `calc(${MENU_WIDTH} * 2)`,
+      paddingLeft: `calc(${APP_TOOLBAR_WIDTH_NARROW} + ${MENU_WIDTH} * 2)`,
+
+      [theme.breakpoints.up('md')]: {
+        paddingLeft: `calc(${APP_TOOLBAR_WIDTH} + ${MENU_WIDTH} * 2)`,
+      },
     }),
     pageContainer: css({
       label: 'page-container',

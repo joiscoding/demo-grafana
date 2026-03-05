@@ -20,6 +20,7 @@ import { usePinnedItems } from './hooks';
 import { enrichWithInteractionTracking, findByUrl, getActiveItem } from './utils';
 
 export const MENU_WIDTH = '300px';
+export const APP_TOOLBAR_WIDTH_NARROW = '56px';
 
 export interface Props extends DOMAttributes {
   onClose: () => void;

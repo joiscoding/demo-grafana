@@ -11,7 +11,7 @@ import { t } from '@grafana/i18n';
 import { useStyles2, useTheme2 } from '@grafana/ui';
 import { useGrafana } from 'app/core/context/GrafanaContext';
 
-import { MegaMenu, MENU_WIDTH } from './MegaMenu/MegaMenu';
+import { MegaMenu, MENU_WIDTH, APP_TOOLBAR_WIDTH_NARROW } from './MegaMenu/MegaMenu';
 
 interface Props {}
 
@@ -94,7 +94,7 @@ const getStyles = (theme: GrafanaTheme2) => {
       display: 'flex',
       bottom: 0,
       flexDirection: 'column',
-      left: 0,
+      left: APP_TOOLBAR_WIDTH_NARROW,
       right: 0,
       // Needs to below navbar should we change the navbarFixed? add add a new level?
       zIndex: theme.zIndex.modal,
@@ -104,6 +104,7 @@ const getStyles = (theme: GrafanaTheme2) => {
       flex: '1 1 0',
 
       [theme.breakpoints.up('md')]: {
+        left: MENU_WIDTH,
         right: 'unset',
       },
     }),
