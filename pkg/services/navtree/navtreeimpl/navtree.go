@@ -601,7 +601,8 @@ func (s *ServiceImpl) buildAlertNavLinks(c *contextmodel.ReqContext) *navtree.Na
 }
 
 func (s *ServiceImpl) buildLabsNavLink(c *contextmodel.ReqContext) *navtree.NavLink {
-	if c.GetOrgRole() != org.RoleAdmin {
+	hasAccess := ac.HasAccess(s.accessControl, c)
+	if !hasAccess(ac.EvalPermission(ac.ActionSettingsRead, ac.ScopeSettingsAll)) {
 		return nil
 	}
 

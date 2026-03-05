@@ -34,8 +34,8 @@ const (
 	WeightPlugin
 	WeightConfig
 	WeightProfile
-	WeightHelp
 	WeightLabs
+	WeightHelp
 )
 
 const (
