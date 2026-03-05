@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
+	"github.com/grafana/grafana/pkg/services/accesscontrol"
+	acmock "github.com/grafana/grafana/pkg/services/accesscontrol/mock"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/dashboards"
 	"github.com/grafana/grafana/pkg/services/search/model"
@@ -161,16 +163,21 @@ func TestBuildStarredItemsNavLinks(t *testing.T) {
 }
 
 func TestBuildLabsNavLink(t *testing.T) {
-	service := ServiceImpl{
-		cfg: setting.NewCfg(),
-	}
-
 	httpReq, _ := http.NewRequest(http.MethodGet, "", nil)
 
-	t.Run("shows Labs for signed-in users", func(t *testing.T) {
+	t.Run("shows Labs for users with settings:read permission", func(t *testing.T) {
+		acMock := acmock.New().WithPermissions([]accesscontrol.Permission{
+			{Action: accesscontrol.ActionSettingsRead, Scope: accesscontrol.ScopeSettingsAll},
+		})
+
+		service := ServiceImpl{
+			cfg:           setting.NewCfg(),
+			accessControl: acMock,
+		}
+
 		reqCtx := &contextmodel.ReqContext{
-			IsSignedIn: true,
-			Context:    &web.Context{Req: httpReq},
+			SignedInUser: &user.SignedInUser{UserID: 1, OrgID: 1},
+			Context:      &web.Context{Req: httpReq},
 		}
 
 		navLink := service.buildLabsNavLink(reqCtx)
@@ -180,10 +187,17 @@ func TestBuildLabsNavLink(t *testing.T) {
 		require.True(t, navLink.IsNew)
 	})
 
-	t.Run("hides Labs for signed-out users", func(t *testing.T) {
+	t.Run("hides Labs for users without settings:read permission", func(t *testing.T) {
+		acMock := acmock.New().WithPermissions([]accesscontrol.Permission{})
+
+		service := ServiceImpl{
+			cfg:           setting.NewCfg(),
+			accessControl: acMock,
+		}
+
 		reqCtx := &contextmodel.ReqContext{
-			IsSignedIn: false,
-			Context:    &web.Context{Req: httpReq},
+			SignedInUser: &user.SignedInUser{UserID: 1, OrgID: 1},
+			Context:      &web.Context{Req: httpReq},
 		}
 
 		navLink := service.buildLabsNavLink(reqCtx)

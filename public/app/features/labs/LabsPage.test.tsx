@@ -47,6 +47,6 @@ describe('LabsPage', () => {
       </TestProvider>
     );
 
-    expect(screen.getByText('No feature flags are enabled.')).toBeInTheDocument();
+    expect(screen.getByText('No feature flags are configured.')).toBeInTheDocument();
   });
 });
