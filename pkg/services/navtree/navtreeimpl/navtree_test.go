@@ -15,6 +15,7 @@ import (
 	"github.com/grafana/grafana/pkg/services/star"
 	"github.com/grafana/grafana/pkg/services/star/startest"
 	"github.com/grafana/grafana/pkg/services/user"
+	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/web"
 )
 
@@ -156,5 +157,36 @@ func TestBuildStarredItemsNavLinks(t *testing.T) {
 		require.Equal(t, "A Dashboard", navLinks[0].Text)
 		require.Equal(t, "B Dashboard", navLinks[1].Text)
 		require.Equal(t, "C Dashboard", navLinks[2].Text)
+	})
+}
+
+func TestBuildLabsNavLink(t *testing.T) {
+	service := ServiceImpl{
+		cfg: setting.NewCfg(),
+	}
+
+	httpReq, _ := http.NewRequest(http.MethodGet, "", nil)
+
+	t.Run("shows Labs for signed-in users", func(t *testing.T) {
+		reqCtx := &contextmodel.ReqContext{
+			IsSignedIn: true,
+			Context:    &web.Context{Req: httpReq},
+		}
+
+		navLink := service.buildLabsNavLink(reqCtx)
+		require.NotNil(t, navLink)
+		require.Equal(t, "labs", navLink.Id)
+		require.Equal(t, "/labs", navLink.Url)
+		require.True(t, navLink.IsNew)
+	})
+
+	t.Run("hides Labs for signed-out users", func(t *testing.T) {
+		reqCtx := &contextmodel.ReqContext{
+			IsSignedIn: false,
+			Context:    &web.Context{Req: httpReq},
+		}
+
+		navLink := service.buildLabsNavLink(reqCtx)
+		require.Nil(t, navLink)
 	})
 }

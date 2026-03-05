@@ -37,6 +37,8 @@ const (
 	WeightHelp
 )
 
+const WeightLabs = WeightConfig - 10
+
 const (
 	NavIDRoot                 = "root"
 	NavIDDashboards           = "dashboards/browse"
@@ -51,6 +53,7 @@ const (
 	NavIDInfrastructure       = "infrastructure"
 	NavIDReporting            = "reports"
 	NavIDApps                 = "apps"
+	NavIDLabs                 = "labs"
 	NavIDCfgGeneral           = "cfg/general"
 	NavIDCfgPlugins           = "cfg/plugins"
 	NavIDCfgAccess            = "cfg/access"

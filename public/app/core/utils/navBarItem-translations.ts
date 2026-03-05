@@ -177,6 +177,8 @@ export function getNavTitle(navId: string | undefined) {
       return t('nav.search-dashboards.title', 'Search dashboards');
     case 'connections':
       return t('nav.connections.title', 'Connections');
+    case 'labs':
+      return t('nav.labs.title', 'Labs');
     case 'connections-add-new-connection':
       return t('nav.add-new-connections.title', 'Add new connection');
     case 'standalone-plugin-page-/connections/collector':
@@ -290,6 +292,8 @@ export function getNavSubTitle(navId: string | undefined) {
       return t('nav.config-access.subtitle', 'Configure access for individual users, teams, and service accounts');
     case 'apps':
       return t('nav.apps.subtitle', 'App plugins that extend the Grafana experience');
+    case 'labs':
+      return t('nav.labs.subtitle', 'View feature flags and experimental capabilities');
     case 'monitoring':
       return t('nav.monitoring.subtitle', 'Out-of-the-box observability solutions');
     case 'infrastructure':
