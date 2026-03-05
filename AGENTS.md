@@ -133,3 +133,29 @@ Build a specific plugin: `yarn workspace @grafana-plugins/<name> dev`
 - **Config**: Defaults in `conf/defaults.ini`, overrides in `conf/custom.ini`.
 - **Database migrations**: Live in `pkg/services/sqlstore/migrations/`. Test with `make devenv sources=postgres_tests,mysql_tests` then `make test-go-integration-postgres`.
 - **CI sharding**: Backend tests use `SHARD`/`SHARDS` env vars for parallelization.
+
+## Cursor Cloud specific instructions
+
+### Services
+
+| Service | Start command | Default URL | Notes |
+|---------|--------------|-------------|-------|
+| Go backend | `make run` | http://localhost:3000 | Hot-reloads via Air; default login `admin`/`admin` |
+| Frontend dev server | `yarn start` | proxied through :3000 | Webpack HMR; builds plugins (tempo, etc.) first |
+
+Both must run for full dev. Backend uses embedded SQLite by default — no external DB needed.
+
+### Startup sequence
+
+1. `make run` in one terminal (wait for `HTTP Server Listen` in logs)
+2. `yarn start` in another terminal (wait for `Compiled successfully`)
+3. Verify: `curl -sI http://localhost:3000/` should return `HTTP/1.1 302` → `/login`
+
+### Non-obvious caveats
+
+- **Node version**: `.nvmrc` specifies v24.11.0. Use `nvm install 24.11.0 && nvm use 24.11.0` before running frontend commands.
+- **Yarn scripts disabled**: `.yarnrc.yml` sets `enableScripts: false`. Native addon packages (e.g. `@swc/core`, `esbuild`) won't build during install — this is intentional and does not break dev.
+- **`make lint-go` timeout**: On resource-constrained environments, `golangci-lint` may timeout on the full codebase. Pass `--timeout 30m` or lint specific packages: `golangci-lint run --config .golangci.yml ./pkg/services/myservice/...`
+- **Frontend lint/test commands**: See `## Commands` section above — `yarn lint`, `yarn test`, `yarn typecheck`.
+- **Backend test commands**: `go test ./pkg/...` for unit tests. See `## Commands` section above for more.
+- **Pre-commit hooks are opt-in**: Run `make lefthook-install` to enable them.
