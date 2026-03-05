@@ -26,9 +26,9 @@ export function SingleTopBarActions({ actions, breadcrumbActions, scopes }: Prop
       data-testid={Components.NavToolbar.container}
       className={cx(styles.actionsBar, isExtensionSidebarOpen && styles.constrained)}
     >
-      <Stack alignItems="center" justifyContent="flex-start" flex={1} wrap="nowrap" minWidth={0}>
+      <Stack alignItems="center" justifyContent="flex-start" flex={1} wrap="wrap" minWidth={0}>
         {scopes?.state.enabled ? <ScopesSelector /> : undefined}
-        <Stack alignItems="center" justifyContent={'flex-end'} flex={1} wrap="nowrap" minWidth={0}>
+        <Stack alignItems="center" justifyContent={'flex-end'} flex={1} wrap="wrap" minWidth={0}>
           {breadcrumbActions}
           {breadcrumbActions && actions && <NavToolbarSeparator />}
           {actions}
@@ -45,8 +45,9 @@ const getStyles = (theme: GrafanaTheme2, extensionSidebarWidth = 0) => {
       backgroundColor: theme.colors.background.primary,
       borderBottom: `1px solid ${theme.colors.border.weak}`,
       display: 'flex',
-      height: getChromeHeaderLevelHeight(),
-      padding: theme.spacing(0, 1, 0, 2),
+      minHeight: getChromeHeaderLevelHeight(),
+      height: 'auto',
+      padding: theme.spacing(1),
     }),
     constrained: css({
       maxWidth: `calc(100% - ${extensionSidebarWidth}px)`,

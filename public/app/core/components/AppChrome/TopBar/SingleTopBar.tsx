@@ -54,7 +54,7 @@ export const SingleTopBar = memo(function SingleTopBar({
   const { chrome } = useGrafana();
   const state = chrome.useState();
   const menuDockedAndOpen = !state.chromeless && state.megaMenuDocked && state.megaMenuOpen;
-  const styles = useStyles2(getStyles, menuDockedAndOpen);
+  const styles = useStyles2(getStyles);
   const profileNode = useSelector((state) => state.navIndex['profile']);
   const homeNav = useSelector((state) => state.navIndex)[HOME_NAV_ID];
   const breadcrumbs = buildBreadcrumbs(sectionNav, pageNav, homeNav);
@@ -110,16 +110,18 @@ export const SingleTopBar = memo(function SingleTopBar({
   );
 });
 
-const getStyles = (theme: GrafanaTheme2, menuDockedAndOpen: boolean) => ({
+const getStyles = (theme: GrafanaTheme2) => ({
   layout: css({
-    height: getChromeHeaderLevelHeight(),
+    minHeight: getChromeHeaderLevelHeight(),
+    height: 'auto',
     display: 'flex',
-    gap: theme.spacing(2),
+    gap: theme.spacing(1),
+    flexWrap: 'wrap',
     alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    paddingLeft: menuDockedAndOpen ? theme.spacing(3.5) : theme.spacing(0.75),
+    alignContent: 'flex-start',
+    padding: theme.spacing(1),
     borderBottom: `1px solid ${theme.colors.border.weak}`,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   }),
   breadcrumbsWrapper: css({
     display: 'flex',

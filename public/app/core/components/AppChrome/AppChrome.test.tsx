@@ -14,6 +14,7 @@ import { DashboardQueryResult, QueryResponse } from 'app/features/search/service
 import { Page } from '../Page/Page';
 
 import { AppChrome } from './AppChrome';
+import { MENU_WIDTH } from './MegaMenu/MegaMenu';
 
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
@@ -108,6 +109,18 @@ describe('AppChrome', () => {
     });
     waitFor(() => {
       expect(screen.queryByRole('link', { name: 'Skip to main content' })).not.toBeInTheDocument();
+    });
+  });
+
+  it('should render app toolbar as a fixed left rail', async () => {
+    setup(<Page navId="child1">Children</Page>);
+
+    const chromeHeader = await screen.findByRole('banner');
+    expect(chromeHeader).toHaveStyle({
+      left: '0px',
+      width: MENU_WIDTH,
+      top: '0px',
+      bottom: '0px',
     });
   });
 });

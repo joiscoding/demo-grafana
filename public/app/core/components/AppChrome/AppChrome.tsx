@@ -24,9 +24,11 @@ import { MegaMenu, MENU_WIDTH } from './MegaMenu/MegaMenu';
 import { useMegaMenuFocusHelper } from './MegaMenu/utils';
 import { ReturnToPrevious } from './ReturnToPrevious/ReturnToPrevious';
 import { SingleTopBar } from './TopBar/SingleTopBar';
-import { getChromeHeaderLevelHeight, useChromeHeaderLevels } from './TopBar/useChromeHeaderHeight';
+import { useChromeHeaderLevels } from './TopBar/useChromeHeaderHeight';
 
 export interface Props extends PropsWithChildren<{}> {}
+
+const APP_TOOLBAR_WIDTH = MENU_WIDTH;
 
 export function AppChrome({ children }: Props) {
   const { chrome } = useGrafana();
@@ -44,7 +46,7 @@ export function AppChrome({ children }: Props) {
   );
 
   const headerLevels = useChromeHeaderLevels();
-  const styles = useStyles2(getStyles, headerLevels, getChromeHeaderLevelHeight());
+  const styles = useStyles2(getStyles);
   const contentSizeStyles = useStyles2(getContentSizeStyles, extensionSidebarWidth);
   const dragStyles = useStyles2(getDragStyles);
 
@@ -184,22 +186,22 @@ function useResponsiveDockedMegaMenu(chrome: AppChromeService) {
   }, [isLargeScreen, chrome, dockedMenuLocalStorageState]);
 }
 
-const getStyles = (theme: GrafanaTheme2, headerLevels: number, headerHeight: number) => {
+const getStyles = (theme: GrafanaTheme2) => {
   return {
     content: css({
       label: 'page-content',
       display: 'flex',
       flexDirection: 'column',
-      paddingTop: headerLevels * headerHeight,
+      paddingLeft: APP_TOOLBAR_WIDTH,
       flexGrow: 1,
-      height: 'auto',
+      height: '100%',
     }),
     contentWithSidebar: css({
       height: '100vh',
       overflow: 'hidden',
     }),
     contentChromeless: css({
-      paddingTop: 0,
+      paddingLeft: 0,
     }),
     dockedMegaMenu: css({
       background: theme.colors.background.primary,
@@ -208,6 +210,7 @@ const getStyles = (theme: GrafanaTheme2, headerLevels: number, headerHeight: num
       height: '100%',
       position: 'fixed',
       top: 0,
+      left: APP_TOOLBAR_WIDTH,
       width: MENU_WIDTH,
       zIndex: 2,
 
@@ -218,23 +221,29 @@ const getStyles = (theme: GrafanaTheme2, headerLevels: number, headerHeight: num
     }),
     scopesDashboardsContainer: css({
       position: 'fixed',
-      height: `calc(100% - ${headerHeight}px)`,
+      left: APP_TOOLBAR_WIDTH,
+      top: 0,
+      height: '100%',
       zIndex: 1,
     }),
     scopesDashboardsContainerDocked: css({
-      left: MENU_WIDTH,
+      left: `calc(${APP_TOOLBAR_WIDTH} + ${MENU_WIDTH})`,
     }),
     topNav: css({
       display: 'flex',
       position: 'fixed',
       zIndex: theme.zIndex.navbarFixed,
+      top: 0,
+      bottom: 0,
       left: 0,
-      right: 0,
+      width: APP_TOOLBAR_WIDTH,
       background: theme.colors.background.primary,
       flexDirection: 'column',
+      borderRight: `1px solid ${theme.colors.border.weak}`,
+      overflowY: 'auto',
     }),
     topNavMenuDocked: css({
-      left: MENU_WIDTH,
+      left: 0,
     }),
     panes: css({
       display: 'flex',
@@ -278,7 +287,7 @@ const getStyles = (theme: GrafanaTheme2, headerLevels: number, headerHeight: num
       // the `Resizeable` component overrides the needed `position` and `height`
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       position: 'fixed !important' as 'fixed',
-      top: headerHeight,
+      top: 0,
       bottom: 0,
       zIndex: theme.zIndex.navbarFixed + 1,
       right: 0,
