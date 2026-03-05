@@ -188,7 +188,7 @@ export function getAppRoutes(): RouteDescriptor[] {
     },
     {
       path: '/labs',
-      roles: () => contextSrv.evaluatePermission([AccessControlAction.SettingsRead]),
+      roles: () => (contextSrv.isGrafanaAdmin ? [] : ['Reject']),
       component: SafeDynamicImport(() => import(/* webpackChunkName: "LabsPage" */ 'app/features/labs/LabsPage')),
     },
     {
