@@ -317,10 +317,12 @@ export function getAppRoutes(): RouteDescriptor[] {
     // LABS
     {
       path: '/labs',
+      roles: () => contextSrv.evaluatePermission([AccessControlAction.SettingsRead]),
       component: () => <Navigate replace to="/labs/feature-toggles" />,
     },
     {
       path: '/labs/feature-toggles',
+      roles: () => contextSrv.evaluatePermission([AccessControlAction.SettingsRead]),
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "LabsFeatureFlagsPage" */ 'app/features/labs/LabsFeatureFlagsPage')
       ),

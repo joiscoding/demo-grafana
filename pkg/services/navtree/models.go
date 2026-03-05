@@ -30,12 +30,12 @@ const (
 	WeightApplication
 	WeightAsserts
 	WeightDataConnections
-	WeightLabs
 	WeightApps
 	WeightPlugin
 	WeightConfig
 	WeightProfile
 	WeightHelp
+	WeightLabs
 )
 
 const (

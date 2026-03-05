@@ -165,10 +165,14 @@ func TestBuildLabsNavLink(t *testing.T) {
 	httpReq, _ := http.NewRequest(http.MethodGet, "", nil)
 	cfg := setting.NewCfg()
 
-	t.Run("Should return nil when user is not signed in", func(t *testing.T) {
+	t.Run("Should return nil when user is not admin", func(t *testing.T) {
 		reqCtx := &contextmodel.ReqContext{
-			SignedInUser: nil,
-			Context:      &web.Context{Req: httpReq},
+			SignedInUser: &user.SignedInUser{
+				UserID:  1,
+				OrgID:   1,
+				OrgRole: "Viewer",
+			},
+			Context: &web.Context{Req: httpReq},
 		}
 
 		service := ServiceImpl{cfg: cfg}
@@ -176,12 +180,13 @@ func TestBuildLabsNavLink(t *testing.T) {
 		require.Nil(t, labsSection)
 	})
 
-	t.Run("Should return Labs section with feature toggles child and IsNew badge when signed in", func(t *testing.T) {
+	t.Run("Should return Labs section with feature toggles child and IsNew badge when user is admin", func(t *testing.T) {
 		reqCtx := &contextmodel.ReqContext{
 			IsSignedIn: true,
 			SignedInUser: &user.SignedInUser{
-				UserID: 1,
-				OrgID:  1,
+				UserID:  1,
+				OrgID:   1,
+				OrgRole: "Admin",
 			},
 			Context: &web.Context{Req: httpReq},
 		}

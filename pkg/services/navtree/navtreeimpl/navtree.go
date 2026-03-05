@@ -601,7 +601,7 @@ func (s *ServiceImpl) buildAlertNavLinks(c *contextmodel.ReqContext) *navtree.Na
 }
 
 func (s *ServiceImpl) buildLabsNavLink(c *contextmodel.ReqContext) *navtree.NavLink {
-	if !c.IsSignedIn {
+	if c.GetOrgRole() != org.RoleAdmin {
 		return nil
 	}
 
