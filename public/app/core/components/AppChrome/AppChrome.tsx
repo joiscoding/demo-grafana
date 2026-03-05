@@ -100,7 +100,7 @@ export function AppChrome({ children }: Props) {
           {menuDockedAndOpen && (
             <MegaMenu className={styles.dockedMegaMenu} onClose={() => chrome.setMegaMenuOpen(false)} />
           )}
-          <header className={cx(styles.topNav, menuDockedAndOpen && styles.topNavMenuDocked)}>
+          <header className={styles.topNav}>
             <SingleTopBar
               sectionNav={state.sectionNav.node}
               pageNav={state.pageNav}
@@ -241,9 +241,6 @@ const getStyles = (theme: GrafanaTheme2) => {
       flexDirection: 'column',
       borderRight: `1px solid ${theme.colors.border.weak}`,
       overflowY: 'auto',
-    }),
-    topNavMenuDocked: css({
-      left: 0,
     }),
     panes: css({
       display: 'flex',
