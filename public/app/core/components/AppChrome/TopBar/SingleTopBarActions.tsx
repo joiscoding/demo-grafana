@@ -28,7 +28,7 @@ export function SingleTopBarActions({ actions, breadcrumbActions, scopes }: Prop
     >
       <Stack alignItems="center" justifyContent="flex-start" flex={1} wrap="nowrap" minWidth={0}>
         {scopes?.state.enabled ? <ScopesSelector /> : undefined}
-        <Stack alignItems="center" justifyContent={'flex-end'} flex={1} wrap="nowrap" minWidth={0}>
+        <Stack alignItems="center" justifyContent="flex-start" wrap="nowrap" minWidth={0}>
           {breadcrumbActions}
           {breadcrumbActions && actions && <NavToolbarSeparator />}
           {actions}

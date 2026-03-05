@@ -61,43 +61,47 @@ export const SingleTopBar = memo(function SingleTopBar({
   const isSmallScreen = !useMediaQueryMinWidth('sm');
   const isLargeScreen = useMediaQueryMinWidth('lg');
   const topLevelScopes = !showToolbarLevel && isLargeScreen && scopes?.state.enabled;
+  const showInlineToolbarActions = !showToolbarLevel && (breadcrumbActions || actions);
 
   return (
     <>
       <div className={styles.layout}>
-        <Stack minWidth={0} gap={0.5} alignItems="center" flex={{ xs: 2, lg: 1 }}>
-          {!menuDockedAndOpen && (
-            <ToolbarButton
-              narrow
-              id={MEGA_MENU_TOGGLE_ID}
-              onClick={onToggleMegaMenu}
-              tooltip={t('navigation.megamenu.open', 'Open menu')}
-            >
-              <Stack gap={0} alignItems="center">
-                <Icon name="bars" size="xl" />
+        <Stack minWidth={0} gap={1} alignItems="center" flex={1}>
+          <Stack minWidth={0} gap={0.5} alignItems="center" flex={1}>
+            {!menuDockedAndOpen && (
+              <ToolbarButton
+                narrow
+                id={MEGA_MENU_TOGGLE_ID}
+                onClick={onToggleMegaMenu}
+                tooltip={t('navigation.megamenu.open', 'Open menu')}
+              >
+                <Stack gap={0} alignItems="center">
+                  <Icon name="bars" size="xl" />
+                </Stack>
+              </ToolbarButton>
+            )}
+            {!menuDockedAndOpen && <HomeLink homeNav={homeNav} />}
+            {topLevelScopes ? <ScopesSelector /> : undefined}
+            <Breadcrumbs breadcrumbs={breadcrumbs} className={styles.breadcrumbsWrapper} />
+          </Stack>
+          {showInlineToolbarActions && (
+            <div className={styles.inlineActions} data-testid={Components.NavToolbar.container}>
+              <Stack gap={0.5} alignItems="center" wrap="nowrap" minWidth={0}>
+                {breadcrumbActions}
+                {breadcrumbActions && actions && <NavToolbarSeparator />}
+                {actions}
               </Stack>
-            </ToolbarButton>
+            </div>
           )}
-          {!menuDockedAndOpen && <HomeLink homeNav={homeNav} />}
-          {topLevelScopes ? <ScopesSelector /> : undefined}
-          <Breadcrumbs breadcrumbs={breadcrumbs} className={styles.breadcrumbsWrapper} />
-          {!showToolbarLevel && breadcrumbActions}
         </Stack>
 
-        <Stack
-          gap={0.5}
-          alignItems="center"
-          justifyContent={'flex-end'}
-          flex={1}
-          data-testid={!showToolbarLevel ? Components.NavToolbar.container : undefined}
-        >
+        <Stack gap={0.5} alignItems="center" justifyContent="flex-end" wrap="nowrap">
           <TopBarExtensionPoint />
           <TopSearchBarCommandPaletteTrigger />
           {!isSmallScreen && <QuickAdd />}
           <HelpTopBarButton isSmallScreen={isSmallScreen} />
           <NavToolbarSeparator />
           {!isSmallScreen && <ExtensionToolbarItem compact={isSmallScreen} />}
-          {!showToolbarLevel && actions}
           {!contextSrv.user.isSignedIn && <SignInLink />}
           <InviteUserButton />
           {profileNode && <ProfileButton profileNode={profileNode} onToggleKioskMode={onToggleKioskMode} />}
@@ -124,9 +128,15 @@ const getStyles = (theme: GrafanaTheme2, menuDockedAndOpen: boolean) => ({
   breadcrumbsWrapper: css({
     display: 'flex',
     overflow: 'hidden',
+    flex: 1,
     [theme.breakpoints.down('sm')]: {
       minWidth: '40%',
     },
+  }),
+  inlineActions: css({
+    display: 'flex',
+    overflow: 'hidden',
+    minWidth: 0,
   }),
   img: css({
     alignSelf: 'center',
