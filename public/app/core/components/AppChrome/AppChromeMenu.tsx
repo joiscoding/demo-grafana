@@ -144,7 +144,7 @@ const getAnimStyles = (theme: GrafanaTheme2, animationDuration: number) => {
   };
 
   const overlayOpen = {
-    width: '100%',
+    width: `calc(100% - ${APP_TOOLBAR_WIDTH_NARROW})`,
     [theme.breakpoints.up('md')]: {
       borderRight: `1px solid ${theme.colors.border.weak}`,
       boxShadow: theme.shadows.z3,

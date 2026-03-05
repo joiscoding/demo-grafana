@@ -270,18 +270,10 @@ const getStyles = (theme: GrafanaTheme2) => {
       position: 'relative',
     }),
     pageContainerMenuDocked: css({
-      paddingLeft: `calc(${APP_TOOLBAR_WIDTH_NARROW} + ${MENU_WIDTH})`,
-
-      [theme.breakpoints.up('md')]: {
-        paddingLeft: `calc(${APP_TOOLBAR_WIDTH} + ${MENU_WIDTH})`,
-      },
+      paddingLeft: MENU_WIDTH,
     }),
     pageContainerMenuDockedScopes: css({
-      paddingLeft: `calc(${APP_TOOLBAR_WIDTH_NARROW} + ${MENU_WIDTH} * 2)`,
-
-      [theme.breakpoints.up('md')]: {
-        paddingLeft: `calc(${APP_TOOLBAR_WIDTH} + ${MENU_WIDTH} * 2)`,
-      },
+      paddingLeft: `calc(${MENU_WIDTH} * 2)`,
     }),
     pageContainer: css({
       label: 'page-container',
