@@ -1,4 +1,4 @@
-import { Trans } from '@grafana/i18n';
+import { t, Trans } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
 import { Alert, Badge, Card, ScrollContainer, Stack, Text } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
@@ -24,8 +24,8 @@ function LabsFeatureFlagsPage() {
               <Trans i18nKey="labs.feature-toggles.table-heading">Feature toggles</Trans>
             </Card.Heading>
             <Card.Description>
-              <Trans i18nKey="labs.feature-toggles.table-description">
-                {entries.length} feature flag{entries.length !== 1 ? 's' : ''} configured for this instance
+              <Trans i18nKey="labs.feature-toggles.table-description" count={entries.length}>
+                {'{{count}}'} feature flags configured for this instance
               </Trans>
             </Card.Description>
             <ScrollContainer overflowY="visible" overflowX="auto" width="100%">
@@ -59,7 +59,7 @@ function LabsFeatureFlagsPage() {
                           </td>
                           <td>
                             <Badge
-                              text={enabled ? 'Enabled' : 'Disabled'}
+                              text={enabled ? t('labs.feature-toggles.status-enabled', 'Enabled') : t('labs.feature-toggles.status-disabled', 'Disabled')}
                               color={enabled ? 'green' : 'darkgrey'}
                             />
                           </td>

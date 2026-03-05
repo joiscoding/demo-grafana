@@ -10164,6 +10164,19 @@
     }
   },
   "label-dropdown-info": "Can't find your label? Enter it manually",
+  "labs": {
+    "feature-toggles": {
+      "column-name": "Name",
+      "column-status": "Status",
+      "empty": "No feature toggles are configured. Add entries under [feature_toggles] in your config file.",
+      "info-description": "This page shows the feature flags currently enabled in this Grafana instance. To change feature flags instance-wide, edit the <1>[feature_toggles]</1> section in your Grafana configuration file ( <3>custom.ini</3> or <5>grafana.ini</5>) and restart Grafana.",
+      "status-disabled": "Disabled",
+      "status-enabled": "Enabled",
+      "table-description_one": "{{count}} feature flag configured for this instance",
+      "table-description_other": "{{count}} feature flags configured for this instance",
+      "table-heading": "Feature toggles"
+    }
+  },
   "layers": {
     "layer-drag-drop-list": {
       "draggable-aria-label": "Drag and drop to reorder",
@@ -11358,6 +11371,14 @@
     },
     "kubernetes": {
       "title": "Kubernetes"
+    },
+    "labs": {
+      "subtitle": "Manage feature flags and experimental features",
+      "title": "Labs"
+    },
+    "labs-feature-toggles": {
+      "subtitle": "View feature flags enabled in this Grafana instance",
+      "title": "Feature toggles"
     },
     "library-panels": {
       "subtitle": "Reusable panels that can be added to multiple dashboards",
