@@ -706,6 +706,13 @@ func CreateGrafDir(t *testing.T, opts GrafanaOpts) (string, string) {
 		require.NoError(t, err)
 	}
 
+	if opts.KubernetesAnnotationsAppEnabled {
+		annotationsSection, err := getOrCreateSection("annotations")
+		require.NoError(t, err)
+		_, err = annotationsSection.NewKey("kubernetes_annotations_app_enabled", "true")
+		require.NoError(t, err)
+	}
+
 	if opts.DisableControllers {
 		apiserverSection, err := getOrCreateSection("grafana-apiserver")
 		require.NoError(t, err)
@@ -830,6 +837,7 @@ type GrafanaOpts struct {
 	ZanzanaReconciliationInterval         time.Duration
 	DisableZanzanaCache                   bool
 	DisableZanzanaServerCheckQueryCache   bool
+	KubernetesAnnotationsAppEnabled      bool
 
 	// If set to 0, the default (2) is used.
 	DBMaxConns int

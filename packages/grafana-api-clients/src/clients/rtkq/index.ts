@@ -2,6 +2,7 @@
  * Don't manually add to this file! Use the `generate:api-client` command to add new API clients.
  */
 import { generatedAPI as advisorAPIv0alpha1 } from './advisor/v0alpha1';
+import { generatedAPI as annotationAPIv0alpha1 } from './annotation/v0alpha1';
 import { generatedAPI as collectionsAPIv1alpha1 } from './collections/v1alpha1';
 import { generatedAPI as correlationsAPIv0alpha1 } from './correlations/v0alpha1';
 import { generatedAPI as dashboardAPIv0alpha1 } from './dashboard/v0alpha1';
@@ -24,6 +25,7 @@ import { generatedAPI as legacyUserAPI } from './user';
 /** RTK Query middleware for all API clients  */
 export const allMiddleware = [
   advisorAPIv0alpha1.middleware,
+  annotationAPIv0alpha1.middleware,
   dashboardAPIv0alpha1.middleware,
   folderAPIv1beta1.middleware,
   iamAPIv0alpha1.middleware,
@@ -47,6 +49,7 @@ export const allMiddleware = [
 /** RTK Query reducers for all API clients  */
 export const allReducers = {
   [advisorAPIv0alpha1.reducerPath]: advisorAPIv0alpha1.reducer,
+  [annotationAPIv0alpha1.reducerPath]: annotationAPIv0alpha1.reducer,
   [dashboardAPIv0alpha1.reducerPath]: dashboardAPIv0alpha1.reducer,
   [folderAPIv1beta1.reducerPath]: folderAPIv1beta1.reducer,
   [iamAPIv0alpha1.reducerPath]: iamAPIv0alpha1.reducer,

@@ -40,6 +40,7 @@ func TestIntegrationOpenAPIs(t *testing.T) {
 			featuremgmt.FlagKubernetesAlertingHistorian,
 			featuremgmt.FlagKubernetesLogsDrilldown,
 		},
+		KubernetesAnnotationsAppEnabled: true,
 		// Explicitly configure with mode 5 the resources supported by provisioning.
 		UnifiedStorageConfig: map[string]setting.UnifiedStorageConfig{
 			"dashboards.dashboard.grafana.app": {DualWriterMode: rest.Mode5},
@@ -127,6 +128,9 @@ func TestIntegrationOpenAPIs(t *testing.T) {
 		Version: "v0alpha1",
 	}, {
 		Group:   "correlations.grafana.app",
+		Version: "v0alpha1",
+	}, {
+		Group:   "annotation.grafana.app",
 		Version: "v0alpha1",
 	}, {
 		Group:   "shorturl.grafana.app",
