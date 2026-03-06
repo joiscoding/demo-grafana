@@ -22,7 +22,7 @@ export function BookmarksPage() {
     return acc;
   }, []);
 
-  const hasInvalidItems = validItems.every((item) => item.url);
+  const hasInvalidItems = validItems.some((item) => !item.url);
 
   if (hasInvalidItems) {
     return null;
