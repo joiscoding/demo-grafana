@@ -22,12 +22,6 @@ export function BookmarksPage() {
     return acc;
   }, []);
 
-  const hasInvalidItems = validItems.some((item) => !item.url);
-
-  if (hasInvalidItems) {
-    return null;
-  }
-
   return (
     <Page navId="bookmarks">
       <Page.Contents>
