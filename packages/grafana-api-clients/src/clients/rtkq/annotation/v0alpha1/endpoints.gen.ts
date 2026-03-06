@@ -162,9 +162,11 @@ const injectedRtkApi = api
       }),
       getSearch: build.query<GetSearchApiResponse, GetSearchApiArg>({
         query: () => ({ url: `/search` }),
+        providesTags: ['Annotation'],
       }),
       getTags: build.query<GetTagsApiResponse, GetTagsApiArg>({
         query: () => ({ url: `/tags` }),
+        providesTags: ['Annotation'],
       }),
     }),
     overrideExisting: false,

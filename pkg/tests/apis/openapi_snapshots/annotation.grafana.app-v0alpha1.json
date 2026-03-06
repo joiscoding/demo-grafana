@@ -1047,6 +1047,7 @@
     },
     "/apis/annotation.grafana.app/v0alpha1/namespaces/{namespace}/search": {
       "get": {
+        "tags": ["Annotation"],
         "operationId": "getSearch",
         "responses": {
           "200": {
@@ -1086,6 +1087,7 @@
     },
     "/apis/annotation.grafana.app/v0alpha1/namespaces/{namespace}/tags": {
       "get": {
+        "tags": ["Annotation"],
         "operationId": "getTags",
         "responses": {
           "200": {

@@ -995,6 +995,7 @@
     },
     "/search": {
       "get": {
+        "tags": ["Annotation"],
         "operationId": "getSearch",
         "responses": {
           "200": {
@@ -1023,6 +1024,7 @@
     },
     "/tags": {
       "get": {
+        "tags": ["Annotation"],
         "operationId": "getTags",
         "responses": {
           "200": {
