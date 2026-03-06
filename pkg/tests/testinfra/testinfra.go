@@ -837,7 +837,7 @@ type GrafanaOpts struct {
 	ZanzanaReconciliationInterval         time.Duration
 	DisableZanzanaCache                   bool
 	DisableZanzanaServerCheckQueryCache   bool
-	KubernetesAnnotationsAppEnabled      bool
+	KubernetesAnnotationsAppEnabled       bool
 
 	// If set to 0, the default (2) is used.
 	DBMaxConns int
