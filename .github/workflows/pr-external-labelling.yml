@@ -20,6 +20,12 @@ jobs:
       - name: Add the 'pr/external' label
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+          if ! gh label list --search "pr/external" --limit 100 | rg -q '^pr/external\t'; then
+            echo "Label 'pr/external' does not exist in this repository, skipping."
+            exit 0
+          fi
+
           echo "Adding 'pr/external' label to the PR"
           gh pr edit "$PR_NUMBER" --add-label pr/external
