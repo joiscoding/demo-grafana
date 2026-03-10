@@ -23,6 +23,11 @@ async function bootstrapWindowData() {
   // an API call, but the old one just sets an immediately resolving promise.
   await window.__grafana_boot_data_promise;
 
+  const { installStructuredConsoleBridge } = await import(
+    /* webpackMode: "eager" */ './core/logging/installStructuredConsoleBridge'
+  );
+  installStructuredConsoleBridge();
+
   // Use eager to ensure the app is included in the initial chunk and does not
   // require additional network requests to load.
   await import(/* webpackMode: "eager" */ './initApp');
