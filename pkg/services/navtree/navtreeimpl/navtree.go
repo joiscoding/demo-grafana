@@ -144,17 +144,6 @@ func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Prefere
 			Url:        s.cfg.AppSubURL + "/drilldown",
 		})
 	}
-
-	if c.IsSignedIn && c.HasRole(org.RoleAdmin) {
-		treeRoot.AddSection(&navtree.NavLink{
-			Text:       "Labs",
-			Id:         navtree.NavIDLabs,
-			SubTitle:   "Inspect the current state of Grafana feature flags",
-			Icon:       "adjust-circle",
-			SortWeight: navtree.WeightLabs,
-			Url:        s.cfg.AppSubURL + "/labs",
-		})
-	}
 	if s.cfg.ProfileEnabled && c.IsSignedIn {
 		treeRoot.AddSection(s.getProfileNode(c))
 	}
