@@ -661,6 +661,14 @@
   },
   {
     "type": "label",
+    "name": "area/frontend",
+    "action": "addToProject",
+    "addToProject": {
+      "url": "https://github.com/orgs/grafana/projects/911"
+    }
+  },
+  {
+    "type": "label",
     "name": "area/frontend/library-panels",
     "action": "addToProject",
     "addToProject": {
