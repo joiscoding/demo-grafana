@@ -36,7 +36,7 @@ func TestIntegrationAnnotation(t *testing.T) {
 				DisableAnonymous:     true,
 				EnableFeatureToggles: []string{featuremgmt.FlagKubernetesAnnotations},
 				UnifiedStorageConfig: map[string]setting.UnifiedStorageConfig{
-					"annotation.annotation.grafana.app": {
+					"annotations.annotation.grafana.app": {
 						DualWriterMode: mode,
 					},
 				},
