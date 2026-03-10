@@ -23,9 +23,9 @@ export async function loadFeatureFlags(): Promise<FeatureFlagRow[]> {
     `/apis/features.grafana.app/v0alpha1/namespaces/${config.namespace}/ofrep/v1/evaluate/flags`,
     {
       context: {
+        ...config.openFeatureContext,
         targetingKey: config.namespace,
         namespace: config.namespace,
-        ...config.openFeatureContext,
       },
     }
   );
