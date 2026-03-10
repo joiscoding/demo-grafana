@@ -344,6 +344,8 @@ export type PreferencesQueryHistoryPreference = {
   homeTab?: string;
 };
 export type PreferencesSpec = {
+  /** Compact navigation layout mode */
+  compactMode?: boolean;
   /** UID for the home dashboard */
   homeDashboardUID?: string;
   /** Selected language (beta) */

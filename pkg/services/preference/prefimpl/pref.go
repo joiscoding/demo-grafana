@@ -83,6 +83,10 @@ func (s *Service) GetWithDefaults(ctx context.Context, query *pref.GetPreference
 			if p.JSONData.Navbar.BookmarkUrls != nil {
 				res.JSONData.Navbar.BookmarkUrls = p.JSONData.Navbar.BookmarkUrls
 			}
+
+			if p.JSONData.CompactMode != nil {
+				res.JSONData.CompactMode = p.JSONData.CompactMode
+			}
 		}
 	}
 
@@ -211,6 +215,13 @@ func (s *Service) Patch(ctx context.Context, cmd *pref.PatchPreferenceCommand) e
 		}
 	}
 
+	if cmd.CompactMode != nil {
+		if preference.JSONData == nil {
+			preference.JSONData = &pref.PreferenceJSONData{}
+		}
+		preference.JSONData.CompactMode = cmd.CompactMode
+	}
+
 	// nolint: staticcheck
 	if cmd.HomeDashboardID != nil {
 		preference.HomeDashboardID = *cmd.HomeDashboardID
@@ -271,6 +282,7 @@ func preferenceData(cmd *pref.SavePreferenceCommand) (*pref.PreferenceJSONData, 
 	if cmd.QueryHistory != nil {
 		jsonData.QueryHistory = *cmd.QueryHistory
 	}
+	jsonData.CompactMode = cmd.CompactMode
 
 	return jsonData, nil
 }

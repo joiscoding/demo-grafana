@@ -54,6 +54,8 @@ type PreferencesSpec struct {
 	QueryHistory *PreferencesQueryHistoryPreference `json:"queryHistory,omitempty"`
 	// Navigation preferences
 	Navbar *PreferencesNavbarPreference `json:"navbar,omitempty"`
+	// Compact navigation layout mode
+	CompactMode *bool `json:"compactMode,omitempty"`
 }
 
 // NewPreferencesSpec creates a new PreferencesSpec object.

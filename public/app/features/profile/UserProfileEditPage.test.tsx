@@ -84,6 +84,7 @@ function getSelectors() {
     name: () => screen.getByRole('textbox', { name: /^name$/i }),
     email: () => screen.getByRole('textbox', { name: /email/i }),
     username: () => screen.getByRole('textbox', { name: /username/i }),
+    compactMode: () => screen.getByTestId('edit-user-profile-compact-mode'),
     saveProfile: () => screen.getByTestId(selectors.components.UserProfile.profileSaveButton),
     savePreferences: () => screen.getByTestId(selectors.components.UserProfile.preferencesSaveButton),
     teamsTable,
@@ -274,7 +275,8 @@ describe('UserProfileEditPage', () => {
       it('should call updateUserProfile', async () => {
         const { props } = await getTestContext();
 
-        const { email, saveProfile } = getSelectors();
+        const { compactMode, email, saveProfile } = getSelectors();
+        await userEvent.click(compactMode());
         await userEvent.clear(email());
         await userEvent.type(email(), 'test@test.se');
         // TODO remove skipPointerEventsCheck once https://github.com/jsdom/jsdom/issues/3232 is fixed
@@ -282,6 +284,7 @@ describe('UserProfileEditPage', () => {
 
         await waitFor(() => expect(props.updateUserProfile).toHaveBeenCalledTimes(1));
         expect(props.updateUserProfile).toHaveBeenCalledWith({
+          compactMode: true,
           email: 'test@test.se',
           login: 'test',
           name: 'Test User',

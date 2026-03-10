@@ -1,6 +1,8 @@
 import { selectors } from '@grafana/e2e-selectors';
+import { useGetUserPreferencesQuery } from '@grafana/api-clients/rtkq/legacy/preferences';
 import { Trans, t } from '@grafana/i18n';
-import { Button, Field, FieldSet, Icon, Input, Tooltip } from '@grafana/ui';
+import { Button, Field, FieldSet, Icon, Input, Switch, Tooltip } from '@grafana/ui';
+import { Controller } from 'react-hook-form';
 import { Form } from 'app/core/components/Form/Form';
 import config from 'app/core/config';
 import { UserDTO } from 'app/types/user';
@@ -16,6 +18,10 @@ export interface Props {
 const { disableLoginForm } = config;
 
 export const UserProfileEditForm = ({ user, isSavingUser, updateProfile }: Props) => {
+  const { data: preferences } = useGetUserPreferencesQuery();
+  const compactMode = Boolean(preferences?.compactMode);
+  const formKey = `${user?.id ?? 'anonymous'}-${compactMode ? 'compact' : 'standard'}`;
+
   const onSubmitProfileUpdate = (data: ProfileUpdateFields) => {
     updateProfile(data);
   };
@@ -30,8 +36,18 @@ export const UserProfileEditForm = ({ user, isSavingUser, updateProfile }: Props
   const disabledEdit = disableLoginForm || isExternalUser;
 
   return (
-    <Form onSubmit={onSubmitProfileUpdate} validateOn="onBlur">
-      {({ register, errors }) => {
+    <Form
+      key={formKey}
+      onSubmit={onSubmitProfileUpdate}
+      validateOn="onBlur"
+      defaultValues={{
+        name: user?.name ?? '',
+        email: user?.email ?? '',
+        login: user?.login ?? '',
+        compactMode,
+      }}
+    >
+      {({ register, errors, control }) => {
         return (
           <>
             <FieldSet>
@@ -45,7 +61,6 @@ export const UserProfileEditForm = ({ user, isSavingUser, updateProfile }: Props
                   {...register('name', { required: true })}
                   id="edit-user-profile-name"
                   placeholder={t('user-profile.fields.name-label', 'Name')}
-                  defaultValue={user?.name ?? ''}
                   suffix={<InputSuffix />}
                 />
               </Field>
@@ -60,7 +75,6 @@ export const UserProfileEditForm = ({ user, isSavingUser, updateProfile }: Props
                   {...register('email', { required: true })}
                   id="edit-user-profile-email"
                   placeholder={t('user-profile.fields.email-label', 'Email')}
-                  defaultValue={user?.email ?? ''}
                   suffix={<InputSuffix />}
                 />
               </Field>
@@ -69,9 +83,30 @@ export const UserProfileEditForm = ({ user, isSavingUser, updateProfile }: Props
                 <Input
                   {...register('login')}
                   id="edit-user-profile-username"
-                  defaultValue={user?.login ?? ''}
                   placeholder={t('user-profile.fields.username-label', 'Username') + lockMessage}
                   suffix={<InputSuffix />}
+                />
+              </Field>
+
+              <Field
+                label={t('user-profile.fields.compact-mode-label', 'Compact mode')}
+                description={t(
+                  'user-profile.fields.compact-mode-description',
+                  'Use a compact navigation layout with an undocked menu.'
+                )}
+              >
+                <Controller
+                  name="compactMode"
+                  control={control}
+                  render={({ field: { ref, value, ...field } }) => (
+                    <Switch
+                      {...field}
+                      id="edit-user-profile-compact-mode"
+                      data-testid="edit-user-profile-compact-mode"
+                      ref={ref}
+                      value={Boolean(value)}
+                    />
+                  )}
                 />
               </Field>
             </FieldSet>

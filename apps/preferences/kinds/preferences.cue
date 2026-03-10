@@ -37,6 +37,9 @@ preferencesV1alpha1: {
 
 			// Navigation preferences
 			navbar?: #NavbarPreference
+
+			// Compact navigation layout mode
+			compactMode?: bool
 		}
 
 		#QueryHistoryPreference: {

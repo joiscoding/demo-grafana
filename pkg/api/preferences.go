@@ -179,6 +179,7 @@ func (hs *HTTPServer) patchPreferencesFor(ctx context.Context, orgID, userID, te
 		RegionalFormat:   dtoCmd.RegionalFormat,
 		QueryHistory:     dtoCmd.QueryHistory,
 		Navbar:           dtoCmd.Navbar,
+		CompactMode:      dtoCmd.CompactMode,
 	}
 
 	if err := hs.preferenceService.Patch(ctx, &patchCmd); err != nil {

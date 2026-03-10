@@ -63,10 +63,17 @@ export const MegaMenu = memo(
     const activeItem = getActiveItem(navItems, state.sectionNav.node, location.pathname);
 
     const handleDockedMenu = () => {
-      chrome.setMegaMenuDocked(!state.megaMenuDocked);
+      const nextDockedState = !state.megaMenuDocked;
+      chrome.setMegaMenuDocked(nextDockedState);
       if (state.megaMenuDocked) {
         chrome.setMegaMenuOpen(false);
       }
+
+      patchPreferences({
+        patchPrefsCmd: {
+          compactMode: !nextDockedState,
+        },
+      });
     };
 
     const isPinned = useCallback(

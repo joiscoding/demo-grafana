@@ -347,6 +347,40 @@ func TestGetWithDefaults_teams(t *testing.T) {
 	}
 }
 
+func TestGetWithDefaults_compactMode(t *testing.T) {
+	prefService := &Service{
+		store:    newFake(),
+		defaults: prefsFromConfig(setting.NewCfg()),
+	}
+	orgCompactMode := true
+	userCompactMode := false
+
+	insertPrefs(t, prefService.store,
+		pref.Preference{
+			OrgID: 1,
+			JSONData: &pref.PreferenceJSONData{
+				CompactMode: &orgCompactMode,
+			},
+		},
+		pref.Preference{
+			OrgID:  1,
+			UserID: 2,
+			JSONData: &pref.PreferenceJSONData{
+				CompactMode: &userCompactMode,
+			},
+		},
+	)
+
+	preference, err := prefService.GetWithDefaults(context.Background(), &pref.GetPreferenceWithDefaultsQuery{
+		OrgID:  1,
+		UserID: 2,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, preference.JSONData)
+	require.NotNil(t, preference.JSONData.CompactMode)
+	assert.False(t, *preference.JSONData.CompactMode)
+}
+
 func TestPatch_toCreate(t *testing.T) {
 	prefService := &Service{
 		store:    newFake(),
@@ -383,6 +417,7 @@ func TestSave(t *testing.T) {
 				HomeDashboardID:  5, // nolint:staticcheck
 				HomeDashboardUID: &testUID,
 				WeekStart:        "1",
+				CompactMode:      boolPointer(true),
 			},
 		)
 		require.NoError(t, err)
@@ -396,6 +431,9 @@ func TestSave(t *testing.T) {
 		assert.EqualValues(t, 5, stored.HomeDashboardID) // nolint:staticcheck
 		assert.Equal(t, testUID, stored.HomeDashboardUID)
 		assert.Equal(t, "1", *stored.WeekStart)
+		require.NotNil(t, stored.JSONData)
+		require.NotNil(t, stored.JSONData.CompactMode)
+		assert.True(t, *stored.JSONData.CompactMode)
 		assert.EqualValues(t, 0, stored.Version)
 	})
 
@@ -460,4 +498,8 @@ func newFake() store {
 		idMap:      map[int64]preferenceKey{},
 		nextID:     1,
 	}
+}
+
+func boolPointer(value bool) *bool {
+	return &value
 }

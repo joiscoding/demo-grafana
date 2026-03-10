@@ -166,6 +166,9 @@ func (s *preferenceStorage) save(ctx context.Context, obj runtime.Object) (runti
 			BookmarkUrls: p.Spec.Navbar.BookmarkUrls,
 		}
 	}
+	if p.Spec.CompactMode != nil {
+		cmd.CompactMode = p.Spec.CompactMode
+	}
 
 	switch owner.Owner {
 	case utils.NamespaceResourceOwner:
@@ -312,6 +315,10 @@ func asPreferencesResource(ns string, p *preferenceModel) preferences.Preference
 			obj.Spec.Navbar = &preferences.PreferencesNavbarPreference{
 				BookmarkUrls: p.JSONData.Navbar.BookmarkUrls,
 			}
+		}
+
+		if p.JSONData.CompactMode != nil {
+			obj.Spec.CompactMode = p.JSONData.CompactMode
 		}
 	}
 

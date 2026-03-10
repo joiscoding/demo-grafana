@@ -62,6 +62,7 @@ func UpdatePreferencesFor(ctx context.Context,
 		HomeDashboardUID: dtoCmd.HomeDashboardUID,
 		QueryHistory:     dtoCmd.QueryHistory,
 		Navbar:           dtoCmd.Navbar,
+		CompactMode:      dtoCmd.CompactMode,
 	}
 
 	//nolint:staticcheck // not yet migrated to OpenFeature
@@ -123,6 +124,10 @@ func GetPreferencesFor(ctx context.Context,
 			dto.QueryHistory = &preferences.PreferencesQueryHistoryPreference{
 				HomeTab: &preference.JSONData.QueryHistory.HomeTab,
 			}
+		}
+
+		if preference.JSONData.CompactMode != nil {
+			dto.CompactMode = preference.JSONData.CompactMode
 		}
 	}
 

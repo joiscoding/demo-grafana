@@ -5211,6 +5211,8 @@ export type PreferencesQueryHistoryPreference = {
   homeTab?: string;
 };
 export type PreferencesSpec = {
+  /** Compact navigation layout mode */
+  compactMode?: boolean;
   /** UID for the home dashboard */
   homeDashboardUID?: string;
   /** Selected language (beta) */
@@ -5234,6 +5236,7 @@ export type QueryHistoryPreference = {
   homeTab?: string;
 };
 export type PatchPrefsCmd = {
+  compactMode?: boolean;
   /** The numerical :id of a favorited dashboard */
   homeDashboardId?: number;
   homeDashboardUID?: string;
@@ -5247,6 +5250,7 @@ export type PatchPrefsCmd = {
   weekStart?: string;
 };
 export type UpdatePrefsCmd = {
+  compactMode?: boolean;
   /** The numerical :id of a favorited dashboard */
   homeDashboardId?: number;
   homeDashboardUID?: string;

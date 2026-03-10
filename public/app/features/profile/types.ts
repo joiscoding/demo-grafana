@@ -8,4 +8,5 @@ export interface ProfileUpdateFields {
   name: string;
   email: string;
   login: string;
+  compactMode: boolean;
 }

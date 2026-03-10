@@ -56,6 +56,7 @@ type SavePreferenceCommand struct {
 	RegionalFormat   string                  `json:"regionalFormat,omitempty"`
 	QueryHistory     *QueryHistoryPreference `json:"queryHistory,omitempty"`
 	Navbar           *NavbarPreference       `json:"navbar,omitempty"`
+	CompactMode      *bool                   `json:"compactMode,omitempty"`
 }
 
 // One (and only one) of the values must be non-zero
@@ -79,6 +80,7 @@ type PatchPreferenceCommand struct {
 	RegionalFormat   *string                 `json:"regionalFormat,omitempty"`
 	QueryHistory     *QueryHistoryPreference `json:"queryHistory,omitempty"`
 	Navbar           *NavbarPreference       `json:"navbar,omitempty"`
+	CompactMode      *bool                   `json:"compactMode,omitempty"`
 }
 
 type PreferenceJSONData struct {
@@ -86,6 +88,7 @@ type PreferenceJSONData struct {
 	RegionalFormat string                 `json:"regionalFormat"`
 	QueryHistory   QueryHistoryPreference `json:"queryHistory"`
 	Navbar         NavbarPreference       `json:"navbar"`
+	CompactMode    *bool                  `json:"compactMode,omitempty"`
 }
 
 type QueryHistoryPreference struct {

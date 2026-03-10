@@ -20,6 +20,7 @@ type UpdatePrefsCmd struct {
 	Language       string                       `json:"language"`
 	RegionalFormat string                       `json:"regionalFormat"`
 	Navbar         *pref.NavbarPreference       `json:"navbar,omitempty"`
+	CompactMode    *bool                        `json:"compactMode,omitempty"`
 }
 
 // swagger:model
@@ -38,4 +39,5 @@ type PatchPrefsCmd struct {
 	QueryHistory     *pref.QueryHistoryPreference `json:"queryHistory,omitempty"`
 	HomeDashboardUID *string                      `json:"homeDashboardUID,omitempty"`
 	Navbar           *pref.NavbarPreference       `json:"navbar,omitempty"`
+	CompactMode      *bool                        `json:"compactMode,omitempty"`
 }

@@ -1,4 +1,6 @@
 import { getBackendSrv } from '@grafana/runtime';
+import { store } from '@grafana/data';
+import { DOCKED_LOCAL_STORAGE_KEY } from 'app/core/components/AppChrome/AppChromeService';
 import { Team } from 'app/types/teams';
 import { UserDTO, UserOrg, UserSession } from 'app/types/user';
 
@@ -39,8 +41,13 @@ async function setUserOrg(org: UserOrg): Promise<void> {
 }
 
 async function updateUserProfile(payload: ProfileUpdateFields): Promise<void> {
+  const { compactMode, ...profilePayload } = payload;
   try {
-    await getBackendSrv().put('/api/user', payload);
+    await Promise.all([
+      getBackendSrv().put('/api/user', profilePayload),
+      getBackendSrv().patch('/api/user/preferences', { compactMode }),
+    ]);
+    store.set(DOCKED_LOCAL_STORAGE_KEY, !compactMode);
   } catch (err) {
     console.error(err);
   }
