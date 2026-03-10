@@ -16,6 +16,7 @@ import { contextSrv } from 'app/core/services/context_srv';
 import kbn from 'app/core/utils/kbn';
 import { dispatch } from 'app/store/store';
 
+import { DashboardSearchHit } from '../types';
 import { deletedDashboardsCache } from './deletedDashboardsCache';
 import {
   DashboardQueryResult,
@@ -152,6 +153,7 @@ export class UnifiedSearcher implements GrafanaSearcher {
       rsp = { hits: results, totalHits: results.length };
     } else {
       rsp = await this.fetchResponse(uri);
+      rsp = await this.enrichWithLastViewed(rsp);
     }
 
     const first = toDashboardResults(rsp, query.sort ?? '');
@@ -277,6 +279,50 @@ export class UnifiedSearcher implements GrafanaSearcher {
     return { ...rsp, hits, totalHits };
   }
 
+  private async enrichWithLastViewed(response: SearchAPIResponse): Promise<SearchAPIResponse> {
+    const dashboardUIDs = response.hits.filter((hit) => hit.resource === 'dashboards').map((hit) => hit.name);
+    if (!dashboardUIDs.length) {
+      return response;
+    }
+
+    try {
+      const legacyHits = await getBackendSrv().get<DashboardSearchHit[]>('/api/search', {
+        type: 'dash-db',
+        dashboardUIDs,
+        limit: dashboardUIDs.length,
+      });
+
+      const lastViewedByUID = new Map(
+        legacyHits.filter((hit) => hit.lastViewed).map((hit) => [hit.uid, hit.lastViewed as string])
+      );
+      if (!lastViewedByUID.size) {
+        return response;
+      }
+
+      return {
+        ...response,
+        hits: response.hits.map((hit) => {
+          if (hit.resource !== 'dashboards') {
+            return hit;
+          }
+          const lastViewed = lastViewedByUID.get(hit.name);
+          if (!lastViewed) {
+            return hit;
+          }
+          return {
+            ...hit,
+            field: {
+              ...(hit.field ?? {}),
+              lastViewed,
+            },
+          };
+        }),
+      };
+    } catch {
+      return response;
+    }
+  }
+
   async isFolderCacheStale(hits: SearchHit[]): Promise<boolean> {
     const locationInfo = await this.locationInfo;
     return hits.some((hit) => {
@@ -331,6 +377,8 @@ export class UnifiedSearcher implements GrafanaSearcher {
 
       uri += `&field=${sortField}`; // we want to the sort field to be included in the response
     }
+
+    uri += '&field=lastViewed';
 
     if (query.name?.length) {
       uri += '&' + query.name.map((name) => `name=${encodeURIComponent(name)}`).join('&');

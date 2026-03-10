@@ -32,6 +32,7 @@ export interface DashboardSearchHit extends WithAccessControlMetadata {
   url: string;
   sortMeta?: number;
   sortMetaName?: string;
+  lastViewed?: string;
   isDeleted?: boolean;
   permanentlyDeleteDate?: string;
 }
@@ -82,6 +83,7 @@ export interface DashboardViewItem {
   // For enterprise sort options
   sortMeta?: number | string; // value sorted by
   sortMetaName?: string; // name of the value being sorted e.g. 'Views'
+  lastViewed?: string;
   managedBy?: ManagerKind;
 }
 

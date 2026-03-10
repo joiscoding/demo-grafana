@@ -62,6 +62,35 @@ describe('browse-dashboards DashboardsTree', () => {
     expect(screen.getByTestId(selectors.pages.BrowseDashboards.table.checkbox(dashboard.item.uid))).toBeInTheDocument();
   });
 
+  it('renders a last viewed column value for dashboards', () => {
+    const dashboardWithLastViewed = {
+      ...dashboard,
+      item: {
+        ...dashboard.item,
+        lastViewed: '2024-01-02T03:04:05Z',
+      },
+    };
+
+    render(
+      <DashboardsTree
+        permissions={mockPermissions}
+        items={[dashboardWithLastViewed]}
+        isSelected={isSelected}
+        width={WIDTH}
+        height={HEIGHT}
+        onFolderClick={noop}
+        onTagClick={noop}
+        onItemSelectionChange={noop}
+        onAllSelectionChange={noop}
+        isItemLoaded={allItemsAreLoaded}
+        requestLoadMore={requestLoadMore}
+      />
+    );
+
+    expect(screen.getByText('Last Viewed')).toBeInTheDocument();
+    expect(screen.getByText(/2024/)).toBeInTheDocument();
+  });
+
   it('does not render checkbox when disabled', () => {
     mockPermissions.canEditFolders = false;
     mockPermissions.canEditDashboards = false;

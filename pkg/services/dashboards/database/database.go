@@ -936,6 +936,9 @@ func (d *dashboardStore) FindDashboards(ctx context.Context, query *dashboards.F
 	}
 
 	if len(res) <= 1 {
+		if err := d.attachLastViewedTimestamps(ctx, query, res); err != nil {
+			return nil, err
+		}
 		return res, nil
 	}
 
@@ -970,7 +973,85 @@ func (d *dashboardStore) FindDashboards(ctx context.Context, query *dashboards.F
 		uniqueRes = append(uniqueRes, item)
 	}
 
+	if err := d.attachLastViewedTimestamps(ctx, query, uniqueRes); err != nil {
+		return nil, err
+	}
+
 	return uniqueRes, nil
+}
+
+func (d *dashboardStore) attachLastViewedTimestamps(ctx context.Context, query *dashboards.FindPersistedDashboardsQuery, results []dashboards.DashboardSearchProjection) error {
+	if len(results) == 0 || query.SignedInUser == nil {
+		return nil
+	}
+
+	userID, err := query.SignedInUser.GetInternalID()
+	if err != nil || userID <= 0 {
+		return nil
+	}
+
+	orgID := query.OrgId
+	if orgID == 0 {
+		orgID = query.SignedInUser.GetOrgID()
+	}
+	if orgID == 0 {
+		return nil
+	}
+
+	dashboardUIDs := make([]string, 0, len(results))
+	for _, item := range results {
+		if !item.IsFolder {
+			dashboardUIDs = append(dashboardUIDs, item.UID)
+		}
+	}
+	if len(dashboardUIDs) == 0 {
+		return nil
+	}
+
+	lastViewedByUID, err := d.getLastViewedByDashboardUID(ctx, orgID, userID, dashboardUIDs)
+	if err != nil {
+		d.log.Debug("Failed to query dashboard last viewed timestamps", "error", err)
+		return nil
+	}
+
+	for i := range results {
+		if viewed, ok := lastViewedByUID[results[i].UID]; ok {
+			viewedCopy := viewed
+			results[i].LastViewed = &viewedCopy
+		}
+	}
+
+	return nil
+}
+
+type userDashboardView struct {
+	DashboardUID string    `xorm:"dashboard_uid"`
+	Viewed       time.Time `xorm:"viewed"`
+}
+
+func (d *dashboardStore) getLastViewedByDashboardUID(ctx context.Context, orgID int64, userID int64, dashboardUIDs []string) (map[string]time.Time, error) {
+	views := make([]userDashboardView, 0, len(dashboardUIDs))
+	err := d.store.WithDbSession(ctx, func(sess *db.Session) error {
+		return sess.Table("user_dashboard_views").
+			Cols("dashboard_uid", "viewed").
+			Where("org_id = ? AND user_id = ?", orgID, userID).
+			In("dashboard_uid", dashboardUIDs).
+			Find(&views)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	lastViewedByUID := make(map[string]time.Time, len(views))
+	for _, view := range views {
+		lastViewedByUID[view.DashboardUID] = view.Viewed
+	}
+
+	return lastViewedByUID, nil
+}
+
+func (d *dashboardStore) GetLastViewedTimestamps(ctx context.Context, orgID int64, userID int64, dashboardUIDs []string) (map[string]time.Time, error) {
+	return d.getLastViewedByDashboardUID(ctx, orgID, userID, dashboardUIDs)
 }
 
 func (d *dashboardStore) GetDashboardTags(ctx context.Context, query *dashboards.GetDashboardTagsQuery) ([]*dashboards.DashboardTagCloudItem, error) {

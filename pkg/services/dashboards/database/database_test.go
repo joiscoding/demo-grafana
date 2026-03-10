@@ -708,6 +708,59 @@ func TestIntegrationDashboard_SortingOptions(t *testing.T) {
 	assert.Equal(t, dashA.ID, results[1].ID)
 }
 
+func TestIntegrationDashboard_FindDashboardsIncludesLastViewed(t *testing.T) {
+	testutil.SkipIntegrationTestInShortMode(t)
+
+	sqlStore := db.InitTestDB(t)
+	dashboardStore, err := ProvideDashboardStore(sqlStore, &setting.Cfg{}, testFeatureToggles, tagimpl.ProvideService(sqlStore))
+	require.NoError(t, err)
+
+	dash := insertTestDashboard(t, dashboardStore, "Dash with view", 1, 0, "", false)
+	viewedAt := time.Now().UTC().Truncate(time.Second)
+
+	err = sqlStore.WithDbSession(context.Background(), func(sess *db.Session) error {
+		_, err := sess.Exec(
+			"CREATE TABLE IF NOT EXISTS user_dashboard_views (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, dashboard_id INTEGER NOT NULL, viewed DATETIME NOT NULL, org_id INTEGER, dashboard_uid TEXT)",
+		)
+		if err != nil {
+			return err
+		}
+		_, err = sess.Exec(
+			"INSERT INTO user_dashboard_views (user_id, dashboard_id, viewed, org_id, dashboard_uid) VALUES (?, ?, ?, ?, ?)",
+			1,
+			dash.ID,
+			viewedAt,
+			1,
+			dash.UID,
+		)
+		return err
+	})
+	require.NoError(t, err)
+
+	results, err := dashboardStore.FindDashboards(context.Background(), &dashboards.FindPersistedDashboardsQuery{
+		SignedInUser: &user.SignedInUser{
+			OrgID:   1,
+			UserID:  1,
+			OrgRole: org.RoleAdmin,
+			Permissions: map[int64]map[string][]string{
+				1: {dashboards.ActionDashboardsRead: []string{dashboards.ScopeDashboardsAll}},
+			},
+		},
+	})
+	require.NoError(t, err)
+
+	var found *dashboards.DashboardSearchProjection
+	for i := range results {
+		if results[i].UID == dash.UID {
+			found = &results[i]
+			break
+		}
+	}
+	require.NotNil(t, found)
+	require.NotNil(t, found.LastViewed)
+	assert.WithinDuration(t, viewedAt, *found.LastViewed, time.Second)
+}
+
 func TestIntegrationDashboard_Filter(t *testing.T) {
 	testutil.SkipIntegrationTestInShortMode(t)
 

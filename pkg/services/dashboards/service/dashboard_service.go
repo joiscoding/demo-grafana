@@ -1687,6 +1687,15 @@ func (dr *DashboardServiceImpl) FindDashboards(ctx context.Context, query *dashb
 			result.SortMeta = hit.Field.GetNestedInt64(fieldName)
 		}
 
+		if hit.Field != nil {
+			lastViewed := hit.Field.GetNestedString("lastViewed")
+			if lastViewed != "" {
+				if parsed, err := time.Parse(time.RFC3339, lastViewed); err == nil {
+					result.LastViewed = &parsed
+				}
+			}
+		}
+
 		if hit.Resource == folderv1.RESOURCE {
 			result.IsFolder = true
 		}
@@ -1694,7 +1703,52 @@ func (dr *DashboardServiceImpl) FindDashboards(ctx context.Context, query *dashb
 		finalResults[i] = result
 	}
 
+	dr.attachLastViewedToResults(ctx, query, finalResults)
+
 	return finalResults, nil
+}
+
+type dashboardLastViewedLookup interface {
+	GetLastViewedTimestamps(ctx context.Context, orgID int64, userID int64, dashboardUIDs []string) (map[string]time.Time, error)
+}
+
+func (dr *DashboardServiceImpl) attachLastViewedToResults(ctx context.Context, query *dashboards.FindPersistedDashboardsQuery, results []dashboards.DashboardSearchProjection) {
+	if len(results) == 0 || query.SignedInUser == nil {
+		return
+	}
+
+	lookupStore, ok := dr.dashboardStore.(dashboardLastViewedLookup)
+	if !ok {
+		return
+	}
+
+	userID, err := query.SignedInUser.GetInternalID()
+	if err != nil || userID <= 0 {
+		return
+	}
+
+	dashboardUIDs := make([]string, 0, len(results))
+	for _, result := range results {
+		if !result.IsFolder {
+			dashboardUIDs = append(dashboardUIDs, result.UID)
+		}
+	}
+	if len(dashboardUIDs) == 0 {
+		return
+	}
+
+	lastViewedByUID, err := lookupStore.GetLastViewedTimestamps(ctx, query.OrgId, userID, dashboardUIDs)
+	if err != nil {
+		dr.log.Debug("Failed to query dashboard last viewed timestamps", "error", err)
+		return
+	}
+
+	for i := range results {
+		if viewed, ok := lastViewedByUID[results[i].UID]; ok {
+			viewedCopy := viewed
+			results[i].LastViewed = &viewedCopy
+		}
+	}
 }
 
 type folderRes struct {
@@ -1773,6 +1827,7 @@ func makeQueryResult(query *dashboards.FindPersistedDashboardsQuery, res []dashb
 			FolderTitle: item.FolderTitle,
 			Tags:        []string{},
 			Description: item.Description,
+			LastViewed:  item.LastViewed,
 		}
 
 		if item.Tags != nil {

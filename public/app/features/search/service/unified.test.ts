@@ -22,6 +22,9 @@ const mockFallbackSearcher = {
 } as unknown as GrafanaSearcher;
 
 const getResponse = (uri: string) => {
+  if (uri.startsWith('/api/search')) {
+    return Promise.resolve([]);
+  }
   if (uri.includes('?type=folders')) {
     return Promise.resolve(mockFolders);
   }
@@ -113,7 +116,8 @@ describe('Unified Storage Searcher', () => {
       .spyOn(mockSearcher, 'search')
       .mockResolvedValueOnce(mockFolders)
       .mockResolvedValueOnce(mockResults)
-      .mockResolvedValueOnce(mockFolders);
+      .mockResolvedValueOnce(mockFolders)
+      .mockResolvedValueOnce([]);
 
     const query: SearchQuery = {
       query: 'test',
@@ -133,7 +137,7 @@ describe('Unified Storage Searcher', () => {
     const locationInfo = df.meta?.custom?.locationInfo;
     expect(locationInfo).toBeDefined();
     expect(locationInfo?.folder2.name).toBe('Folder 2');
-    expect(mockSearcher.search).toHaveBeenCalledTimes(3);
+    expect(mockSearcher.search).toHaveBeenCalledTimes(4);
   });
 
   it('can create dashboard search results and set meta sortBy so column is added for sprinkles sort field', () => {

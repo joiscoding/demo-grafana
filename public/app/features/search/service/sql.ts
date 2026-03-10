@@ -154,6 +154,7 @@ export class SQLSearcher implements GrafanaSearcher {
     const sortBy: number[] = [];
     const isDeleted: boolean[] = [];
     const permanentlyDeleteDate: Array<Date | undefined> = [];
+    const lastViewed: Array<Date | undefined> = [];
     let sortMetaName: string | undefined;
 
     for (let hit of rsp) {
@@ -166,6 +167,7 @@ export class SQLSearcher implements GrafanaSearcher {
       sortBy.push(hit.sortMeta!);
       isDeleted.push(hit.isDeleted ?? false);
       permanentlyDeleteDate.push(hit.permanentlyDeleteDate ? new Date(hit.permanentlyDeleteDate) : undefined);
+      lastViewed.push(hit.lastViewed ? new Date(hit.lastViewed) : undefined);
 
       let v = hit.folderUid;
       if (!v && k === 'dashboard') {
@@ -204,6 +206,7 @@ export class SQLSearcher implements GrafanaSearcher {
         { name: 'location', type: FieldType.string, config: {}, values: location },
         { name: 'isDeleted', type: FieldType.boolean, config: {}, values: isDeleted },
         { name: 'permanentlyDeleteDate', type: FieldType.time, config: {}, values: permanentlyDeleteDate },
+        { name: 'lastViewed', type: FieldType.time, config: {}, values: lastViewed },
       ],
       length: name.length,
       meta: {

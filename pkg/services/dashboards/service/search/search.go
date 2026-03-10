@@ -45,6 +45,7 @@ var (
 		// below is needed to determine whether a provisioned dashboard exists or not
 		resource.SEARCH_FIELD_LEGACY_ID,
 		resource.SEARCH_FIELD_LABELS + "." + resource.SEARCH_FIELD_LEGACY_ID,
+		"lastViewed",
 	}
 )
 

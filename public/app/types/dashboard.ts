@@ -63,6 +63,7 @@ export interface DashboardMeta {
   created?: string;
   createdBy?: string;
   updated?: string;
+  lastViewed?: string;
   updatedBy?: string;
   fromScript?: boolean;
   fromFile?: boolean;

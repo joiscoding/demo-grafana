@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"google.golang.org/grpc"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -266,7 +268,17 @@ func (c *DashboardSearchClient) Search(ctx context.Context, req *resourcepb.Reso
 		}
 	}
 
-	columns := c.getColumns(sortByField, query)
+	includeLastViewed := slices.Contains(req.Fields, "lastViewed")
+	if !includeLastViewed {
+		for _, field := range req.Options.Fields {
+			if field.Key == "lastViewed" {
+				includeLastViewed = true
+				break
+			}
+		}
+	}
+
+	columns := c.getColumns(sortByField, query, includeLastViewed)
 	list := &resourcepb.ResourceSearchResponse{
 		Results: &resourcepb.ResourceTable{
 			Columns: columns,
@@ -349,7 +361,7 @@ func (c *DashboardSearchClient) Search(ctx context.Context, req *resourcepb.Reso
 	}
 
 	for _, dashboard := range res {
-		cells, err := c.createBaseCells(dashboard, sortByField)
+		cells, err := c.createBaseCells(dashboard, sortByField, includeLastViewed)
 		if err != nil {
 			return nil, err
 		}
@@ -449,7 +461,7 @@ func (c *DashboardSearchClient) GetStats(ctx context.Context, req *resourcepb.Re
 	}, nil
 }
 
-func (c *DashboardSearchClient) getColumns(sortByField string, query *dashboards.FindPersistedDashboardsQuery) []*resourcepb.ResourceTableColumnDefinition {
+func (c *DashboardSearchClient) getColumns(sortByField string, query *dashboards.FindPersistedDashboardsQuery, includeLastViewed bool) []*resourcepb.ResourceTableColumnDefinition {
 	searchFields := resource.StandardSearchFields()
 	columns := []*resourcepb.ResourceTableColumnDefinition{
 		searchFields.Field(resource.SEARCH_FIELD_TITLE),
@@ -488,6 +500,13 @@ func (c *DashboardSearchClient) getColumns(sortByField string, query *dashboards
 		return columns
 	}
 
+	if includeLastViewed {
+		columns = append(columns, &resourcepb.ResourceTableColumnDefinition{
+			Name: "lastViewed",
+			Type: resourcepb.ResourceTableColumnDefinition_STRING,
+		})
+	}
+
 	// cannot sort when querying provisioned dashboards
 	if sortByField != "" {
 		columns = append(columns, &resourcepb.ResourceTableColumnDefinition{
@@ -508,13 +527,20 @@ func (c *DashboardSearchClient) createCommonCells(title, folderUID string, id in
 	}
 }
 
-func (c *DashboardSearchClient) createBaseCells(dashboard dashboards.DashboardSearchProjection, sortByField string) ([][]byte, error) {
+func (c *DashboardSearchClient) createBaseCells(dashboard dashboards.DashboardSearchProjection, sortByField string, includeLastViewed bool) ([][]byte, error) {
 	tags, err := json.Marshal(dashboard.Tags)
 	if err != nil {
 		return nil, err
 	}
 
 	cells := c.createCommonCells(dashboard.Title, dashboard.FolderUID, dashboard.ID, tags)
+	if includeLastViewed {
+		lastViewed := ""
+		if dashboard.LastViewed != nil {
+			lastViewed = dashboard.LastViewed.UTC().Format(time.RFC3339)
+		}
+		cells = append(cells, []byte(lastViewed))
+	}
 
 	if sortByField != "" {
 		cells = append(cells, []byte(strconv.FormatInt(dashboard.SortMeta, 10)))

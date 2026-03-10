@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -664,6 +665,27 @@ func TestDashboardSearchClient_Search(t *testing.T) {
 		i := len(resp.Results.Columns) - 1
 		require.Equal(t, "views_total", resp.Results.Columns[i].Name)
 		require.Equal(t, []byte(strconv.FormatInt(100, 10)), resp.Results.Rows[0].Cells[i]) // views should be set to 100
+		mockStore.AssertExpectations(t)
+	})
+
+	t.Run("Should include last viewed field in results", func(t *testing.T) {
+		lastViewed := time.Date(2026, time.March, 10, 12, 0, 0, 0, time.UTC)
+		mockStore.On("FindDashboards", mock.Anything, mock.Anything).Return([]dashboards.DashboardSearchProjection{
+			{ID: 1, UID: "uid", Title: "Test Dashboard", FolderUID: "folder1", LastViewed: &lastViewed},
+		}, nil).Twice() // Called twice due to total count call
+
+		req := &resourcepb.ResourceSearchRequest{
+			Options: &resourcepb.ListOptions{
+				Key: dashboardKey,
+			},
+			Fields: []string{"lastViewed"},
+		}
+
+		resp, err := client.Search(ctx, req)
+		require.NoError(t, err)
+		require.NotNil(t, resp)
+		require.Equal(t, "lastViewed", resp.Results.Columns[len(resp.Results.Columns)-1].Name)
+		require.Equal(t, []byte(lastViewed.Format(time.RFC3339)), resp.Results.Rows[0].Cells[len(resp.Results.Rows[0].Cells)-1])
 		mockStore.AssertExpectations(t)
 	})
 

@@ -102,6 +102,14 @@ export function queryResultToViewItem(
     title: item.name,
     url: item.url,
     tags: item.tags ?? [],
+    lastViewed:
+      item.lastViewed instanceof Date
+        ? item.lastViewed.toISOString()
+        : typeof item.lastViewed === 'string'
+          ? item.lastViewed
+          : typeof item.lastViewed === 'number'
+            ? new Date(item.lastViewed).toISOString()
+            : undefined,
     managedBy: managedByStr,
   };
 

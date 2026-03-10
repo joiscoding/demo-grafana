@@ -439,6 +439,7 @@ type DashboardSearchProjection struct {
 	FolderSlug  string
 	FolderTitle string
 	SortMeta    int64
+	LastViewed  *time.Time
 	Tags        []string
 	ManagedBy   utils.ManagerKind
 	ManagerId   string
