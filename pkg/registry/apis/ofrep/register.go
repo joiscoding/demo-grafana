@@ -23,9 +23,9 @@ import (
 	"k8s.io/kube-openapi/pkg/spec3"
 	"k8s.io/kube-openapi/pkg/validation/spec"
 
-	"github.com/grafana/grafana/pkg/infra/tracing"
-
+	"github.com/grafana/grafana/pkg/apimachinery/identity"
 	"github.com/grafana/grafana/pkg/infra/log"
+	"github.com/grafana/grafana/pkg/infra/tracing"
 	"github.com/grafana/grafana/pkg/services/apiserver/builder"
 	"github.com/grafana/grafana/pkg/services/featuremgmt"
 	"github.com/grafana/grafana/pkg/setting"
@@ -81,8 +81,14 @@ func RegisterAPIService(apiregistration builder.APIRegistrar, cfg *setting.Cfg) 
 
 func (b *APIBuilder) GetAuthorizer() authorizer.Authorizer {
 	return authorizer.AuthorizerFunc(func(ctx context.Context, attr authorizer.Attributes) (authorizer.Decision, string, error) {
-		// Allow all requests - we'll handle auth in the handler
-		return authorizer.DecisionAllow, "", nil
+		u, err := identity.GetRequester(ctx)
+		if err != nil {
+			return authorizer.DecisionDeny, "valid user is required", err
+		}
+		if u.GetIsGrafanaAdmin() || u.GetOrgRole().Includes(identity.RoleAdmin) {
+			return authorizer.DecisionAllow, "", nil
+		}
+		return authorizer.DecisionDeny, "org admin role required", nil
 	})
 }
 
