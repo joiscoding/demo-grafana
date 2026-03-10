@@ -286,15 +286,15 @@ class DataSourceWithBackend<
     return headers;
   }
 
-  private getResourceRequestURL(path: string): string {
+  protected getResourceRequestURL(path: string): string {
     const shouldUseK8sResourceEndpoint =
       config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend && Boolean(config.namespace);
+    const normalizedPath = path.replace(/^\/+/, '');
 
     if (!shouldUseK8sResourceEndpoint) {
-      return `/api/datasources/uid/${this.uid}/resources/${path}`;
+      return `/api/datasources/uid/${this.uid}/resources/${normalizedPath}`;
     }
 
-    const normalizedPath = path.replace(/^\/+/, '');
     const apiVersion = this.apiVersion ?? `${this.type}.datasource.grafana.app/v0alpha1`;
     return `/apis/${apiVersion}/namespaces/${config.namespace}/datasources/${this.uid}/resource/${normalizedPath}`;
   }
