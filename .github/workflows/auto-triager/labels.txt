@@ -36,7 +36,6 @@ area/data/export
 area/explore
 area/expressions
 area/field/overrides
-area/frontend
 area/frontend/library-panels
 area/frontend/login
 area/image-rendering
