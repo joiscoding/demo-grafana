@@ -6,6 +6,10 @@ type ConsoleMethods = Record<ConsoleLevel, ConsoleMethod>;
 
 const CONSOLE_LEVELS: ConsoleLevel[] = ['log', 'info', 'warn', 'error', 'debug', 'trace'];
 let restoreBridge: (() => void) | undefined;
+const SENSITIVE_KEYS =
+  /^(password|token|secret|apikey|api_key|authorization|cookie|sessionid|session_id|auth_token|privatekey|private_key)$/i;
+const EMAIL_PATTERN = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+const BEARER_TOKEN_PATTERN = /Bearer\s+[^\s]+/gi;
 
 function serializeForContext(value: unknown): unknown {
   if (value instanceof Error) {
@@ -61,6 +65,36 @@ function formatLogMessage(level: ConsoleLevel, args: unknown[]): string {
   return `console.${level}: ${typeof serializedValue === 'string' ? serializedValue : JSON.stringify(serializedValue)}`;
 }
 
+function sanitizeForRemoteContext(value: unknown): unknown {
+  if (value === undefined || value === null) {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    return value.replace(EMAIL_PATTERN, '[REDACTED]').replace(BEARER_TOKEN_PATTERN, 'Bearer [REDACTED]');
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeForRemoteContext(item));
+  }
+
+  if (typeof value === 'object') {
+    const result: Record<string, unknown> = {};
+
+    for (const [key, nestedValue] of Object.entries(value)) {
+      result[key] = SENSITIVE_KEYS.test(key) ? '[REDACTED]' : sanitizeForRemoteContext(nestedValue);
+    }
+
+    return result;
+  }
+
+  return value;
+}
+
 export function installStructuredConsoleBridge(source = 'frontend.console') {
   if (restoreBridge) {
     return restoreBridge;
@@ -76,7 +110,8 @@ export function installStructuredConsoleBridge(source = 'frontend.console') {
     debug: nativeConsole.debug.bind(nativeConsole),
     trace: nativeConsole.trace.bind(nativeConsole),
   };
-  const shouldEmitStructuredLogs = !config.grafanaJavascriptAgent.consoleInstrumentalizationEnabled;
+  const shouldEmitStructuredLogs =
+    config.grafanaJavascriptAgent.enabled && !config.grafanaJavascriptAgent.consoleInstrumentalizationEnabled;
 
   const emitStructuredLog = (level: ConsoleLevel, args: unknown[]) => {
     if (!shouldEmitStructuredLogs) {
@@ -85,7 +120,11 @@ export function installStructuredConsoleBridge(source = 'frontend.console') {
 
     const message = formatLogMessage(level, args);
     const serializedArgs = args.map(serializeForContext);
-    const context = { level, args: serializedArgs };
+    const sanitizedArgs = serializedArgs.map((arg) => sanitizeForRemoteContext(arg));
+    const context: Record<string, string> = {
+      level,
+      args: JSON.stringify(sanitizedArgs),
+    };
 
     if (level === 'error') {
       const [firstArg] = args;
