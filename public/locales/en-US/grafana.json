@@ -4095,6 +4095,7 @@
       },
       "collapse-folder-button": "Collapse folder {{title}}",
       "expand-folder-button": "Expand folder {{title}}",
+      "last-viewed-column": "Last Viewed",
       "name-column": "Name",
       "select-all-header-checkbox": "Select all",
       "select-checkbox": "Select",
