@@ -118,9 +118,9 @@ export function installStructuredConsoleBridge(source = 'frontend.console') {
       return;
     }
 
-    const message = formatLogMessage(level, args);
     const serializedArgs = args.map(serializeForContext);
     const sanitizedArgs = serializedArgs.map((arg) => sanitizeForRemoteContext(arg));
+    const message = formatLogMessage(level, sanitizedArgs);
     const context: Record<string, string> = {
       level,
       args: JSON.stringify(sanitizedArgs),
