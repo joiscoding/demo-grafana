@@ -35,7 +35,7 @@ export async function loadFeatureFlags(): Promise<FeatureFlagRow[]> {
       const evaluatedValue = Boolean(flag.value);
       const runtimeValue = Reflect.get(config.featureToggles, flag.key);
       const runtimeOverrideValue = typeof runtimeValue === 'boolean' ? runtimeValue : undefined;
-      const hasRuntimeOverride = runtimeOverrideValue !== undefined;
+      const hasRuntimeOverride = runtimeOverrideValue !== undefined && runtimeOverrideValue !== evaluatedValue;
 
       return {
         key: flag.key,

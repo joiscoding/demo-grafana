@@ -1,6 +1,7 @@
 import { NavLinkDTO } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import config from 'app/core/config';
+import { contextSrv } from 'app/core/services/context_srv';
 
 export const LABS_NAV_ID = 'labs';
 const ADMIN_NAV_ID = 'cfg';
@@ -16,7 +17,8 @@ export function getLabsNavItem(): NavLinkDTO {
 }
 
 export function withLabsNavItem(navTree: NavLinkDTO[]): NavLinkDTO[] {
-  if (!config.bootData.user.isSignedIn || navTree.some((item) => item.id === LABS_NAV_ID)) {
+  const isAdmin = contextSrv.hasRole('Admin') || contextSrv.isGrafanaAdmin;
+  if (!config.bootData.user.isSignedIn || !isAdmin || navTree.some((item) => item.id === LABS_NAV_ID)) {
     return navTree;
   }
 
