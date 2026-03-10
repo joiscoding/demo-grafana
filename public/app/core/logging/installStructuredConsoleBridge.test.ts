@@ -13,6 +13,7 @@ const mockLogger = {
 jest.mock('@grafana/runtime', () => ({
   config: {
     grafanaJavascriptAgent: {
+      enabled: true,
       consoleInstrumentalizationEnabled: false,
     },
   },
@@ -30,8 +31,12 @@ describe('installStructuredConsoleBridge', () => {
     restoreBridge?.();
     restoreBridge = undefined;
 
-    (config.grafanaJavascriptAgent as { consoleInstrumentalizationEnabled: boolean }).consoleInstrumentalizationEnabled =
-      false;
+    const agentConfig = config.grafanaJavascriptAgent as {
+      enabled: boolean;
+      consoleInstrumentalizationEnabled: boolean;
+    };
+    agentConfig.enabled = true;
+    agentConfig.consoleInstrumentalizationEnabled = false;
 
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -54,7 +59,7 @@ describe('installStructuredConsoleBridge', () => {
       'hello',
       expect.objectContaining({
         level: 'log',
-        args: ['hello', { foo: 'bar' }],
+        args: '["hello",{"foo":"bar"}]',
       })
     );
     expect(logSpy).toHaveBeenCalledWith('hello', { foo: 'bar' });
@@ -88,8 +93,9 @@ describe('installStructuredConsoleBridge', () => {
   });
 
   it('does not emit duplicate structured logs when console instrumentation is enabled', () => {
-    (config.grafanaJavascriptAgent as { consoleInstrumentalizationEnabled: boolean }).consoleInstrumentalizationEnabled =
-      true;
+    (
+      config.grafanaJavascriptAgent as { consoleInstrumentalizationEnabled: boolean }
+    ).consoleInstrumentalizationEnabled = true;
 
     restoreBridge = installStructuredConsoleBridge('unit-test.console');
     console.log('no-duplicate');
