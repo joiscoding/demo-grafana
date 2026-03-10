@@ -9,47 +9,35 @@ function getMonitoringLogger() {
   return monitoringLogger;
 }
 
-function toSerializableArgument(arg: unknown): unknown {
-  if (arg instanceof Error) {
-    return {
-      name: arg.name,
-      message: arg.message,
-      stack: arg.stack,
-    };
-  }
-
-  if (typeof arg === 'function') {
-    return `[Function ${arg.name || 'anonymous'}]`;
-  }
-
-  if (typeof arg === 'symbol') {
-    return arg.toString();
-  }
-
-  if (typeof arg === 'bigint') {
-    return arg.toString();
-  }
-
-  return arg;
-}
-
 function toContext(args: unknown[], timestamp: number) {
   return {
     timestamp,
     argumentCount: args.length,
-    arguments: args.map(toSerializableArgument),
   };
+}
+
+const PII_REDACT_PATTERNS = [
+  { pattern: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, replacement: '[REDACTED]' },
+  { pattern: /(Bearer|token|session|auth)\s*[:=]\s*['"]?\S+['"]?/gi, replacement: '[REDACTED]' },
+];
+
+function sanitizeForLogging(value: string): string {
+  let result = value;
+  for (const { pattern, replacement } of PII_REDACT_PATTERNS) {
+    result = result.replace(pattern, replacement);
+  }
+  return result;
 }
 
 function toMessage(level: ConsoleLogLevel, args: unknown[]) {
   const firstArg = args[0];
 
   if (typeof firstArg === 'string' && firstArg.length > 0) {
-    return firstArg;
+    return sanitizeForLogging(firstArg);
   }
 
   if (firstArg instanceof Error && firstArg.message) {
-    return firstArg.message;
+    return sanitizeForLogging(firstArg.message);
   }
 
   return `console.${level}`;
@@ -66,7 +54,13 @@ function forwardLog(level: ConsoleLogLevel, args: unknown[], timestamp: number) 
       return;
     case 'error': {
       const firstError = args.find((arg): arg is Error => arg instanceof Error);
-      logger.logError(firstError ?? new Error(message), context);
+      const errorToLog = firstError
+        ? Object.assign(new Error(sanitizeForLogging(firstError.message)), {
+            stack: firstError.stack,
+            name: firstError.name,
+          })
+        : new Error(message);
+      logger.logError(errorToLog, context);
       return;
     }
     case 'debug':
@@ -103,12 +97,23 @@ export function enableStructuredConsoleForwarding() {
     return;
   }
 
+  let isForwarding = false;
+
   for (const level of consoleLevels) {
     const original = originalConsoleMethods[level] ?? window.console[level].bind(window.console);
 
     window.console[level] = (...args: unknown[]) => {
       const timestamp = Date.now();
-      forwardLog(level, args, timestamp);
+      if (!isForwarding) {
+        isForwarding = true;
+        try {
+          forwardLog(level, args, timestamp);
+        } catch {
+          // Ensure original console always runs even if forwarding fails
+        } finally {
+          isForwarding = false;
+        }
+      }
       original(...args);
     };
   }

@@ -37,10 +37,12 @@ describe('enableStructuredConsoleForwarding', () => {
     window.__grafana_console_structured_forwarding__ = false;
     window.__grafana_console_buffer__ = [];
     window.__grafana_console_original__ = undefined;
-    (config as { grafanaJavascriptAgent: { enabled: boolean; consoleInstrumentalizationEnabled: boolean } })
-      .grafanaJavascriptAgent.enabled = false;
-    (config as { grafanaJavascriptAgent: { enabled: boolean; consoleInstrumentalizationEnabled: boolean } })
-      .grafanaJavascriptAgent.consoleInstrumentalizationEnabled = false;
+    (
+      config as { grafanaJavascriptAgent: { enabled: boolean; consoleInstrumentalizationEnabled: boolean } }
+    ).grafanaJavascriptAgent.enabled = false;
+    (
+      config as { grafanaJavascriptAgent: { enabled: boolean; consoleInstrumentalizationEnabled: boolean } }
+    ).grafanaJavascriptAgent.consoleInstrumentalizationEnabled = false;
   });
 
   afterEach(() => {
@@ -69,10 +71,7 @@ describe('enableStructuredConsoleForwarding', () => {
 
     console.warn('runtime warning', { id: 42 });
 
-    expect(logger.logWarning).toHaveBeenCalledWith(
-      'runtime warning',
-      expect.objectContaining({ argumentCount: 2, arguments: ['runtime warning', { id: 42 }] })
-    );
+    expect(logger.logWarning).toHaveBeenCalledWith('runtime warning', expect.objectContaining({ argumentCount: 2 }));
     expect(originalWarn).toHaveBeenCalledWith('runtime warning', { id: 42 });
   });
 
@@ -91,10 +90,12 @@ describe('enableStructuredConsoleForwarding', () => {
     };
     console.info = instrumentedInfo;
 
-    (config as { grafanaJavascriptAgent: { enabled: boolean; consoleInstrumentalizationEnabled: boolean } })
-      .grafanaJavascriptAgent.enabled = true;
-    (config as { grafanaJavascriptAgent: { enabled: boolean; consoleInstrumentalizationEnabled: boolean } })
-      .grafanaJavascriptAgent.consoleInstrumentalizationEnabled = true;
+    (
+      config as { grafanaJavascriptAgent: { enabled: boolean; consoleInstrumentalizationEnabled: boolean } }
+    ).grafanaJavascriptAgent.enabled = true;
+    (
+      config as { grafanaJavascriptAgent: { enabled: boolean; consoleInstrumentalizationEnabled: boolean } }
+    ).grafanaJavascriptAgent.consoleInstrumentalizationEnabled = true;
 
     enableStructuredConsoleForwarding();
     console.info('live info');
