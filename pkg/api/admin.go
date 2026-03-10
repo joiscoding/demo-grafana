@@ -3,12 +3,15 @@ package api
 import (
 	"context"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/apimachinery/identity"
 	ac "github.com/grafana/grafana/pkg/services/accesscontrol"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
+	"github.com/grafana/grafana/pkg/services/featuremgmt"
+	featuretoggleapi "github.com/grafana/grafana/pkg/services/featuremgmt/feature_toggle_api"
 	"github.com/grafana/grafana/pkg/services/stats"
 	"github.com/grafana/grafana/pkg/setting"
 )
@@ -72,6 +75,49 @@ func (hs *HTTPServer) AdminGetStats(c *contextmodel.ReqContext) response.Respons
 	adminStats.ActiveDevices = devicesCount
 
 	return response.JSON(http.StatusOK, adminStats)
+}
+
+func (hs *HTTPServer) AdminGetFeatureToggles(c *contextmodel.ReqContext) response.Response {
+	featureList, err := featuremgmt.GetEmbeddedFeatureList()
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "Failed to load feature toggle definitions", err)
+	}
+
+	enabled := hs.Features.GetEnabled(c.Req.Context())
+	known := make(map[string]struct{}, len(featureList.Items))
+	toggles := make([]featuretoggleapi.ToggleStatus, 0, len(featureList.Items)+len(enabled))
+
+	for _, feature := range featureList.Items {
+		known[feature.Name] = struct{}{}
+		toggles = append(toggles, featuretoggleapi.ToggleStatus{
+			Name:        feature.Name,
+			Description: feature.Spec.Description,
+			Stage:       feature.Spec.Stage,
+			Enabled:     enabled[feature.Name],
+		})
+	}
+
+	for name, isEnabled := range enabled {
+		if _, ok := known[name]; ok {
+			continue
+		}
+
+		toggles = append(toggles, featuretoggleapi.ToggleStatus{
+			Name:    name,
+			Stage:   "unknown",
+			Enabled: isEnabled,
+			Warning: "Unknown flag in config",
+		})
+	}
+
+	sort.Slice(toggles, func(i, j int) bool {
+		return toggles[i].Name < toggles[j].Name
+	})
+
+	return response.JSON(http.StatusOK, featuretoggleapi.ResolvedToggleState{
+		Enabled: enabled,
+		Toggles: toggles,
+	})
 }
 
 func (hs *HTTPServer) getAuthorizedSettings(ctx context.Context, user identity.Requester, bag setting.SettingsBag) (setting.SettingsBag, error) {
