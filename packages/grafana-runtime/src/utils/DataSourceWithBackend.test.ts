@@ -456,6 +456,29 @@ describe('DataSourceWithBackend', () => {
     });
   });
 
+  test('check that getResource uses the k8s datasource endpoint when enabled', () => {
+    const previousFlag = config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend;
+    const previousNamespace = config.namespace;
+    try {
+      config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend = true;
+      config.namespace = 'default';
+
+      const { mock, ds } = createMockDatasource({ apiVersion: 'dummy.datasource.grafana.app/v0alpha1' });
+      ds.getResource('foo');
+
+      const args = mock.calls[0][0];
+
+      expect(mock.calls.length).toBe(1);
+      expect(args).toMatchObject({
+        method: 'GET',
+        url: '/apis/dummy.datasource.grafana.app/v0alpha1/namespaces/default/datasources/abc/resource/foo',
+      });
+    } finally {
+      config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend = previousFlag;
+      config.namespace = previousNamespace;
+    }
+  });
+
   test('check that postResource uses the data source UID', () => {
     const { mock, ds } = createMockDatasource();
     ds.postResource('foo');
@@ -471,6 +494,29 @@ describe('DataSourceWithBackend', () => {
       method: 'POST',
       url: '/api/datasources/uid/abc/resources/foo',
     });
+  });
+
+  test('check that postResource uses the k8s datasource endpoint when enabled', () => {
+    const previousFlag = config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend;
+    const previousNamespace = config.namespace;
+    try {
+      config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend = true;
+      config.namespace = 'default';
+
+      const { mock, ds } = createMockDatasource({ apiVersion: 'dummy.datasource.grafana.app/v0alpha1' });
+      ds.postResource('foo');
+
+      const args = mock.calls[0][0];
+
+      expect(mock.calls.length).toBe(1);
+      expect(args).toMatchObject({
+        method: 'POST',
+        url: '/apis/dummy.datasource.grafana.app/v0alpha1/namespaces/default/datasources/abc/resource/foo',
+      });
+    } finally {
+      config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend = previousFlag;
+      config.namespace = previousNamespace;
+    }
   });
 
   test('check that callHealthCheck uses the data source UID', () => {
@@ -608,13 +654,16 @@ describe('DataSourceWithBackend', () => {
   });
 });
 
-function createMockDatasource() {
+function createMockDatasource(
+  overrides: Partial<DataSourceInstanceSettings<DataSourceJsonData>> = {}
+) {
   const settings = {
     name: 'test',
     id: 1234,
     uid: 'abc',
     type: 'dummy',
     jsonData: {},
+    ...overrides,
   } as DataSourceInstanceSettings<DataSourceJsonData>;
 
   mockDatasourceRequest.mockReset();

@@ -200,6 +200,31 @@ describe('PrometheusDatasource', () => {
     });
   });
 
+  describe('k8s datasource resource endpoint', () => {
+    it('uses /apis resource URL when frontend toggle is enabled', () => {
+      const previousFlag = config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend;
+      const previousNamespace = config.namespace;
+      try {
+        config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend = true;
+        config.namespace = 'default';
+
+        const apiSettings = cloneDeep(instanceSettings);
+        apiSettings.apiVersion = 'prometheus.datasource.grafana.app/v0alpha1';
+        const promDs = new PrometheusDatasource(apiSettings, templateSrvStub);
+
+        promDs.metadataRequest('/foo');
+
+        expect(fetchMock.mock.calls.length).toBe(1);
+        expect(fetchMock.mock.calls[0][0].url).toBe(
+          '/apis/prometheus.datasource.grafana.app/v0alpha1/namespaces/default/datasources/ABCDEF/resource/foo'
+        );
+      } finally {
+        config.featureToggles.datasourcesApiServerEnableResourceEndpointFrontend = previousFlag;
+        config.namespace = previousNamespace;
+      }
+    });
+  });
+
   describe('When using adhoc filters', () => {
     const DEFAULT_QUERY_EXPRESSION = 'metric{job="foo"} - metric';
     const target: PromQuery = { expr: DEFAULT_QUERY_EXPRESSION, refId: 'A' };
