@@ -28,6 +28,7 @@ import {
   BackendDataSourceResponse,
   getBackendSrv,
 } from '@grafana/runtime';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 
 import { StreamingResponseData } from '../data/utils';
 
@@ -125,7 +126,7 @@ export class CentrifugeService implements CentrifugeSrv {
   };
 
   private onServerSideMessage = (context: ServerPublicationContext) => {
-    console.log('Publication from server-side channel', context);
+    logStructuredInfo('public/app/features/live/centrifuge/service.ts','Publication from server-side channel', context);
   };
 
   private onError = (context: ErrorContext) => {

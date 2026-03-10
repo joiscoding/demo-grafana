@@ -8,6 +8,7 @@ import { SceneComponentProps, SceneObjectBase, sceneGraph } from '@grafana/scene
 import { Alert, Spinner, Stack } from '@grafana/ui';
 import { useGetDisplayMappingQuery } from 'app/api/clients/iam/v0alpha1';
 import { Page } from 'app/core/components/Page/Page';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 import { AnnoKeyMessage, AnnoKeyUpdatedBy, AnnoKeyUpdatedTimestamp, Resource } from 'app/features/apiserver/types';
 import { getDashboardAPI } from 'app/features/dashboard/api/dashboard_api';
 import {
@@ -112,7 +113,7 @@ export class VersionsEditView extends SceneObjectBase<VersionsEditViewState> imp
         // Update the continueToken for the next request, if available
         this._continueToken = result.metadata.continue ?? '';
       })
-      .catch((err) => console.log(err))
+      .catch((err) => logStructuredInfo('public/app/features/dashboard-scene/settings/VersionsEditView.tsx',err))
       .finally(() => this.setState({ isAppending: false }));
   };
 

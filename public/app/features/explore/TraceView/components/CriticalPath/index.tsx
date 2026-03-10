@@ -14,6 +14,8 @@
 
 import memoizeOne from 'memoize-one';
 
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
+
 import { TraceSpan, CriticalPathSection, Trace } from '../types/trace';
 
 import findLastFinishingChildSpan from './utils/findLastFinishingChildSpan';
@@ -104,7 +106,7 @@ function criticalPathForTrace(trace: Trace) {
       criticalPath = computeCriticalPath(sanitizedSpanMap, rootSpanId, criticalPath);
     } catch (error) {
       /* eslint-disable no-console */
-      console.log('error while computing critical path for a trace', error);
+      logStructuredInfo('public/app/features/explore/TraceView/components/CriticalPath/index.tsx','error while computing critical path for a trace', error);
     }
   }
   return criticalPath;

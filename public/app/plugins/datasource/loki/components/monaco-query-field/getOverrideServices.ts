@@ -1,4 +1,5 @@
 import { monacoTypes } from '@grafana/ui';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 
 // this thing here is a workaround in a way.
 // what we want to achieve, is that when the autocomplete-window
@@ -81,7 +82,7 @@ function makeStorageService() {
     },
 
     logStorage: (): void => {
-      console.log('logStorage: not implemented');
+      logStructuredInfo('public/app/plugins/datasource/loki/components/monaco-query-field/getOverrideServices.ts','logStorage: not implemented');
     },
 
     migrate: (): Promise<void> => {

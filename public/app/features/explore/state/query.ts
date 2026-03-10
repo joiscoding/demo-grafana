@@ -33,6 +33,7 @@ import {
   hasNonEmptyQuery,
   stopQueryState,
 } from 'app/core/utils/explore';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 import { getShiftedTimeRange } from 'app/core/utils/timePicker';
 import { getCorrelationsFromStorage } from 'app/features/correlations/utils';
 import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
@@ -657,7 +658,7 @@ export const runQueries = createAsyncThunk<void, RunQueriesOptions>(
 
           // Keep scanning for results if this was the last scanning transaction
           if (exploreState!.scanning) {
-            console.log(data.series);
+            logStructuredInfo('public/app/features/explore/state/query.ts',data.series);
             if (data.state === LoadingState.Done && data.series.length === 0) {
               const range = getShiftedTimeRange(-1, exploreState!.range);
               dispatch(updateTime({ exploreId, absoluteRange: range }));

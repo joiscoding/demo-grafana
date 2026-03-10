@@ -7,6 +7,7 @@ import { notifyApp } from 'app/core/reducers/appNotification';
 import { backendSrv } from 'app/core/services/backend_srv';
 import { KeybindingSrv } from 'app/core/services/keybindingSrv';
 import { startMeasure, stopMeasure } from 'app/core/utils/metrics';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 import { dashboardLoaderSrv } from 'app/features/dashboard/services/DashboardLoaderSrv';
 import { DashboardSrv, getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { getTimeSrv, TimeSrv } from 'app/features/dashboard/services/TimeSrv';
@@ -109,7 +110,7 @@ async function fetchDashboard(
               ...locationService.getLocation(),
               pathname: dashboardUrl,
             });
-            console.log('not correct url correcting', dashboardUrl, currentPath);
+            logStructuredInfo('public/app/features/dashboard/state/initDashboard.ts','not correct url correcting', dashboardUrl, currentPath);
           }
         }
         return dashDTO;

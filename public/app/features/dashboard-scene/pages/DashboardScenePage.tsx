@@ -9,6 +9,7 @@ import { Box } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 import {
   DashboardBrandingFooter,
   DashboardBrandingFooterVariant,
@@ -111,7 +112,7 @@ export function DashboardScenePage({ route, queryParams, location }: Props) {
   // A bit tricky for transition to or from Home dashboard that does not have a uid in the url (but could have it in the dashboard model)
   // if prevMatch is undefined we are going from normal route to home route or vice versa
   if (type !== 'snapshot' && (!prevMatch || uid !== prevMatch?.params.uid)) {
-    console.log('skipping rendering');
+    logStructuredInfo('public/app/features/dashboard-scene/pages/DashboardScenePage.tsx','skipping rendering');
     return null;
   }
 

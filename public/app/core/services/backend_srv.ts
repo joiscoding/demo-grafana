@@ -31,6 +31,7 @@ import { BackendSrv as BackendService, BackendSrvRequest, config, FetchError, Fe
 import { appEvents } from 'app/core/app_events';
 import { getConfig } from 'app/core/config';
 import { getSessionExpiry, hasSessionExpiry } from 'app/core/utils/auth';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 import { loadUrlToken } from 'app/core/utils/urlToken';
 import { getDashboardAPI } from 'app/features/dashboard/api/dashboard_api';
 import { DashboardSearchItem } from 'app/features/search/types';
@@ -235,7 +236,7 @@ export class BackendSrv implements BackendService {
             observer.complete();
           }) // runs in background
           .catch((e) => {
-            console.log(requestId, 'catch', e);
+            logStructuredInfo('public/app/core/services/backend_srv.ts',requestId, 'catch', e);
             observer.error(e);
           }); // from abort
       },

@@ -2,6 +2,7 @@ import { lastValueFrom } from 'rxjs';
 
 import { getBackendSrv, isFetchError } from '@grafana/runtime';
 import { contextSrv } from 'app/core/services/context_srv';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 import { AccessControlAction } from 'app/types/accessControl';
 import { Settings, UpdateSettingsQuery } from 'app/types/settings';
 import { ThunkResult } from 'app/types/store';
@@ -78,7 +79,7 @@ export function saveSettings(data: UpdateSettingsQuery): ThunkResult<Promise<boo
         dispatch(resetError());
         return true;
       } catch (error) {
-        console.log(error);
+        logStructuredInfo('public/app/features/auth-config/state/actions.ts',error);
         if (isFetchError(error)) {
           error.isHandled = true;
           const updateErr: SettingsError = {

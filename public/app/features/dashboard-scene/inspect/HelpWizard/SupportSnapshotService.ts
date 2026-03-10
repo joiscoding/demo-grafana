@@ -4,6 +4,7 @@ import { dateTimeFormat, formattedValueToString, getValueFormat, SelectableValue
 import { t } from '@grafana/i18n';
 import { sceneGraph, SceneObject, VizPanel } from '@grafana/scenes';
 import { StateManagerBase } from 'app/core/services/StateManagerBase';
+import { logStructuredInfo } from 'app/core/utils/structuredLog';
 
 import { transformSaveModelToScene } from '../../serialization/transformSaveModelToScene';
 
@@ -84,7 +85,7 @@ export class SupportSnapshotService extends StateManagerBase<SupportSnapshotStat
         const dash = transformSaveModelToScene({ dashboard: snapshot, meta: { isEmbedded: true } });
         scene = dash.state.body; // skip the wrappers
       } catch (ex) {
-        console.log('Error creating scene:', ex);
+        logStructuredInfo('public/app/features/dashboard-scene/inspect/HelpWizard/SupportSnapshotService.ts','Error creating scene:', ex);
       }
     }
 
