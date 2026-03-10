@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { NavModelItem } from '@grafana/data';
 import { config } from '@grafana/runtime';
+import { withLabsNavItem } from 'app/features/labs/nav';
 
 import { getNavSubTitle, getNavTitle } from '../utils/navBarItem-translations';
 
@@ -26,7 +27,7 @@ export const ID_PREFIX = 'starred/';
 
 const navTreeSlice = createSlice({
   name: 'navBarTree',
-  initialState: () => translateNav(config.bootData?.navTree ?? []),
+  initialState: () => translateNav(withLabsNavItem(config.bootData?.navTree ?? [])),
   reducers: {
     setStarred: (state, action: PayloadAction<{ id: string; title: string; url: string; isStarred: boolean }>) => {
       const starredItems = state.find((navItem) => navItem.id === 'starred');

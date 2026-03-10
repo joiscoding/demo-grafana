@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 
 import { NavIndex, NavModel, NavModelItem } from '@grafana/data';
 import config from 'app/core/config';
+import { withLabsNavItem } from 'app/features/labs/nav';
 
 import { getNavSubTitle, getNavTitle } from '../utils/navBarItem-translations';
 
@@ -10,7 +11,7 @@ export const HOME_NAV_ID = 'home';
 
 export function buildInitialState(): NavIndex {
   const navIndex: NavIndex = {};
-  const rootNodes = cloneDeep(config.bootData.navTree);
+  const rootNodes = cloneDeep(withLabsNavItem(config.bootData.navTree));
   const homeNav = rootNodes.find((node) => node.id === HOME_NAV_ID);
   const otherRootNodes = rootNodes.filter((node) => node.id !== HOME_NAV_ID);
 

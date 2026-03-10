@@ -33,6 +33,7 @@
 # START Technical documentation
 /.vale.ini  @grafana/docs-tooling
 /AGENTS.md  @grafana/docs-tooling
+/.cursor/ @grafana/grafana-developer-enablement-squad
 
 # `make docs` procedure and related workflows are owned @grafana/docs-tooling. Slack #docs.
 /docs/                                                                            @grafana/docs-tooling
@@ -996,6 +997,7 @@ playwright.storybook.config.ts @grafana/grafana-frontend-platform
 /public/app/features/users/ @grafana/access-squad
 /public/app/features/variables/ @grafana/dashboards-squad
 /public/app/features/bookmarks/ @grafana/grafana-frontend-navigation
+/public/app/features/labs/ @grafana/grafana-frontend-navigation
 /public/app/plugins/panel/* @grafana/dataviz-squad
 /public/app/plugins/panel/alertlist/ @grafana/alerting-frontend
 /public/app/plugins/panel/annolist/ @grafana/dashboards-squad
