@@ -37,10 +37,13 @@ const (
 	WeightHelp
 )
 
+const WeightLabs = WeightApps + 50
+
 const (
 	NavIDRoot                 = "root"
 	NavIDDashboards           = "dashboards/browse"
 	NavIDExplore              = "explore"
+	NavIDLabs                 = "labs"
 	NavIDDrilldown            = "drilldown"
 	NavIDAdaptiveTelemetry    = "adaptive-telemetry"
 	NavIDCfg                  = "cfg" // NavIDCfg is the id for org configuration navigation node
