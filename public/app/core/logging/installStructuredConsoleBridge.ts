@@ -148,7 +148,11 @@ export function installStructuredConsoleBridge(source = 'frontend.console') {
 
   CONSOLE_LEVELS.forEach((level) => {
     nativeConsole[level] = (...args: unknown[]) => {
-      emitStructuredLog(level, args);
+      try {
+        emitStructuredLog(level, args);
+      } catch {
+        // Bridge must never break the functionality it wraps
+      }
       originalConsole[level](...args);
     };
   });
