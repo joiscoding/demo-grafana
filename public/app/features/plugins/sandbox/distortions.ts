@@ -3,7 +3,12 @@ import DOMPurify from 'dompurify';
 import { cloneDeep, isFunction } from 'lodash';
 
 import { Monaco } from '@grafana/ui';
-import { logStructuredInfo } from 'app/core/utils/structuredLog';
+import {
+  logStructuredDebug,
+  logStructuredError,
+  logStructuredInfo,
+  logStructuredWarn,
+} from 'app/core/utils/structuredLog';
 
 import { loadScriptIntoSandbox } from './codeLoader';
 import { forbiddenElements } from './constants';
@@ -139,17 +144,16 @@ function distortConsole(distortions: DistortionMap) {
   if (descriptor?.value) {
     function getSandboxConsole(originalAttrOrMethod: unknown, meta: SandboxPluginMeta) {
       const pluginId = meta.id;
+      const source = 'public/app/features/plugins/sandbox/distortions.ts';
+      const prefix = `[plugin ${pluginId}]`;
 
-      function sandboxLog(...args: unknown[]) {
-        logStructuredInfo('public/app/features/plugins/sandbox/distortions.ts',`[plugin ${pluginId}]`, ...args);
-      }
       return {
-        log: sandboxLog,
-        warn: sandboxLog,
-        error: sandboxLog,
-        info: sandboxLog,
-        debug: sandboxLog,
-        table: sandboxLog,
+        log: (...args: unknown[]) => logStructuredInfo(source, prefix, ...args),
+        warn: (...args: unknown[]) => logStructuredWarn(source, prefix, ...args),
+        error: (...args: unknown[]) => logStructuredError(source, prefix, ...args),
+        info: (...args: unknown[]) => logStructuredInfo(source, prefix, ...args),
+        debug: (...args: unknown[]) => logStructuredDebug(source, prefix, ...args),
+        table: (...args: unknown[]) => logStructuredInfo(source, prefix, ...args),
       };
     }
 
