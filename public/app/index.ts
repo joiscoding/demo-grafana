@@ -18,6 +18,36 @@ if (window.nonce) {
 // This is an indication to the window.onLoad failure check that the app bundle has loaded.
 window.__grafana_app_bundle_loaded = true;
 
+const bufferedConsoleLevels: ConsoleLogLevel[] = ['log', 'info', 'warn', 'error', 'debug', 'trace'];
+const bufferedConsoleLimit = 1000;
+
+function installBufferedConsoleCapture() {
+  if (window.__grafana_console_buffer_installed__) {
+    return;
+  }
+
+  window.__grafana_console_buffer_installed__ = true;
+  window.__grafana_console_buffer__ = [];
+  window.__grafana_console_original__ = {};
+
+  for (const level of bufferedConsoleLevels) {
+    const original = window.console[level].bind(window.console);
+    window.__grafana_console_original__[level] = original;
+    window.console[level] = (...args: unknown[]) => {
+      const buffer = window.__grafana_console_buffer__;
+      if (buffer) {
+        buffer.push({ level, args, timestamp: Date.now() });
+        if (buffer.length > bufferedConsoleLimit) {
+          buffer.shift();
+        }
+      }
+      original(...args);
+    };
+  }
+}
+
+installBufferedConsoleCapture();
+
 async function bootstrapWindowData() {
   // Wait for window.grafanaBootData is ready. The new index.html loads it from
   // an API call, but the old one just sets an immediately resolving promise.

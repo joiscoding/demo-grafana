@@ -1,4 +1,11 @@
 export declare global {
+  type ConsoleLogLevel = 'log' | 'info' | 'warn' | 'error' | 'debug' | 'trace';
+  type BufferedConsoleEntry = {
+    level: ConsoleLogLevel;
+    args: unknown[];
+    timestamp: number;
+  };
+
   interface Window {
     __grafanaSceneContext: SceneObject;
     __grafana_app_bundle_loaded: boolean;
@@ -11,6 +18,10 @@ export declare global {
      * Required in new index.html to fetch necessary data before app init()
      **/
     __grafana_boot_data_promise: Promise<void>;
+    __grafana_console_buffer__?: BufferedConsoleEntry[];
+    __grafana_console_buffer_installed__?: boolean;
+    __grafana_console_structured_forwarding__?: boolean;
+    __grafana_console_original__?: Partial<Record<ConsoleLogLevel, (...args: unknown[]) => void>>;
 
     public_cdn_path: string;
     nonce: string | undefined;

@@ -80,6 +80,7 @@ import { NewFrontendAssetsChecker } from './core/services/NewFrontendAssetsCheck
 import { backendSrv } from './core/services/backend_srv';
 import { contextSrv, RedirectToUrlKey } from './core/services/context_srv';
 import { initEchoSrv } from './core/services/echo/init';
+import { enableStructuredConsoleForwarding } from './core/services/echo/structuredConsole';
 import { KeybindingSrv } from './core/services/keybindingSrv';
 import { startMeasure, stopMeasure } from './core/utils/metrics';
 import { initAlerting } from './features/alerting/unified/initAlerting';
@@ -174,6 +175,7 @@ export class GrafanaApp {
 
       setBackendSrv(backendSrv);
       await initEchoSrv();
+      enableStructuredConsoleForwarding();
       // This needs to be done after the `initEchoSrv` since it is being used under the hood.
       startMeasure('frontend_app_init');
 
