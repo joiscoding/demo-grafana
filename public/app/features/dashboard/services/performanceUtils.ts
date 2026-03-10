@@ -1,6 +1,5 @@
 import { store } from '@grafana/data';
 import { performanceUtils, writePerformanceLog } from '@grafana/scenes';
-import { logStructuredInfo } from 'app/core/utils/structuredLog';
 
 /**
  * Utility function to register a performance observer with the global tracker
@@ -87,10 +86,10 @@ export function writePerformanceGroupLog(logger: string, message: string, data?:
   if (isPerformanceLoggingEnabled()) {
     if (data) {
       // eslint-disable-next-line no-console
-      logStructuredInfo('public/app/features/dashboard/services/performanceUtils.ts',message, data);
+      console.log(message, data);
     } else {
       // eslint-disable-next-line no-console
-      logStructuredInfo('public/app/features/dashboard/services/performanceUtils.ts',message);
+      console.log(message);
     }
   }
 }
