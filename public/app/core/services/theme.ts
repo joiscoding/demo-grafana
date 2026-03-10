@@ -6,11 +6,37 @@ import { contextSrv } from '../services/context_srv';
 
 import { PreferencesService } from './PreferencesService';
 
+const THEME_BODY_CLASSES = ['theme-dark', 'theme-light', 'theme-system'];
+
+function setBodyThemeClass(mode: 'light' | 'dark') {
+  document.body.classList.remove(...THEME_BODY_CLASSES);
+  document.body.classList.add(`theme-${mode}`);
+}
+
+function isThemeStylesheetLink(link: HTMLLinkElement, mode: 'light' | 'dark') {
+  if (!link.href) {
+    return false;
+  }
+
+  const configuredThemeStylesheet = config.bootData.assets[mode];
+  if (configuredThemeStylesheet) {
+    const configuredThemeHref = new URL(configuredThemeStylesheet, window.location.href).href;
+
+    if (link.href === configuredThemeHref) {
+      return true;
+    }
+  }
+
+  // Keep the old matcher as a fallback to avoid regressions.
+  return link.href.includes(`build/grafana.${mode}`);
+}
+
 export async function changeTheme(themeId: string, runtimeOnly?: boolean) {
   const oldTheme = config.theme2;
 
   const newTheme = getThemeById(themeId);
 
+  setBodyThemeClass(newTheme.colors.mode);
   appEvents.publish(new ThemeChangedEvent(newTheme));
 
   // Add css file for new theme
@@ -24,7 +50,7 @@ export async function changeTheme(themeId: string, runtimeOnly?: boolean) {
       for (let i = 0; i < bodyLinks.length; i++) {
         const link = bodyLinks[i];
 
-        if (link.href && link.href.includes(`build/grafana.${oldTheme.colors.mode}`)) {
+        if (link !== newCssLink && isThemeStylesheetLink(link, oldTheme.colors.mode)) {
           // Remove existing link once the new css has loaded to avoid flickering
           // If we add new css at the same time we remove current one the page will be rendered without css
           // As the new css file is loading
