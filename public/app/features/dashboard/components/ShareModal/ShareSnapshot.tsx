@@ -5,7 +5,7 @@ import { isEmptyObject, SelectableValue, VariableRefresh } from '@grafana/data';
 import { selectors as e2eSelectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
 import { getBackendSrv } from '@grafana/runtime';
-import { Button, ClipboardButton, Field, Input, LinkButton, Modal, Select, Spinner, Stack } from '@grafana/ui';
+import { Button, ClipboardButton, Field, Input, Modal, Select, Spinner, Stack } from '@grafana/ui';
 import { getTimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
@@ -21,6 +21,7 @@ interface Props extends ShareModalTabProps {}
 interface State {
   isLoading: boolean;
   step: number;
+  snapshotKey: string;
   snapshotName: string;
   selectedExpireOption: SelectableValue<number>;
   snapshotExpires?: number;
@@ -32,7 +33,28 @@ interface State {
 }
 
 const selectors = e2eSelectors.pages.ShareDashboardModal.SnapshotScene;
+const SNAPSHOT_LINK_STORAGE_KEY = 'grafana.share.snapshot.latest';
 
+interface PersistedSnapshotLinkState {
+  storageId: string;
+  snapshotKey?: string;
+  snapshotUrl: string;
+  deleteUrl: string;
+}
+
+const isPersistedSnapshotLinkState = (value: unknown): value is PersistedSnapshotLinkState => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  return (
+    typeof Reflect.get(value, 'storageId') === 'string' &&
+    typeof Reflect.get(value, 'snapshotUrl') === 'string' &&
+    typeof Reflect.get(value, 'deleteUrl') === 'string'
+  );
+};
+
+// eslint-disable-next-line react-prefer-function-component/react-prefer-function-component
 export class ShareSnapshot extends PureComponent<Props, State> {
   private dashboard: DashboardModel;
   private expireOptions: Array<SelectableValue<number>>;
@@ -61,6 +83,7 @@ export class ShareSnapshot extends PureComponent<Props, State> {
     this.state = {
       isLoading: false,
       step: 1,
+      snapshotKey: '',
       selectedExpireOption: this.expireOptions[2],
       snapshotExpires: this.expireOptions[2].value,
       snapshotName: props.dashboard.title,
@@ -74,6 +97,7 @@ export class ShareSnapshot extends PureComponent<Props, State> {
 
   componentDidMount() {
     this.getSnaphotShareOptions();
+    this.restoreSnapshotLinkState();
   }
 
   async getSnaphotShareOptions() {
@@ -114,9 +138,16 @@ export class ShareSnapshot extends PureComponent<Props, State> {
     try {
       const results = await getDashboardSnapshotSrv().create(cmdData);
       this.setState({
+        snapshotKey: results.key,
         deleteUrl: results.deleteUrl,
         snapshotUrl: results.url,
         step: 2,
+      });
+      this.persistSnapshotLinkState({
+        storageId: this.getSnapshotStorageID(),
+        snapshotKey: results.key,
+        snapshotUrl: results.url,
+        deleteUrl: results.deleteUrl,
       });
     } finally {
       if (external) {
@@ -205,8 +236,64 @@ export class ShareSnapshot extends PureComponent<Props, State> {
 
   deleteSnapshot = async () => {
     const { deleteUrl } = this.state;
-    await getBackendSrv().get(deleteUrl);
-    this.setState({ step: 3 });
+    this.setState({ isLoading: true });
+    try {
+      await getBackendSrv().get(deleteUrl);
+      this.clearPersistedSnapshotLinkState();
+      this.setState({ step: 3 });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
+
+  getSnapshotStorageID = () => {
+    return `${this.dashboard.uid || 'dashboard'}:${this.props.panel?.id || 'all'}`;
+  };
+
+  restoreSnapshotLinkState = () => {
+    const persisted = this.getPersistedSnapshotLinkState();
+    if (!persisted || persisted.storageId !== this.getSnapshotStorageID()) {
+      return;
+    }
+
+    this.setState({
+      step: 2,
+      snapshotKey: persisted.snapshotKey || '',
+      snapshotUrl: persisted.snapshotUrl,
+      deleteUrl: persisted.deleteUrl,
+    });
+  };
+
+  persistSnapshotLinkState = (snapshotState: PersistedSnapshotLinkState) => {
+    try {
+      window.sessionStorage.setItem(SNAPSHOT_LINK_STORAGE_KEY, JSON.stringify(snapshotState));
+    } catch {
+      // ignore storage errors (e.g. unavailable in strict privacy mode)
+    }
+  };
+
+  clearPersistedSnapshotLinkState = () => {
+    try {
+      window.sessionStorage.removeItem(SNAPSHOT_LINK_STORAGE_KEY);
+    } catch {
+      // ignore storage errors
+    }
+  };
+
+  getPersistedSnapshotLinkState = (): PersistedSnapshotLinkState | undefined => {
+    try {
+      const raw = window.sessionStorage.getItem(SNAPSHOT_LINK_STORAGE_KEY);
+      if (!raw) {
+        return undefined;
+      }
+      const parsed = JSON.parse(raw);
+      if (!isPersistedSnapshotLinkState(parsed)) {
+        return undefined;
+      }
+      return parsed;
+    } catch {
+      return undefined;
+    }
   };
 
   getSnapshotUrl = () => {
@@ -258,10 +345,10 @@ export class ShareSnapshot extends PureComponent<Props, State> {
             </Trans>
           </p>
         </div>
-        <Field label={snapshotNameTranslation}>
+        <Field label={snapshotNameTranslation} noMargin>
           <Input id="snapshot-name-input" width={30} value={snapshotName} onChange={this.onSnapshotNameChange} />
         </Field>
-        <Field label={expireTranslation}>
+        <Field label={expireTranslation} noMargin>
           <Select
             inputId="expire-select-input"
             width={30}
@@ -270,7 +357,7 @@ export class ShareSnapshot extends PureComponent<Props, State> {
             onChange={this.onExpireChange}
           />
         </Field>
-        <Field label={timeoutTranslation} description={timeoutDescriptionTranslation}>
+        <Field label={timeoutTranslation} description={timeoutDescriptionTranslation} noMargin>
           <Input id="timeout-input" type="number" width={21} value={timeoutSeconds} onChange={this.onTimeoutChange} />
         </Field>
 
@@ -301,7 +388,7 @@ export class ShareSnapshot extends PureComponent<Props, State> {
 
     return (
       <Stack direction="column" gap={0}>
-        <Field label={t('share-modal.snapshot.url-label', 'Snapshot URL')}>
+        <Field label={t('share-modal.snapshot.url-label', 'Snapshot URL')} noMargin>
           <Input
             id="snapshot-url-input"
             value={snapshotUrl}
@@ -319,13 +406,22 @@ export class ShareSnapshot extends PureComponent<Props, State> {
             }
           />
         </Field>
-
-        <div style={{ alignSelf: 'flex-end', padding: '5px' }}>
-          <Trans i18nKey="share-modal.snapshot.mistake-message">Did you make a mistake? </Trans>&nbsp;
-          <LinkButton fill="text" target="_blank" onClick={this.deleteSnapshot}>
-            <Trans i18nKey="share-modal.snapshot.delete-button">Delete snapshot.</Trans>
-          </LinkButton>
-        </div>
+        <p>
+          <Trans i18nKey="share-modal.snapshot.disable-link-description">
+            Need to invalidate this copied link before it expires? Disable it now.
+          </Trans>
+        </p>
+        <Stack direction="row" justifyContent="flex-end">
+          <Button
+            fill="outline"
+            variant="destructive"
+            icon="trash-alt"
+            onClick={this.deleteSnapshot}
+            data-testid="snapshot-disable-link-button"
+          >
+            <Trans i18nKey="share-modal.snapshot.disable-link-button">Disable link</Trans>
+          </Button>
+        </Stack>
       </Stack>
     );
   }
