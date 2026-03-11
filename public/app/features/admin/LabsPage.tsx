@@ -25,7 +25,7 @@ type Cell<T extends keyof FeatureToggle = keyof FeatureToggle> = CellProps<Featu
 const EMPTY_TOGGLES: FeatureToggle[] = [];
 
 const getFeatureToggles = async (): Promise<FeatureTogglesResponse | null> => {
-  return getBackendSrv().get('api/admin/feature-toggles');
+  return getBackendSrv().get('/api/admin/feature-toggles');
 };
 
 export default function LabsPage() {
