@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"testing"
@@ -11,6 +12,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/db/dbtest"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
 	"github.com/grafana/grafana/pkg/services/anonymous/anontest"
+	"github.com/grafana/grafana/pkg/services/featuremgmt"
 	"github.com/grafana/grafana/pkg/services/stats"
 	"github.com/grafana/grafana/pkg/services/stats/statstest"
 	"github.com/grafana/grafana/pkg/setting"
@@ -148,6 +150,26 @@ func TestAdmin_AccessControl(t *testing.T) {
 				},
 			},
 		},
+		{
+			expectedCode: http.StatusOK,
+			desc:         "AdminGetFeatureToggles should return 200 for user with correct permissions",
+			url:          "/api/admin/feature-toggles",
+			permissions: []accesscontrol.Permission{
+				{
+					Action: accesscontrol.ActionFeatureManagementRead,
+				},
+			},
+		},
+		{
+			expectedCode: http.StatusForbidden,
+			desc:         "AdminGetFeatureToggles should return 403 for user without required permissions",
+			url:          "/api/admin/feature-toggles",
+			permissions: []accesscontrol.Permission{
+				{
+					Action: "wrong",
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -160,6 +182,7 @@ func TestAdmin_AccessControl(t *testing.T) {
 				hs.Cfg = setting.NewCfg()
 				hs.SQLStore = dbtest.NewFakeDB()
 				hs.SettingsProvider = &setting.OSSImpl{Cfg: hs.Cfg}
+				hs.Features = featuremgmt.WithFeatures()
 				hs.statsService = fakeStatsService
 				hs.anonService = fakeAnonService
 			})
@@ -170,4 +193,43 @@ func TestAdmin_AccessControl(t *testing.T) {
 			require.NoError(t, res.Body.Close())
 		})
 	}
+}
+
+func TestAPI_AdminGetFeatureToggles(t *testing.T) {
+	server := SetupAPITestServer(t, func(hs *HTTPServer) {
+		hs.Features = featuremgmt.WithFeatures("panelTitleSearch")
+	})
+
+	res, err := server.Send(
+		webtest.RequestWithSignedInUser(
+			server.NewGetRequest("/api/admin/feature-toggles"),
+			userWithPermissions(1, []accesscontrol.Permission{{Action: accesscontrol.ActionFeatureManagementRead}}),
+		),
+	)
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, res.StatusCode)
+	defer func() {
+		require.NoError(t, res.Body.Close())
+	}()
+
+	body, err := io.ReadAll(res.Body)
+	require.NoError(t, err)
+
+	var response AdminFeatureTogglesResponse
+	require.NoError(t, json.Unmarshal(body, &response))
+	require.NotEmpty(t, response.Toggles)
+
+	foundEnabled := false
+	foundDisabled := false
+	for _, toggle := range response.Toggles {
+		switch toggle.Name {
+		case "panelTitleSearch":
+			foundEnabled = toggle.Enabled
+		case "storage":
+			foundDisabled = !toggle.Enabled
+		}
+	}
+
+	require.True(t, foundEnabled)
+	require.True(t, foundDisabled)
 }

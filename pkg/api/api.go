@@ -560,6 +560,7 @@ func (hs *HTTPServer) registerRoutes() {
 		// There is additional filter which will ensure that user sees only settings that they are allowed to see, so we don't need provide additional scope here for ActionSettingsRead.
 		adminRoute.Get("/settings", authorize(ac.EvalPermission(ac.ActionSettingsRead)), routing.Wrap(hs.AdminGetSettings))
 		adminRoute.Get("/settings-verbose", authorize(ac.EvalPermission(ac.ActionSettingsRead)), routing.Wrap(hs.AdminGetVerboseSettings))
+		adminRoute.Get("/feature-toggles", authorize(ac.EvalPermission(ac.ActionFeatureManagementRead)), routing.Wrap(hs.AdminGetFeatureToggles))
 		adminRoute.Get("/stats", authorize(ac.EvalPermission(ac.ActionServerStatsRead)), routing.Wrap(hs.AdminGetStats))
 
 		adminRoute.Post("/encryption/rotate-data-keys", reqGrafanaAdmin, routing.Wrap(hs.AdminRotateDataEncryptionKeys))
