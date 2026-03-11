@@ -7,6 +7,7 @@ import { isFrontendService } from 'app/core/utils/isFrontendService';
 
 import { useGrafana } from '../context/GrafanaContext';
 import { contextSrv } from '../services/context_srv';
+import { changeTheme } from '../services/theme';
 
 import { GrafanaRouteError } from './GrafanaRouteError';
 import { GrafanaRouteLoading } from './GrafanaRouteLoading';
@@ -22,6 +23,20 @@ export function GrafanaRoute(props: Props) {
   useLayoutEffect(() => {
     keybindings.clearAndInitGlobalBindings(props.route);
   }, [keybindings, props.route]);
+
+  useEffect(() => {
+    const theme = new URLSearchParams(props.location.search).get('theme');
+    if (theme !== 'dark' && theme !== 'light') {
+      return;
+    }
+
+    const currentIsDark = config.theme2?.isDark;
+    const shouldChangeTheme = theme === 'dark' ? currentIsDark !== true : currentIsDark !== false;
+
+    if (shouldChangeTheme) {
+      void changeTheme(theme, true);
+    }
+  }, [props.location.search]);
 
   useEffect(() => {
     updateBodyClassNames(props.route);

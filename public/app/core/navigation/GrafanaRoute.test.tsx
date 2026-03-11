@@ -2,12 +2,18 @@ import { screen } from '@testing-library/react';
 import { lazy, ComponentType } from 'react';
 import { render } from 'test/test-utils';
 
-import { setEchoSrv } from '@grafana/runtime';
+import { getThemeById } from '@grafana/data/internal';
+import { config, setEchoSrv } from '@grafana/runtime';
 
 import { Echo } from '../services/echo/Echo';
 
 import { GrafanaRoute, Props } from './GrafanaRoute';
 import { GrafanaRouteComponentProps } from './types';
+
+const mockChangeTheme = jest.fn();
+jest.mock('../services/theme', () => ({
+  changeTheme: (...args: unknown[]) => mockChangeTheme(...args),
+}));
 
 const mockLocation = {
   search: '?query=hello&test=asd',
@@ -31,6 +37,8 @@ function setup(overrides: Partial<Props>) {
 describe('GrafanaRoute', () => {
   beforeEach(() => {
     setEchoSrv(new Echo());
+    mockChangeTheme.mockReset();
+    config.theme2 = getThemeById('light');
   });
 
   it('Parses search', () => {
@@ -66,5 +74,16 @@ describe('GrafanaRoute', () => {
 
     expect(await screen.findByRole('heading', { name: 'An unexpected error happened' })).toBeInTheDocument();
     expect(consoleError).toHaveBeenCalled();
+  });
+
+  it('Applies dark theme from URL when mode differs', () => {
+    setup({ location: { ...mockLocation, search: '?theme=dark' } });
+    expect(mockChangeTheme).toHaveBeenCalledWith('dark', true);
+  });
+
+  it('Does not apply theme when URL mode matches current mode', () => {
+    config.theme2 = getThemeById('dark');
+    setup({ location: { ...mockLocation, search: '?theme=dark' } });
+    expect(mockChangeTheme).not.toHaveBeenCalled();
   });
 });
