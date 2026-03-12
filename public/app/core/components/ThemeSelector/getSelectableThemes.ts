@@ -5,6 +5,7 @@ export function getSelectableThemes() {
   const allowedExtraThemes = [];
 
   if (config.featureToggles.grafanaconThemes) {
+    allowedExtraThemes.push('amethyst');
     allowedExtraThemes.push('desertbloom');
     allowedExtraThemes.push('gildedgrove');
     allowedExtraThemes.push('sapphiredusk');
