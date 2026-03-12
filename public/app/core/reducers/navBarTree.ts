@@ -21,12 +21,49 @@ function translateNav(navTree: NavModelItem[]): NavModelItem[] {
   });
 }
 
+export function addLabsSectionToNav(
+  navTree: NavModelItem[],
+  isSignedIn = config.bootData?.user?.isSignedIn ?? false,
+  appSubUrl = config.appSubUrl
+): NavModelItem[] {
+  if (!isSignedIn || navTree.some((navItem) => navItem.id === 'labs')) {
+    return navTree;
+  }
+
+  const labsNavItem: NavModelItem = {
+    id: 'labs',
+    text: 'Labs',
+    subTitle: 'View and control feature flags for this app',
+    icon: 'flask',
+    url: `${appSubUrl}/labs`,
+    isNew: true,
+  };
+
+  const navTreeWithLabs = [...navTree];
+  const connectionsIndex = navTreeWithLabs.findIndex((navItem) => navItem.id === 'connections');
+  const configIndex = navTreeWithLabs.findIndex((navItem) => navItem.id === 'cfg');
+
+  if (connectionsIndex > -1) {
+    const insertionIndex = connectionsIndex + 1;
+    navTreeWithLabs.splice(insertionIndex, 0, labsNavItem);
+    return navTreeWithLabs;
+  }
+
+  if (configIndex > -1) {
+    navTreeWithLabs.splice(configIndex, 0, labsNavItem);
+    return navTreeWithLabs;
+  }
+
+  navTreeWithLabs.push(labsNavItem);
+  return navTreeWithLabs;
+}
+
 // this matches the prefix set in the backend navtree
 export const ID_PREFIX = 'starred/';
 
 const navTreeSlice = createSlice({
   name: 'navBarTree',
-  initialState: () => translateNav(config.bootData?.navTree ?? []),
+  initialState: () => addLabsSectionToNav(translateNav(config.bootData?.navTree ?? [])),
   reducers: {
     setStarred: (state, action: PayloadAction<{ id: string; title: string; url: string; isStarred: boolean }>) => {
       const starredItems = state.find((navItem) => navItem.id === 'starred');
