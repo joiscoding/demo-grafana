@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useRef } from 'react';
+import { memo, useCallback, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { GrafanaTheme2 } from '@grafana/data';
@@ -38,6 +38,11 @@ export const DashboardFiltersOverview = ({
     groupByVariable,
     searchQuery,
   });
+
+  const handleApplyAndClose = useCallback(() => {
+    actions.applyChanges();
+    onClose();
+  }, [actions, onClose]);
 
   const virtualizer = useVirtualizer({
     count: listItems.length,
@@ -138,12 +143,9 @@ export const DashboardFiltersOverview = ({
         </div>
       </div>
 
-      <Footer
+      <MemoFooter
         onApply={actions.applyChanges}
-        onApplyAndClose={() => {
-          actions.applyChanges();
-          onClose();
-        }}
+        onApplyAndClose={handleApplyAndClose}
         onClose={onClose}
       />
     </div>
@@ -156,7 +158,9 @@ interface FooterProps {
   onClose: () => void;
 }
 
-const Footer = ({ onApply, onApplyAndClose, onClose }: FooterProps) => {
+const MemoFooter = memo(Footer);
+
+function Footer({ onApply, onApplyAndClose, onClose }: FooterProps) {
   const styles = useStyles2(getStyles);
 
   return (
@@ -174,7 +178,7 @@ const Footer = ({ onApply, onApplyAndClose, onClose }: FooterProps) => {
       </Stack>
     </div>
   );
-};
+}
 
 const getStyles = (theme: GrafanaTheme2) => ({
   container: css({

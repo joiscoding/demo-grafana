@@ -646,15 +646,13 @@ function usePanelEditDirty(panelEditor?: PanelEditor) {
   useEffect(() => {
     if (panelEditor) {
       const unsub = panelEditor.subscribeToState((state) => {
-        if (state.isDirty !== isDirty) {
-          setIsDirty(state.isDirty);
-        }
+        setIsDirty((prev) => (state.isDirty !== prev ? state.isDirty : prev));
       });
 
       return () => unsub.unsubscribe();
     }
     return;
-  }, [panelEditor, isDirty]);
+  }, [panelEditor]);
 
   return isDirty;
 }

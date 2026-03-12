@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
@@ -91,19 +91,25 @@ function DashboardEditPaneSplitterNewLayouts({ dashboard, isEditing, body, contr
     editPane.setState({ isDocked: sidebarContext.isDocked });
   }, [sidebarContext.isDocked, editPane]);
 
-  const onClearSelection: React.PointerEventHandler<HTMLDivElement> = (evt) => {
-    if (evt.shiftKey) {
-      return;
-    }
+  const onClearSelection: React.PointerEventHandler<HTMLDivElement> = useCallback(
+    (evt) => {
+      if (evt.shiftKey) {
+        return;
+      }
 
-    editPane.clearSelection();
-  };
+      editPane.clearSelection();
+    },
+    [editPane]
+  );
 
-  const onBodyRef = (ref: HTMLDivElement | null) => {
-    if (ref) {
-      dashboard.onSetScrollRef(new DivScrollElement(ref));
-    }
-  };
+  const onBodyRef = useCallback(
+    (ref: HTMLDivElement | null) => {
+      if (ref) {
+        dashboard.onSetScrollRef(new DivScrollElement(ref));
+      }
+    },
+    [dashboard]
+  );
 
   function renderBody() {
     const renderWithoutSidebar = isPlaying || kioskMode === KioskMode.Full;

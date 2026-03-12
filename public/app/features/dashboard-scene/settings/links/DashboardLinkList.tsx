@@ -86,7 +86,7 @@ export function DashboardLinkList({
                   {link.type === 'dashboards' && <TagList tags={link.tags ?? []} />}
                 </Stack>
               </td>
-              <td style={{ width: '1%' }} role="gridcell">
+              <td className={styles.shrinkCell} role="gridcell">
                 {idx !== 0 && (
                   <IconButton
                     name="arrow-up"
@@ -95,7 +95,7 @@ export function DashboardLinkList({
                   />
                 )}
               </td>
-              <td style={{ width: '1%' }} role="gridcell">
+              <td className={styles.shrinkCell} role="gridcell">
                 {links.length > 1 && idx !== links.length - 1 ? (
                   <IconButton
                     name="arrow-down"
@@ -104,14 +104,14 @@ export function DashboardLinkList({
                   />
                 ) : null}
               </td>
-              <td style={{ width: '1%' }} role="gridcell">
+              <td className={styles.shrinkCell} role="gridcell">
                 <IconButton
                   name="copy"
                   onClick={() => onDuplicate(link)}
                   tooltip={t('dashboard-scene.dashboard-link-list.tooltip-copy-link', 'Copy link')}
                 />
               </td>
-              <td style={{ width: '1%' }} role="gridcell">
+              <td className={styles.shrinkCell} role="gridcell">
                 <DeleteButton
                   aria-label={t(
                     'dashboard-scene.dashboard-link-list.delete-aria-label',
@@ -146,5 +146,8 @@ const getStyles = (theme: GrafanaTheme2) => ({
   }),
   newLinkButton: css({
     marginTop: theme.spacing(3),
+  }),
+  shrinkCell: css({
+    width: '1%',
   }),
 });
