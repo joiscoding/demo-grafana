@@ -174,7 +174,7 @@ export function buildCorrelationFieldSelector(sourceUIDs: string[]): string | un
   if (sourceUIDs.length === 1) {
     return `spec.datasource.name=${sourceUIDs[0]}`;
   }
-  return `spec.datasource.name in (${sourceUIDs.join(';')})`;
+  return `spec.datasource.name in (${sourceUIDs.join(',')})`;
 }
 
 export const createCorrelation = async (

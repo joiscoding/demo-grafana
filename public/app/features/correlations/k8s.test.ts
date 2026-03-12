@@ -120,6 +120,6 @@ describe('buildCorrelationFieldSelector', () => {
   });
 
   it('builds in selector for many source uids', () => {
-    expect(buildCorrelationFieldSelector(['uid-a', 'uid-b'])).toBe('spec.datasource.name in (uid-a;uid-b)');
+    expect(buildCorrelationFieldSelector(['uid-a', 'uid-b'])).toBe('spec.datasource.name in (uid-a,uid-b)');
   });
 });

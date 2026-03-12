@@ -70,7 +70,7 @@ func (s *legacyStorage) List(ctx context.Context, options *internalversion.ListO
 				case selection.Equals, selection.DoubleEquals:
 					uids = []string{r.Value}
 				case selection.In:
-					uids = strings.Split(r.Value, ";") // ??? not sure how/if this supports multiple values
+					uids = strings.Split(r.Value, ",")
 				default:
 					return nil, fmt.Errorf("unsupported operation")
 				}
