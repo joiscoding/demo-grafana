@@ -181,6 +181,8 @@ export function getNavTitle(navId: string | undefined) {
       return t('nav.search-dashboards.title', 'Search dashboards');
     case 'connections':
       return t('nav.connections.title', 'Connections');
+    case 'labs':
+      return t('nav.labs.title', 'Labs');
     case 'connections-add-new-connection':
       return t('nav.add-new-connections.title', 'Add new connection');
     case 'standalone-plugin-page-/connections/collector':
@@ -319,6 +321,8 @@ export function getNavSubTitle(navId: string | undefined) {
       );
     case 'plugin-page-grafana-ml-app':
       return t('nav.machine-learning.subtitle', 'Explore AI and machine learning features');
+    case 'labs':
+      return t('nav.labs.subtitle', 'View and control feature flags for this app');
     default:
       return undefined;
   }

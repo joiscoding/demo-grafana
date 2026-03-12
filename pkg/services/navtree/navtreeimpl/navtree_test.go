@@ -15,6 +15,7 @@ import (
 	"github.com/grafana/grafana/pkg/services/star"
 	"github.com/grafana/grafana/pkg/services/star/startest"
 	"github.com/grafana/grafana/pkg/services/user"
+	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/web"
 )
 
@@ -157,4 +158,25 @@ func TestBuildStarredItemsNavLinks(t *testing.T) {
 		require.Equal(t, "B Dashboard", navLinks[1].Text)
 		require.Equal(t, "C Dashboard", navLinks[2].Text)
 	})
+}
+
+func TestBuildLabsNavLink(t *testing.T) {
+	service := ServiceImpl{
+		cfg: setting.NewCfg(),
+	}
+
+	signedInReq := &contextmodel.ReqContext{
+		IsSignedIn: true,
+	}
+	link := service.buildLabsNavLink(signedInReq)
+	require.NotNil(t, link)
+	require.Equal(t, "labs", link.Id)
+	require.Equal(t, "/labs", link.Url)
+	require.Equal(t, "flask", link.Icon)
+	require.True(t, link.IsNew)
+
+	signedOutReq := &contextmodel.ReqContext{
+		IsSignedIn: false,
+	}
+	require.Nil(t, service.buildLabsNavLink(signedOutReq))
 }

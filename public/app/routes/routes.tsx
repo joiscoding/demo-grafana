@@ -210,6 +210,10 @@ export function getAppRoutes(): RouteDescriptor[] {
       component: () => <NavLandingPage navId="adaptive-telemetry" />,
     },
     {
+      path: '/labs',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "LabsPage" */ 'app/features/labs/LabsPage')),
+    },
+    {
       path: '/monitoring',
       component: () => <Navigate replace to="/observability" />,
     },
