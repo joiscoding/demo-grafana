@@ -50,8 +50,8 @@
       "main": "#d07a23"
     },
     "background": {
-      "canvas": "#261d38",
-      "primary": "#1b1529",
+      "canvas": "#1b1529",
+      "primary": "#261d38",
       "secondary": "#2a2040",
       "elevated": "#2a2040"
     },
