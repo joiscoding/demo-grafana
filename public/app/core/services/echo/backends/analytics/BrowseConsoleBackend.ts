@@ -29,7 +29,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
       logger.logInfo('echo interaction event', {
         eventType: EchoEventType.Interaction,
         interactionName: eventName,
-        properties: e.payload.properties,
+        properties: JSON.stringify(e.payload.properties ?? {}),
       });
 
       // Warn for non-scalar property values. We're not yet making this a hard a
@@ -44,7 +44,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
         logger.logWarning('echo interaction event has invalid property types', {
           eventType: EchoEventType.Interaction,
           interactionName: eventName,
-          invalidProperties: Object.fromEntries(invalidTypeProperties),
+          invalidProperties: JSON.stringify(Object.fromEntries(invalidTypeProperties)),
         });
       }
     }
@@ -52,7 +52,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
     if (isExperimentViewEvent(e)) {
       logger.logInfo('echo experiment event', {
         eventType: EchoEventType.ExperimentView,
-        payload: e.payload,
+        payload: JSON.stringify(e.payload),
       });
     }
   };

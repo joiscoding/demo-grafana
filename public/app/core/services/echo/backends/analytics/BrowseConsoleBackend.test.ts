@@ -69,22 +69,22 @@ describe('BrowserConsoleBackend', () => {
     expect(mockMonitoringLogger.logInfo).toHaveBeenCalledWith('echo interaction event', {
       eventType: EchoEventType.Interaction,
       interactionName: 'panel_click',
-      properties: {
+      properties: JSON.stringify({
         valid: 'ok',
         invalid: {
           nested: true,
         },
-      },
+      }),
     });
 
     expect(mockMonitoringLogger.logWarning).toHaveBeenCalledWith('echo interaction event has invalid property types', {
       eventType: EchoEventType.Interaction,
       interactionName: 'panel_click',
-      invalidProperties: {
+      invalidProperties: JSON.stringify({
         invalid: {
           nested: true,
         },
-      },
+      }),
     });
   });
 
@@ -102,11 +102,11 @@ describe('BrowserConsoleBackend', () => {
 
     expect(mockMonitoringLogger.logInfo).toHaveBeenCalledWith('echo experiment event', {
       eventType: EchoEventType.ExperimentView,
-      payload: {
+      payload: JSON.stringify({
         experimentId: 'abc',
         experimentGroup: 'group_a',
         experimentVariant: 'variant_1',
-      },
+      }),
     });
   });
 });
