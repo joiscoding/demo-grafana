@@ -1,7 +1,13 @@
 import { css } from '@emotion/css';
 import { ChangeEvent, useMemo, useState } from 'react';
 
-import { GrafanaTheme2, store } from '@grafana/data';
+import {
+  GrafanaTheme2,
+  parseFeatureToggleOverrides,
+  serializeFeatureToggleOverrides,
+  store,
+  type FeatureToggleMap,
+} from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
 import { Alert, Badge, Button, Input, Stack, Switch, Text, useStyles2 } from '@grafana/ui';
@@ -10,34 +16,6 @@ import { Page } from 'app/core/components/Page/Page';
 const FEATURE_TOGGLE_STORAGE_KEY = 'grafana.featureToggles';
 const FEATURE_TOGGLE_NAME_SORTER = new Intl.Collator('en');
 const FEATURE_MANAGEMENT_WRITE_PERMISSION = 'featuremgmt.write';
-
-type FeatureToggleMap = Record<string, boolean>;
-
-function parseFeatureToggleOverrides(rawValue: string | undefined): FeatureToggleMap {
-  if (!rawValue) {
-    return {};
-  }
-
-  const overrides: FeatureToggleMap = {};
-
-  for (const featureItem of rawValue.split(',')) {
-    const [featureName, featureValue] = featureItem.split('=');
-    if (!featureName) {
-      continue;
-    }
-
-    overrides[featureName] = featureValue === 'true' || featureValue === '1';
-  }
-
-  return overrides;
-}
-
-function serializeFeatureToggleOverrides(overrides: FeatureToggleMap): string {
-  return Object.entries(overrides)
-    .sort(([leftName], [rightName]) => FEATURE_TOGGLE_NAME_SORTER.compare(leftName, rightName))
-    .map(([featureName, isEnabled]) => `${featureName}=${isEnabled}`)
-    .join(',');
-}
 
 function buildInitialFeatureToggleState(): FeatureToggleMap {
   const runtimeFeatureToggles: FeatureToggleMap = {};
@@ -108,7 +86,10 @@ export default function LabsPage() {
             )}
           </Text>
           <Stack direction="row" gap={1}>
-            <Badge text={t('labs.feature-flags.enabled-count', '{{count}} enabled', { count: enabledCount })} color="green" />
+            <Badge
+              text={t('labs.feature-flags.enabled-count', '{{count}} enabled', { count: enabledCount })}
+              color="green"
+            />
             <Badge
               text={t('labs.feature-flags.total-count', '{{count}} visible', { count: featureNames.length })}
               color="blue"

@@ -15,6 +15,7 @@ import {
   OAuthSettings,
   PanelPluginMeta,
   PreinstalledPlugin as PreinstalledPluginGrafanaData,
+  parseFeatureToggleOverrides,
   systemDateFormats,
   SystemDateFormatSettings,
   getThemeById,
@@ -304,16 +305,11 @@ export class GrafanaBootConfig {
 function overrideFeatureTogglesFromLocalStorage(config: GrafanaBootConfig) {
   const featureToggles = config.featureToggles;
   const localStorageKey = 'grafana.featureToggles';
-  const localStorageValue = window.localStorage.getItem(localStorageKey);
-  if (localStorageValue) {
-    const features = localStorageValue.split(',');
-    for (const feature of features) {
-      const [featureName, featureValue] = feature.split('=');
-      const toggleState = featureValue === 'true' || featureValue === '1';
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      featureToggles[featureName as keyof FeatureToggles] = toggleState;
-      console.log(`Setting feature toggle ${featureName} = ${toggleState} via localstorage`);
-    }
+  const overrides = parseFeatureToggleOverrides(window.localStorage.getItem(localStorageKey));
+  for (const [featureName, toggleState] of Object.entries(overrides)) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    featureToggles[featureName as keyof FeatureToggles] = toggleState;
+    console.log(`Setting feature toggle ${featureName} = ${toggleState} via localstorage`);
   }
 }
 
