@@ -1,0 +1,76 @@
+{
+  "name": "Purple",
+  "id": "purple",
+  "colors": {
+    "mode": "dark",
+    "border": {
+      "weak": "#3b2e57",
+      "medium": "#4b3a70",
+      "strong": "#66508f"
+    },
+    "text": {
+      "primary": "#f3eefe",
+      "secondary": "#c8bbeb",
+      "disabled": "#9f94bf",
+      "link": "#b59cff",
+      "maxContrast": "#ffffff"
+    },
+    "primary": {
+      "main": "#9370db",
+      "text": "#b59cff",
+      "border": "#9370db",
+      "name": "primary",
+      "shade": "#7b68ee",
+      "transparent": "#9370db29",
+      "contrastText": "#141120",
+      "borderTransparent": "#9370db40"
+    },
+    "secondary": {
+      "main": "#3b2f59",
+      "shade": "#463769",
+      "transparent": "rgba(204, 187, 235, 0.08)",
+      "text": "#d8caf6",
+      "contrastText": "#efe8ff",
+      "border": "rgba(204, 187, 235, 0.1)",
+      "name": "secondary",
+      "borderTransparent": "rgba(204, 187, 235, 0.25)"
+    },
+    "info": {
+      "main": "#5c4e8a",
+      "text": "#c8bbeb",
+      "border": "#705ea3"
+    },
+    "error": {
+      "main": "#c0437f"
+    },
+    "success": {
+      "main": "#2b8a5b"
+    },
+    "warning": {
+      "main": "#d07a23"
+    },
+    "background": {
+      "canvas": "#261d38",
+      "primary": "#1b1529",
+      "secondary": "#2a2040",
+      "elevated": "#2a2040"
+    },
+    "action": {
+      "hover": "#403156",
+      "selected": "#4a3966",
+      "selectedBorder": "#b59cff",
+      "focus": "#4a3966",
+      "hoverOpacity": 0.08,
+      "disabledText": "#9f94bf",
+      "disabledBackground": "rgba(74, 57, 102, 0.2)",
+      "disabledOpacity": 0.38
+    },
+    "gradients": {
+      "brandHorizontal": "linear-gradient(270deg, #b59cff 0%, #7b68ee 100%)",
+      "brandVertical": "linear-gradient(0deg, #b59cff 0%, #7b68ee 100%)"
+    },
+    "contrastThreshold": 3,
+    "hoverFactor": 0.03,
+    "tonalOffset": 0.15
+  }
+}

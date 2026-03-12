@@ -10,6 +10,7 @@ import gildedgrove from '@grafana/data/themes/definitions/gildedgrove.json';
 import gloom from '@grafana/data/themes/definitions/gloom.json';
 import mars from '@grafana/data/themes/definitions/mars.json';
 import matrix from '@grafana/data/themes/definitions/matrix.json';
+import purple from '@grafana/data/themes/definitions/purple.json';
 import sapphiredusk from '@grafana/data/themes/definitions/sapphiredusk.json';
 import synthwave from '@grafana/data/themes/definitions/synthwave.json';
 import tron from '@grafana/data/themes/definitions/tron.json';
@@ -54,6 +55,7 @@ const experimentalDefinitions: Record<string, unknown> = {
   gloom,
   mars,
   matrix,
+  purple,
   sapphiredusk,
   synthwave,
   tron,
