@@ -26,16 +26,18 @@ function getDataSourceRef(uid: string) {
 }
 
 function normalizeTransformations(input: CorrelationInput) {
-  return input.config.transformations?.map((transformation): CorrelationTransformationSpec => ({
-    ...transformation,
-    type:
-      transformation.type === SupportedTransformationType.Logfmt
-        ? SupportedTransformationType.Logfmt
-        : SupportedTransformationType.Regex,
-    expression: transformation.expression ?? '',
-    field: transformation.field ?? '',
-    mapValue: transformation.mapValue ?? '',
-  }));
+  return input.config.transformations?.map(
+    (transformation): CorrelationTransformationSpec => ({
+      ...transformation,
+      type:
+        transformation.type === SupportedTransformationType.Logfmt
+          ? SupportedTransformationType.Logfmt
+          : SupportedTransformationType.Regex,
+      expression: transformation.expression ?? '',
+      field: transformation.field ?? '',
+      mapValue: transformation.mapValue ?? '',
+    })
+  );
 }
 
 export function toCorrelationSpec(input: CorrelationInput): CorrelationSpec {

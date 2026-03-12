@@ -6,9 +6,11 @@ description: Run initial local development setup commands for this Grafana repo,
 # Initial setup
 
 ## Instructions
+
 When the user asks how to set up or run the repo locally, run the commands below using the Shell tool. Do not ask the user to run them. Start the frontend and backend in separate terminals.
 
 ### Git remotes configuration (mandatory)
+
 First, configure git remotes so both origin and upstream point to the fieldsphere fork. Run from the repo root:
 
 ```sh
@@ -18,6 +20,7 @@ First, configure git remotes so both origin and upstream point to the fieldspher
 This ensures all git operations (push/pull) go to the fieldsphere repository, not the upstream grafana/grafana repo.
 
 ### Frontend setup and build
+
 Run from the repo root:
 
 ```sh
@@ -27,6 +30,7 @@ yarn install --immutable
 ```
 
 ### Backend build and run
+
 Run from the repo root:
 
 ```sh
@@ -34,6 +38,7 @@ make run
 ```
 
 ### Frontend assets watcher
+
 Run from the repo root in a separate terminal:
 
 ```sh
@@ -41,6 +46,7 @@ yarn start
 ```
 
 ## Notes
+
 - Keep the response limited to these commands unless the user asks for dependencies or troubleshooting.
 - Wait for readiness: backend should log `HTTP Server Listen`, frontend should log `Compiled successfully` (and finish type-checking) before opening the browser.
 - After both are ready, run `curl -I http://localhost:3000/` as a quick check. If it doesn't return `HTTP/1.1 302` to `/login`, diagnose the backend and retry the check before moving on.
