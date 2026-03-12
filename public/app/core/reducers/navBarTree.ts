@@ -24,9 +24,10 @@ function translateNav(navTree: NavModelItem[]): NavModelItem[] {
 export function addLabsSectionToNav(
   navTree: NavModelItem[],
   isSignedIn = config.bootData?.user?.isSignedIn ?? false,
-  appSubUrl = config.appSubUrl
+  appSubUrl = config.appSubUrl,
+  canReadFeatureManagement = config.bootData?.user?.permissions?.['featuremgmt.read'] === true
 ): NavModelItem[] {
-  if (!isSignedIn || navTree.some((navItem) => navItem.id === 'labs')) {
+  if (!isSignedIn || !canReadFeatureManagement || navTree.some((navItem) => navItem.id === 'labs')) {
     return navTree;
   }
 

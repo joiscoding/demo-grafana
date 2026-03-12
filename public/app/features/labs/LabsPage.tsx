@@ -9,6 +9,7 @@ import { Page } from 'app/core/components/Page/Page';
 
 const FEATURE_TOGGLE_STORAGE_KEY = 'grafana.featureToggles';
 const FEATURE_TOGGLE_NAME_SORTER = new Intl.Collator('en');
+const FEATURE_MANAGEMENT_WRITE_PERMISSION = 'featuremgmt.write';
 
 type FeatureToggleMap = Record<string, boolean>;
 
@@ -47,14 +48,20 @@ function buildInitialFeatureToggleState(): FeatureToggleMap {
     }
   }
 
-  const overrides = parseFeatureToggleOverrides(store.get(FEATURE_TOGGLE_STORAGE_KEY));
-  return { ...runtimeFeatureToggles, ...overrides };
+  const runtimeFeatureToggleNames = new Set(Object.keys(runtimeFeatureToggles));
+  const overrideFeatureToggles = parseFeatureToggleOverrides(store.get(FEATURE_TOGGLE_STORAGE_KEY));
+  const filteredOverrides = Object.fromEntries(
+    Object.entries(overrideFeatureToggles).filter(([featureName]) => runtimeFeatureToggleNames.has(featureName))
+  );
+
+  return { ...runtimeFeatureToggles, ...filteredOverrides };
 }
 
 export default function LabsPage() {
   const styles = useStyles2(getStyles);
   const [search, setSearch] = useState('');
   const [featureToggles, setFeatureToggles] = useState<FeatureToggleMap>(() => buildInitialFeatureToggleState());
+  const canWriteFeatureFlags = Boolean(config.bootData?.user?.permissions?.[FEATURE_MANAGEMENT_WRITE_PERMISSION]);
 
   const enabledCount = useMemo(
     () => Object.values(featureToggles).filter((isEnabled) => isEnabled).length,
@@ -69,6 +76,10 @@ export default function LabsPage() {
   }, [featureToggles, search]);
 
   const onToggleChange = (featureName: string, event: ChangeEvent<HTMLInputElement>) => {
+    if (!canWriteFeatureFlags) {
+      return;
+    }
+
     const enabled = event.currentTarget.checked;
     const nextFeatureToggles = { ...featureToggles, [featureName]: enabled };
 
@@ -118,6 +129,14 @@ export default function LabsPage() {
             'Changes are stored in localStorage and can require a page reload to fully apply.'
           )}
         </Alert>
+        {!canWriteFeatureFlags && (
+          <Alert title={t('labs.feature-flags.read-only-title', 'Read-only access')} severity="warning">
+            {t(
+              'labs.feature-flags.read-only',
+              'You can view feature flags, but you do not have permission to update them.'
+            )}
+          </Alert>
+        )}
 
         <Button
           className={styles.reloadButton}
@@ -151,6 +170,7 @@ export default function LabsPage() {
                     value={enabled}
                     onChange={(event) => onToggleChange(featureName, event)}
                     data-testid={`labs-feature-toggle-${featureName}`}
+                    disabled={!canWriteFeatureFlags}
                   />
                 </Stack>
               </div>
