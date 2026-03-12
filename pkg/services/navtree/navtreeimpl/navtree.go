@@ -657,6 +657,9 @@ func (s *ServiceImpl) buildLabsNavLink(c *contextmodel.ReqContext) *navtree.NavL
 	if !c.IsSignedIn {
 		return nil
 	}
+	if !ac.HasAccess(s.accessControl, c)(ac.EvalPermission(ac.ActionSettingsWrite, ac.ScopeSettingsAll)) {
+		return nil
+	}
 
 	return &navtree.NavLink{
 		Text:       "Labs",

@@ -48,7 +48,13 @@ function buildInitialFeatureToggleState(): FeatureToggleMap {
   }
 
   const overrides = parseFeatureToggleOverrides(store.get(FEATURE_TOGGLE_STORAGE_KEY));
-  return { ...runtimeFeatureToggles, ...overrides };
+  const filteredOverrides: FeatureToggleMap = {};
+  for (const [key, value] of Object.entries(overrides)) {
+    if (key in runtimeFeatureToggles) {
+      filteredOverrides[key] = value;
+    }
+  }
+  return { ...runtimeFeatureToggles, ...filteredOverrides };
 }
 
 export default function LabsPage() {
