@@ -6,6 +6,12 @@ import { config, CorrelationData, CorrelationsData, FetchResponse, getDataSource
 import { useGrafana } from 'app/core/context/GrafanaContext';
 
 import {
+  CORRELATIONS_API_BASE_URL,
+  fromK8sCorrelation,
+  toCreateCorrelationResource,
+  toUpdateCorrelationPatch,
+} from './k8s';
+import {
   Correlation,
   CreateCorrelationParams,
   CreateCorrelationResponse,
@@ -16,12 +22,6 @@ import {
   UpdateCorrelationResponse,
 } from './types';
 import { correlationsLogger } from './utils';
-import {
-  CORRELATIONS_API_BASE_URL,
-  fromK8sCorrelation,
-  toCreateCorrelationResource,
-  toUpdateCorrelationPatch,
-} from './k8s';
 
 export interface CorrelationsResponse {
   correlations: Correlation[];

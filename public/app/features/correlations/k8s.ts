@@ -38,7 +38,7 @@ function normalizeTransformations(input: CorrelationInput) {
   }));
 }
 
-export function toCorrelationSpec(input: CorrelationInput): CorrelationSpec {
+function toCorrelationSpec(input: CorrelationInput): CorrelationSpec {
   const spec: CorrelationSpec = {
     type: input.type,
     label: input.label ?? '',

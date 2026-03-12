@@ -15,9 +15,9 @@ import { ExploreItemState } from 'app/types/explore';
 import { formatValueName } from '../explore/PrometheusListView/ItemLabels';
 import { parseLogsFrame } from '../logs/logsFrame';
 
+import { CORRELATIONS_API_BASE_URL, fromK8sCorrelation, toCreateCorrelationResource } from './k8s';
 import { Correlation, CreateCorrelationParams, CreateCorrelationResponse } from './types';
 import { CorrelationsResponse, getData, toEnrichedCorrelationData, toEnrichedCorrelationsData } from './useCorrelations';
-import { CORRELATIONS_API_BASE_URL, fromK8sCorrelation, toCreateCorrelationResource } from './k8s';
 
 type DataFrameRefIdToDataSourceUid = Record<string, string>;
 
