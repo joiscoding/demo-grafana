@@ -5,10 +5,7 @@ import {
   isInteractionEvent,
   isPageviewEvent,
   PageviewEchoEvent,
-  createMonitoringLogger,
 } from '@grafana/runtime';
-
-const logger = createMonitoringLogger('EchoSrv.BrowserConsoleBackend');
 
 function toContextValue(value: unknown): string {
   if (value === undefined) {
@@ -26,7 +23,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
 
   addEvent = (e: PageviewEchoEvent) => {
     if (isPageviewEvent(e)) {
-      logger.logInfo('echo pageview event', {
+      console.log('[EchoSrv] echo pageview event', {
         eventType: EchoEventType.Pageview,
         page: e.payload.page,
       });
@@ -34,7 +31,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
 
     if (isInteractionEvent(e)) {
       const eventName = e.payload.interactionName;
-      logger.logInfo('echo interaction event', {
+      console.log('[EchoSrv] echo interaction event', {
         eventType: EchoEventType.Interaction,
         interactionName: eventName,
         properties: toContextValue(e.payload.properties),
@@ -49,7 +46,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
       });
 
       if (invalidTypeProperties.length > 0) {
-        logger.logWarning('echo interaction event has invalid property types', {
+        console.warn('[EchoSrv] echo interaction event has invalid property types', {
           eventType: EchoEventType.Interaction,
           interactionName: eventName,
           invalidProperties: toContextValue(Object.fromEntries(invalidTypeProperties)),
@@ -58,7 +55,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
     }
 
     if (isExperimentViewEvent(e)) {
-      logger.logInfo('echo experiment event', {
+      console.log('[EchoSrv] echo experiment event', {
         eventType: EchoEventType.ExperimentView,
         payload: toContextValue(e.payload),
       });

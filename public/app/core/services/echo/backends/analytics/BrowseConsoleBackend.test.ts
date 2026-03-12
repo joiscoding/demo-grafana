@@ -2,36 +2,14 @@ import { EchoEventType, PageviewEchoEvent } from '@grafana/runtime';
 
 import { BrowserConsoleBackend } from './BrowseConsoleBackend';
 
-jest.mock('@grafana/runtime', () => {
-  const actual = jest.requireActual('@grafana/runtime');
-  const mockMonitoringLogger = {
-    logInfo: jest.fn(),
-    logWarning: jest.fn(),
-    logError: jest.fn(),
-    logDebug: jest.fn(),
-    logMeasurement: jest.fn(),
-  };
-
-  return {
-    ...actual,
-    __mockMonitoringLogger: mockMonitoringLogger,
-    createMonitoringLogger: jest.fn(() => mockMonitoringLogger),
-  };
-});
-
 describe('BrowserConsoleBackend', () => {
-  const { __mockMonitoringLogger: mockMonitoringLogger } = jest.requireMock('@grafana/runtime') as {
-    __mockMonitoringLogger: {
-      logInfo: jest.Mock;
-      logWarning: jest.Mock;
-      logError: jest.Mock;
-      logDebug: jest.Mock;
-      logMeasurement: jest.Mock;
-    };
-  };
-
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('logs pageview events as structured info logs', () => {
@@ -44,7 +22,7 @@ describe('BrowserConsoleBackend', () => {
       },
     } as PageviewEchoEvent);
 
-    expect(mockMonitoringLogger.logInfo).toHaveBeenCalledWith('echo pageview event', {
+    expect(console.log).toHaveBeenCalledWith('[EchoSrv] echo pageview event', {
       eventType: EchoEventType.Pageview,
       page: '/explore',
     });
@@ -66,13 +44,13 @@ describe('BrowserConsoleBackend', () => {
       },
     } as unknown as PageviewEchoEvent);
 
-    expect(mockMonitoringLogger.logInfo).toHaveBeenCalledWith('echo interaction event', {
+    expect(console.log).toHaveBeenCalledWith('[EchoSrv] echo interaction event', {
       eventType: EchoEventType.Interaction,
       interactionName: 'panel_click',
       properties: '{"valid":"ok","invalid":{"nested":true}}',
     });
 
-    expect(mockMonitoringLogger.logWarning).toHaveBeenCalledWith('echo interaction event has invalid property types', {
+    expect(console.warn).toHaveBeenCalledWith('[EchoSrv] echo interaction event has invalid property types', {
       eventType: EchoEventType.Interaction,
       interactionName: 'panel_click',
       invalidProperties: '{"invalid":{"nested":true}}',
@@ -91,7 +69,7 @@ describe('BrowserConsoleBackend', () => {
       },
     } as unknown as PageviewEchoEvent);
 
-    expect(mockMonitoringLogger.logInfo).toHaveBeenCalledWith('echo experiment event', {
+    expect(console.log).toHaveBeenCalledWith('[EchoSrv] echo experiment event', {
       eventType: EchoEventType.ExperimentView,
       payload: '{"experimentId":"abc","experimentGroup":"group_a","experimentVariant":"variant_1"}',
     });

@@ -50,19 +50,25 @@ export async function initEchoSrv() {
   try {
     await initPerformanceBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'Performance'), { backend: 'Performance', error: toErrorString(error) });
+    const err = toError(error, 'Performance');
+    console.error('[EchoSrv] Failed to init Performance backend:', err);
+    echoInitLogger.logError(err, { backend: 'Performance', error: toErrorString(error) });
   }
 
   try {
     await initFaroBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'Faro'), { backend: 'Faro', error: toErrorString(error) });
+    const err = toError(error, 'Faro');
+    console.error('[EchoSrv] Failed to init Faro backend:', err);
+    echoInitLogger.logError(err, { backend: 'Faro', error: toErrorString(error) });
   }
 
   try {
     await initGoogleAnalyticsBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'GoogleAnalytics'), {
+    const err = toError(error, 'GoogleAnalytics');
+    console.error('[EchoSrv] Failed to init GoogleAnalytics backend:', err);
+    echoInitLogger.logError(err, {
       backend: 'GoogleAnalytics',
       error: toErrorString(error),
     });
@@ -71,7 +77,9 @@ export async function initEchoSrv() {
   try {
     await initGoogleAnalaytics4Backend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'GoogleAnalytics4'), {
+    const err = toError(error, 'GoogleAnalytics4');
+    console.error('[EchoSrv] Failed to init GoogleAnalytics4 backend:', err);
+    echoInitLogger.logError(err, {
       backend: 'GoogleAnalytics4',
       error: toErrorString(error),
     });
@@ -80,13 +88,17 @@ export async function initEchoSrv() {
   try {
     await initRudderstackBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'Rudderstack'), { backend: 'Rudderstack', error: toErrorString(error) });
+    const err = toError(error, 'Rudderstack');
+    console.error('[EchoSrv] Failed to init Rudderstack backend:', err);
+    echoInitLogger.logError(err, { backend: 'Rudderstack', error: toErrorString(error) });
   }
 
   try {
     await initAzureAppInsightsBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'AzureAppInsights'), {
+    const err = toError(error, 'AzureAppInsights');
+    console.error('[EchoSrv] Failed to init AzureAppInsights backend:', err);
+    echoInitLogger.logError(err, {
       backend: 'AzureAppInsights',
       error: toErrorString(error),
     });
@@ -95,7 +107,9 @@ export async function initEchoSrv() {
   try {
     await initConsoleBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'Console'), { backend: 'Console', error: toErrorString(error) });
+    const err = toError(error, 'Console');
+    console.error('[EchoSrv] Failed to init Console backend:', err);
+    echoInitLogger.logError(err, { backend: 'Console', error: toErrorString(error) });
   }
 }
 
