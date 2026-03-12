@@ -1,5 +1,6 @@
 import { lastValueFrom } from 'rxjs';
 
+import { Correlation as CorrelationK8s, CorrelationList } from '@grafana/api-clients/rtkq/correlations/v0alpha1';
 import { DataFrame, DataLinkConfigOrigin } from '@grafana/data';
 import {
   config,
@@ -14,8 +15,9 @@ import { ExploreItemState } from 'app/types/explore';
 import { formatValueName } from '../explore/PrometheusListView/ItemLabels';
 import { parseLogsFrame } from '../logs/logsFrame';
 
-import { CreateCorrelationParams, CreateCorrelationResponse } from './types';
-import { CorrelationsResponse, getData, toEnrichedCorrelationsData } from './useCorrelations';
+import { Correlation, CreateCorrelationParams, CreateCorrelationResponse } from './types';
+import { CorrelationsResponse, getData, toEnrichedCorrelationData, toEnrichedCorrelationsData } from './useCorrelations';
+import { CORRELATIONS_API_BASE_URL, fromK8sCorrelation, toCreateCorrelationResource } from './k8s';
 
 type DataFrameRefIdToDataSourceUid = Record<string, string>;
 
@@ -107,6 +109,45 @@ const fixLokiDataplaneFields = (correlations: CorrelationData[], dataFrame: Data
 };
 
 export const getCorrelationsBySourceUIDs = async (sourceUIDs: string[]): Promise<CorrelationsData> => {
+  if (config.featureToggles.kubernetesCorrelations) {
+    const sourceUIDSet = new Set(sourceUIDs);
+    const correlations: CorrelationData[] = [];
+    let continueToken: string | undefined;
+
+    do {
+      const response = await lastValueFrom(
+        getBackendSrv().fetch<CorrelationList>({
+          url: `${CORRELATIONS_API_BASE_URL}/correlations`,
+          method: 'GET',
+          showErrorAlert: false,
+          params: {
+            limit: 1000,
+            continue: continueToken,
+          },
+        })
+      );
+
+      response.data.items
+        .map((resource) => fromK8sCorrelation(resource as CorrelationK8s))
+        .filter((correlation): correlation is Correlation => correlation !== undefined)
+        .filter((correlation) => sourceUIDSet.has(correlation.sourceUID))
+        .map(toEnrichedCorrelationData)
+        .filter((correlation): correlation is CorrelationData => correlation !== undefined)
+        .forEach((correlation) => {
+          correlations.push(correlation);
+        });
+
+      continueToken = response.data.metadata?.continue;
+    } while (continueToken);
+
+    return {
+      correlations,
+      page: 1,
+      limit: correlations.length,
+      totalCount: correlations.length,
+    };
+  }
+
   return lastValueFrom(
     getBackendSrv().fetch<CorrelationsResponse>({
       url: `/api/datasources/correlations`,
@@ -125,6 +166,28 @@ export const createCorrelation = async (
   sourceUID: string,
   correlation: CreateCorrelationParams
 ): Promise<CreateCorrelationResponse> => {
+  if (config.featureToggles.kubernetesCorrelations) {
+    const resource = toCreateCorrelationResource({ ...correlation, sourceUID });
+    const response = await lastValueFrom(
+      getBackendSrv().fetch<CorrelationK8s>({
+        url: `${CORRELATIONS_API_BASE_URL}/correlations`,
+        method: 'POST',
+        data: resource,
+        showErrorAlert: false,
+      })
+    );
+
+    const created = fromK8sCorrelation(response.data as CorrelationK8s);
+    if (created === undefined) {
+      throw new Error('invalid sourceUID');
+    }
+
+    return {
+      message: 'Correlation created',
+      result: created,
+    };
+  }
+
   return getBackendSrv().post<CreateCorrelationResponse>(`/api/datasources/uid/${sourceUID}/correlations`, correlation);
 };
 

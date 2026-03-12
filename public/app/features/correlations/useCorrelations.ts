@@ -1,7 +1,8 @@
 import { useAsyncFn } from 'react-use';
 import { lastValueFrom } from 'rxjs';
 
-import { getDataSourceSrv, FetchResponse, CorrelationData, CorrelationsData } from '@grafana/runtime';
+import { Correlation as CorrelationK8s } from '@grafana/api-clients/rtkq/correlations/v0alpha1';
+import { config, CorrelationData, CorrelationsData, FetchResponse, getDataSourceSrv } from '@grafana/runtime';
 import { useGrafana } from 'app/core/context/GrafanaContext';
 
 import {
@@ -15,6 +16,12 @@ import {
   UpdateCorrelationResponse,
 } from './types';
 import { correlationsLogger } from './utils';
+import {
+  CORRELATIONS_API_BASE_URL,
+  fromK8sCorrelation,
+  toCreateCorrelationResource,
+  toUpdateCorrelationPatch,
+} from './k8s';
 
 export interface CorrelationsResponse {
   correlations: Correlation[];
@@ -88,6 +95,7 @@ export function getData<T>(response: FetchResponse<T>) {
  */
 export const useCorrelations = () => {
   const { backend } = useGrafana();
+  const useKubernetesCorrelations = config.featureToggles.kubernetesCorrelations;
 
   const [getInfo, get] = useAsyncFn<(params: GetCorrelationsParams) => Promise<CorrelationsData>>(
     async (params) => {
@@ -108,39 +116,101 @@ export const useCorrelations = () => {
 
   const [createInfo, create] = useAsyncFn<(params: CreateCorrelationParams) => Promise<CorrelationData>>(
     async ({ sourceUID, ...correlation }) => {
-      return backend
-        .post<CreateCorrelationResponse>(`/api/datasources/uid/${sourceUID}/correlations`, correlation)
-        .then((response) => {
-          const enrichedCorrelation = toEnrichedCorrelationData(response.result);
-          if (enrichedCorrelation !== undefined) {
-            return enrichedCorrelation;
-          } else {
-            throw new Error('invalid sourceUID');
-          }
-        });
+      if (!useKubernetesCorrelations) {
+        return backend
+          .post<CreateCorrelationResponse>(`/api/datasources/uid/${sourceUID}/correlations`, correlation)
+          .then((response) => {
+            const enrichedCorrelation = toEnrichedCorrelationData(response.result);
+            if (enrichedCorrelation !== undefined) {
+              return enrichedCorrelation;
+            } else {
+              throw new Error('invalid sourceUID');
+            }
+          });
+      }
+
+      const resource = toCreateCorrelationResource({ sourceUID, ...correlation });
+      const response = await lastValueFrom(
+        backend.fetch<CorrelationK8s>({
+          url: `${CORRELATIONS_API_BASE_URL}/correlations`,
+          method: 'POST',
+          data: resource,
+          showErrorAlert: false,
+        })
+      );
+      const createdCorrelation = fromK8sCorrelation(response.data as CorrelationK8s);
+      if (createdCorrelation === undefined) {
+        throw new Error('invalid sourceUID');
+      }
+
+      const enrichedCorrelation = toEnrichedCorrelationData(createdCorrelation);
+      if (enrichedCorrelation === undefined) {
+        throw new Error('invalid sourceUID');
+      }
+
+      return enrichedCorrelation;
     },
-    [backend]
+    [backend, useKubernetesCorrelations]
   );
 
   const [removeInfo, remove] = useAsyncFn<(params: RemoveCorrelationParams) => Promise<{ message: string }>>(
-    ({ sourceUID, uid }) =>
-      backend.delete<RemoveCorrelationResponse>(`/api/datasources/uid/${sourceUID}/correlations/${uid}`),
-    [backend]
+    async ({ sourceUID, uid }) => {
+      if (!useKubernetesCorrelations) {
+        return backend.delete<RemoveCorrelationResponse>(`/api/datasources/uid/${sourceUID}/correlations/${uid}`);
+      }
+
+      await lastValueFrom(
+        backend.fetch({
+          url: `${CORRELATIONS_API_BASE_URL}/correlations/${uid}`,
+          method: 'DELETE',
+          showErrorAlert: false,
+        })
+      );
+
+      return { message: 'Correlation deleted' };
+    },
+    [backend, useKubernetesCorrelations]
   );
 
   const [updateInfo, update] = useAsyncFn<(params: UpdateCorrelationParams) => Promise<CorrelationData>>(
-    ({ sourceUID, uid, ...correlation }) =>
-      backend
-        .patch<UpdateCorrelationResponse>(`/api/datasources/uid/${sourceUID}/correlations/${uid}`, correlation)
-        .then((response) => {
-          const enrichedCorrelation = toEnrichedCorrelationData(response.result);
-          if (enrichedCorrelation !== undefined) {
-            return enrichedCorrelation;
-          } else {
-            throw new Error('invalid sourceUID');
-          }
-        }),
-    [backend]
+    async ({ sourceUID, uid, ...correlation }) => {
+      if (!useKubernetesCorrelations) {
+        return backend
+          .patch<UpdateCorrelationResponse>(`/api/datasources/uid/${sourceUID}/correlations/${uid}`, correlation)
+          .then((response) => {
+            const enrichedCorrelation = toEnrichedCorrelationData(response.result);
+            if (enrichedCorrelation !== undefined) {
+              return enrichedCorrelation;
+            } else {
+              throw new Error('invalid sourceUID');
+            }
+          });
+      }
+
+      const response = await lastValueFrom(
+        backend.fetch<CorrelationK8s>({
+          url: `${CORRELATIONS_API_BASE_URL}/correlations/${uid}`,
+          method: 'PATCH',
+          data: toUpdateCorrelationPatch({ sourceUID, uid, ...correlation }),
+          showErrorAlert: false,
+          headers: {
+            'Content-Type': 'application/strategic-merge-patch+json',
+          },
+        })
+      );
+      const updatedCorrelation = fromK8sCorrelation(response.data as CorrelationK8s);
+      if (updatedCorrelation === undefined) {
+        throw new Error('invalid sourceUID');
+      }
+
+      const enrichedCorrelation = toEnrichedCorrelationData(updatedCorrelation);
+      if (enrichedCorrelation === undefined) {
+        throw new Error('invalid sourceUID');
+      }
+
+      return enrichedCorrelation;
+    },
+    [backend, useKubernetesCorrelations]
   );
 
   return {
