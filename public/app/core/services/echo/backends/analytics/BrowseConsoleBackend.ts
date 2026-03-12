@@ -10,6 +10,14 @@ import {
 
 const logger = createMonitoringLogger('EchoSrv.BrowserConsoleBackend');
 
+function toContextValue(value: unknown): string {
+  if (value === undefined) {
+    return 'undefined';
+  }
+
+  return typeof value === 'string' ? value : JSON.stringify(value);
+}
+
 export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unknown> {
   options = {};
   supportedEvents = [EchoEventType.Pageview, EchoEventType.Interaction, EchoEventType.ExperimentView];
@@ -29,7 +37,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
       logger.logInfo('echo interaction event', {
         eventType: EchoEventType.Interaction,
         interactionName: eventName,
-        properties: e.payload.properties,
+        properties: toContextValue(e.payload.properties),
       });
 
       // Warn for non-scalar property values. We're not yet making this a hard a
@@ -44,7 +52,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
         logger.logWarning('echo interaction event has invalid property types', {
           eventType: EchoEventType.Interaction,
           interactionName: eventName,
-          invalidProperties: Object.fromEntries(invalidTypeProperties),
+          invalidProperties: toContextValue(Object.fromEntries(invalidTypeProperties)),
         });
       }
     }
@@ -52,7 +60,7 @@ export class BrowserConsoleBackend implements EchoBackend<PageviewEchoEvent, unk
     if (isExperimentViewEvent(e)) {
       logger.logInfo('echo experiment event', {
         eventType: EchoEventType.ExperimentView,
-        payload: e.payload,
+        payload: toContextValue(e.payload),
       });
     }
   };

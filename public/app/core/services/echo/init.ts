@@ -15,6 +15,18 @@ function toError(error: unknown, backendName: string): Error {
   return new Error(`Error initializing EchoSrv ${backendName} backend`);
 }
 
+function toErrorString(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  return String(error);
+}
+
 // Initialise EchoSrv backends, calls during frontend app startup
 export async function initEchoSrv() {
   setEchoSrv(new Echo({ debug: process.env.NODE_ENV === 'development' }));
@@ -38,43 +50,52 @@ export async function initEchoSrv() {
   try {
     await initPerformanceBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'Performance'), { backend: 'Performance', error });
+    echoInitLogger.logError(toError(error, 'Performance'), { backend: 'Performance', error: toErrorString(error) });
   }
 
   try {
     await initFaroBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'Faro'), { backend: 'Faro', error });
+    echoInitLogger.logError(toError(error, 'Faro'), { backend: 'Faro', error: toErrorString(error) });
   }
 
   try {
     await initGoogleAnalyticsBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'GoogleAnalytics'), { backend: 'GoogleAnalytics', error });
+    echoInitLogger.logError(toError(error, 'GoogleAnalytics'), {
+      backend: 'GoogleAnalytics',
+      error: toErrorString(error),
+    });
   }
 
   try {
     await initGoogleAnalaytics4Backend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'GoogleAnalytics4'), { backend: 'GoogleAnalytics4', error });
+    echoInitLogger.logError(toError(error, 'GoogleAnalytics4'), {
+      backend: 'GoogleAnalytics4',
+      error: toErrorString(error),
+    });
   }
 
   try {
     await initRudderstackBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'Rudderstack'), { backend: 'Rudderstack', error });
+    echoInitLogger.logError(toError(error, 'Rudderstack'), { backend: 'Rudderstack', error: toErrorString(error) });
   }
 
   try {
     await initAzureAppInsightsBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'AzureAppInsights'), { backend: 'AzureAppInsights', error });
+    echoInitLogger.logError(toError(error, 'AzureAppInsights'), {
+      backend: 'AzureAppInsights',
+      error: toErrorString(error),
+    });
   }
 
   try {
     await initConsoleBackend();
   } catch (error) {
-    echoInitLogger.logError(toError(error, 'Console'), { backend: 'Console', error });
+    echoInitLogger.logError(toError(error, 'Console'), { backend: 'Console', error: toErrorString(error) });
   }
 }
 
