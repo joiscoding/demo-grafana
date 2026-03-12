@@ -81,9 +81,8 @@ export default function LabsPage() {
     }
 
     const enabled = event.currentTarget.checked;
-    const nextFeatureToggles = { ...featureToggles, [featureName]: enabled };
 
-    setFeatureToggles(nextFeatureToggles);
+    setFeatureToggles((prev) => ({ ...prev, [featureName]: enabled }));
     const localStorageFeatureToggles = parseFeatureToggleOverrides(store.get(FEATURE_TOGGLE_STORAGE_KEY));
     localStorageFeatureToggles[featureName] = enabled;
     store.set(FEATURE_TOGGLE_STORAGE_KEY, serializeFeatureToggleOverrides(localStorageFeatureToggles));
