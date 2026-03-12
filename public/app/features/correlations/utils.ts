@@ -16,7 +16,12 @@ import { formatValueName } from '../explore/PrometheusListView/ItemLabels';
 import { parseLogsFrame } from '../logs/logsFrame';
 
 import { Correlation, CreateCorrelationParams, CreateCorrelationResponse } from './types';
-import { CorrelationsResponse, getData, toEnrichedCorrelationData, toEnrichedCorrelationsData } from './useCorrelations';
+import {
+  CorrelationsResponse,
+  getData,
+  toEnrichedCorrelationData,
+  toEnrichedCorrelationsData,
+} from './useCorrelations';
 import { CORRELATIONS_API_BASE_URL, fromK8sCorrelation, toCreateCorrelationResource } from './k8s';
 
 type DataFrameRefIdToDataSourceUid = Record<string, string>;
@@ -110,7 +115,7 @@ const fixLokiDataplaneFields = (correlations: CorrelationData[], dataFrame: Data
 
 export const getCorrelationsBySourceUIDs = async (sourceUIDs: string[]): Promise<CorrelationsData> => {
   if (config.featureToggles.kubernetesCorrelations) {
-    const sourceUIDSet = new Set(sourceUIDs);
+    const fieldSelector = buildCorrelationFieldSelector(sourceUIDs);
     const correlations: CorrelationData[] = [];
     let continueToken: string | undefined;
 
@@ -123,6 +128,7 @@ export const getCorrelationsBySourceUIDs = async (sourceUIDs: string[]): Promise
           params: {
             limit: 1000,
             continue: continueToken,
+            ...(fieldSelector && { fieldSelector }),
           },
         })
       );
@@ -130,7 +136,6 @@ export const getCorrelationsBySourceUIDs = async (sourceUIDs: string[]): Promise
       response.data.items
         .map((resource) => fromK8sCorrelation(resource as CorrelationK8s))
         .filter((correlation): correlation is Correlation => correlation !== undefined)
-        .filter((correlation) => sourceUIDSet.has(correlation.sourceUID))
         .map(toEnrichedCorrelationData)
         .filter((correlation): correlation is CorrelationData => correlation !== undefined)
         .forEach((correlation) => {
@@ -161,6 +166,16 @@ export const getCorrelationsBySourceUIDs = async (sourceUIDs: string[]): Promise
     .then(getData)
     .then(toEnrichedCorrelationsData);
 };
+
+export function buildCorrelationFieldSelector(sourceUIDs: string[]): string | undefined {
+  if (sourceUIDs.length === 0) {
+    return undefined;
+  }
+  if (sourceUIDs.length === 1) {
+    return `spec.datasource.name=${sourceUIDs[0]}`;
+  }
+  return `spec.datasource.name in (${sourceUIDs.join(';')})`;
+}
 
 export const createCorrelation = async (
   sourceUID: string,

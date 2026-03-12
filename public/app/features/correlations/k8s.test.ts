@@ -4,6 +4,7 @@ import { getDataSourceSrv } from '@grafana/runtime';
 
 import { CreateCorrelationParams } from './types';
 import { fromK8sCorrelation, toCreateCorrelationResource } from './k8s';
+import { buildCorrelationFieldSelector } from './utils';
 
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
@@ -106,5 +107,19 @@ describe('correlations k8s mappings', () => {
         transformations: undefined,
       },
     });
+  });
+});
+
+describe('buildCorrelationFieldSelector', () => {
+  it('returns undefined without source uids', () => {
+    expect(buildCorrelationFieldSelector([])).toBeUndefined();
+  });
+
+  it('builds equals selector for one source uid', () => {
+    expect(buildCorrelationFieldSelector(['source-uid'])).toBe('spec.datasource.name=source-uid');
+  });
+
+  it('builds in selector for many source uids', () => {
+    expect(buildCorrelationFieldSelector(['uid-a', 'uid-b'])).toBe('spec.datasource.name in (uid-a;uid-b)');
   });
 });
