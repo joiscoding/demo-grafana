@@ -63,7 +63,7 @@ export const ID_PREFIX = 'starred/';
 
 const navTreeSlice = createSlice({
   name: 'navBarTree',
-  initialState: () => addLabsSectionToNav(translateNav(config.bootData?.navTree ?? [])),
+  initialState: () => translateNav(addLabsSectionToNav(config.bootData?.navTree ?? [])),
   reducers: {
     setStarred: (state, action: PayloadAction<{ id: string; title: string; url: string; isStarred: boolean }>) => {
       const starredItems = state.find((navItem) => navItem.id === 'starred');
