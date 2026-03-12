@@ -10390,6 +10390,26 @@
     }
   },
   "label-dropdown-info": "Can't find your label? Enter it manually",
+  "labs": {
+    "feature-flags": {
+      "description": "View enabled feature flags and override them for your browser session.",
+      "enabled-count_one": "{{count}} enabled",
+      "enabled-count_other": "{{count}} enabled",
+      "no-results": "No feature flags match your search.",
+      "off": "Off",
+      "on": "On",
+      "read-only": "You can view feature flags, but you do not have permission to update them.",
+      "read-only-title": "Read-only access",
+      "reload-button": "Reload app",
+      "restart-note": "Changes are stored in localStorage and can require a page reload to fully apply.",
+      "restart-note-title": "Local browser override",
+      "search-placeholder": "Search feature flags",
+      "search-prefix": "Search",
+      "title": "Feature flags",
+      "total-count_one": "{{count}} visible",
+      "total-count_other": "{{count}} visible"
+    }
+  },
   "layers": {
     "layer-drag-drop-list": {
       "draggable-aria-label": "Drag and drop to reorder",
@@ -11604,6 +11624,10 @@
     },
     "kubernetes": {
       "title": "Kubernetes"
+    },
+    "labs": {
+      "subtitle": "View and control feature flags for this app",
+      "title": "Labs"
     },
     "library-panels": {
       "subtitle": "Reusable panels that can be added to multiple dashboards",
