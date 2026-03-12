@@ -1,8 +1,9 @@
 import { NavIndex } from '@grafana/data';
+import { config } from '@grafana/runtime';
 
 import { reducerTester } from '../../../test/core/redux/reducerTester';
 
-import { navIndexReducer, updateNavIndex, updateConfigurationSubtitle } from './navModel';
+import { buildInitialState, navIndexReducer, updateNavIndex, updateConfigurationSubtitle } from './navModel';
 
 describe('navModelReducer', () => {
   describe('when updateNavIndex is dispatched', () => {
@@ -78,5 +79,31 @@ describe('navModelReducer', () => {
         .whenActionIsDispatched(updateConfigurationSubtitle(newOrgName))
         .thenStateShouldEqual(expectedState);
     });
+  });
+});
+
+describe('buildInitialState', () => {
+  it('adds Labs to navIndex when feature management read access is granted', () => {
+    const initialNavTree = config.bootData.navTree;
+    const initialUser = config.bootData.user;
+
+    try {
+      config.bootData.navTree = [{ id: 'connections', text: 'Connections', url: '/connections' }];
+      config.bootData.user = {
+        ...initialUser,
+        isSignedIn: true,
+        permissions: {
+          ...(initialUser.permissions ?? {}),
+          'featuremgmt.read': true,
+        },
+      };
+
+      const navIndex = buildInitialState();
+      expect(navIndex.labs).toBeDefined();
+      expect(navIndex.labs.url).toBe(`${config.appSubUrl}/labs`);
+    } finally {
+      config.bootData.navTree = initialNavTree;
+      config.bootData.user = initialUser;
+    }
   });
 });

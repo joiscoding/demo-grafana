@@ -33,8 +33,8 @@ export function addLabsSectionToNav(
 
   const labsNavItem: NavModelItem = {
     id: 'labs',
-    text: 'Labs',
-    subTitle: 'View and control feature flags for this app',
+    text: getNavTitle('labs') ?? 'Labs',
+    subTitle: getNavSubTitle('labs') ?? 'View and control feature flags for this app',
     icon: 'flask',
     url: `${appSubUrl}/labs`,
     isNew: true,

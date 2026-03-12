@@ -6,11 +6,13 @@ import config from 'app/core/config';
 
 import { getNavSubTitle, getNavTitle } from '../utils/navBarItem-translations';
 
+import { addLabsSectionToNav } from './navBarTree';
+
 export const HOME_NAV_ID = 'home';
 
 export function buildInitialState(): NavIndex {
   const navIndex: NavIndex = {};
-  const rootNodes = cloneDeep(config.bootData.navTree);
+  const rootNodes = addLabsSectionToNav(cloneDeep(config.bootData.navTree));
   const homeNav = rootNodes.find((node) => node.id === HOME_NAV_ID);
   const otherRootNodes = rootNodes.filter((node) => node.id !== HOME_NAV_ID);
 
