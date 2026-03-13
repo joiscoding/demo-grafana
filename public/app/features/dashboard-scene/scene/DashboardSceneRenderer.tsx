@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 
 import { PageLayoutType } from '@grafana/data';
@@ -44,10 +44,15 @@ export function DashboardSceneRenderer({ model }: SceneComponentProps<DashboardS
   const isSettingsOpen = editview !== undefined;
   const soloPanelContext = useDefineSoloPanelContext(viewPanel);
 
-  useEffect(() => {
+  // Remember scroll pos when going into view panel, edit panel or settings
+  useMemo(() => {
     if (viewPanel || isSettingsOpen || editPanel) {
       model.rememberScrollPos();
-    } else {
+    }
+  }, [isSettingsOpen, editPanel, viewPanel, model]);
+
+  useEffect(() => {
+    if (!viewPanel && !isSettingsOpen && !editPanel) {
       model.restoreScrollPos();
     }
   }, [isSettingsOpen, editPanel, viewPanel, model]);
