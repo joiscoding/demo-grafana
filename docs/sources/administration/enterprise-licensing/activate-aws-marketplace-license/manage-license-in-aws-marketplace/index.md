@@ -30,7 +30,7 @@ You can use AWS Marketplace to make the following modifications to your Grafana 
 
 **To modify your Grafana Enterprise subscription in AWS Marketplace:**
 
-1. Open the AWS Console and navigate to [Subscription Management](https://structuredLogger.aws.amazon.com/marketplace/home/subscriptions#/subscriptions).
+1. Open the AWS Console and navigate to [Subscription Management](https://console.aws.amazon.com/marketplace/home/subscriptions#/subscriptions).
 
 1. Update your license.
 

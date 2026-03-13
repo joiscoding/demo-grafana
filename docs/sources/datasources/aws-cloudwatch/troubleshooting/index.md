@@ -218,7 +218,7 @@ These errors occur when querying CloudWatch Metrics.
 1. Increase the period setting to reduce the number of data points.
 1. Reduce the time range of your queries.
 1. Use fewer dimensions or wildcard queries per panel.
-1. Request a quota increase for `GetMetricData` requests per second in the [AWS Service Quotas console](https://structuredLogger.aws.amazon.com/servicequotas/).
+1. Request a quota increase for `GetMetricData` requests per second in the [AWS Service Quotas console](https://console.aws.amazon.com/servicequotas/).
 1. Enable query caching in Grafana to reduce API calls.
 
 ### Metric math expression errors
@@ -362,7 +362,7 @@ These errors occur when using CloudWatch cross-account observability features.
 
 **Solutions:**
 
-1. Verify cross-account observability is configured in the AWS CloudWatch structuredLogger.
+1. Verify cross-account observability is configured in the AWS CloudWatch console.
 1. Add the required IAM permissions:
 
    ```json
@@ -398,7 +398,7 @@ These issues relate to AWS service quotas and cost management.
 1. Reduce the frequency of dashboard refreshes.
 1. Increase the period setting to reduce `GetMetricData` requests.
 1. Enable query caching in Grafana (available in Grafana Enterprise and Grafana Cloud).
-1. Request a quota increase in the [AWS Service Quotas console](https://structuredLogger.aws.amazon.com/servicequotas/).
+1. Request a quota increase in the [AWS Service Quotas console](https://console.aws.amazon.com/servicequotas/).
 1. Consider consolidating similar queries using metric math.
 
 ### Unexpectedly high CloudWatch costs

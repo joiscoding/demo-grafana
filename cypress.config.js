@@ -1,6 +1,3 @@
-import { createStructuredLogger } from '@grafana/data';
-const structuredLogger = createStructuredLogger('cypress.config');
-
 const { defineConfig } = require('cypress');
 const fs = require('fs');
 const path = require('path');
@@ -9,6 +6,8 @@ const benchmarkPlugin = require('./e2e/cypress/plugins/benchmark/index');
 const readProvisions = require('./e2e/cypress/plugins/readProvisions');
 const smtpTester = require('./e2e/cypress/plugins/smtpTester');
 const typescriptPreprocessor = require('./e2e/cypress/plugins/typescriptPreprocessor');
+const { createStructuredLogger } = require('./scripts/helpers/structuredLogging');
+const structuredLogger = createStructuredLogger('cypress.config');
 
 module.exports = defineConfig({
   projectId: 'zb7k1c',

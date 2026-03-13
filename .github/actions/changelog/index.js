@@ -12,7 +12,7 @@ import {findPreviousVersion, semverParse} from "./semver.js";
 // newlines and percent signs
 //
 const escapeData = (s) => s.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
-const LOG = (msg) => structuredLogger.log(`::notice::${escapeData(msg)}`);
+const LOG = (msg) => process.stdout.write(`::notice::${escapeData(msg)}\n`);
 
 
 // Using `git tag -l` output find the tag (version) that goes semantically

@@ -9,7 +9,13 @@ function normalizeValue(value: unknown): unknown {
     };
   }
 
-  if (value === null || value === undefined || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+  if (
+    value === null ||
+    value === undefined ||
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
+  ) {
     return value;
   }
 
@@ -35,8 +41,7 @@ function writeStructuredLog(level: StructuredLogLevel, source: string, args: unk
 
   const shouldUseConsole = typeof window !== 'undefined' || process?.env?.NODE_ENV === 'test';
   if (!shouldUseConsole && process?.stdout?.write && process?.stderr?.write) {
-    const stream = level === 'warn' ? process.stderr : process.stderr;
-    stream.write(`${JSON.stringify(payload)}\n`);
+    process.stderr.write(`${JSON.stringify(payload)}\n`);
     return;
   }
 

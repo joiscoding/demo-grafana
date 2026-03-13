@@ -94,7 +94,7 @@ Configured address to serve Grafana: http://yourdomain.com/existingsubpath/grafa
 1. In the IIS Manager, click on the website that grafana will run under. For example, select the website that is bound to the http://yourdomain.com domain.
 2. In the admin console for this website, double click on the URL Rewrite option:
 
-{{< figure src="/static/img/docs/tutorials/IIS_admin_structuredLogger.png"  max-width="800px" >}}
+{{< figure src="/static/img/docs/tutorials/IIS_admin_console.png"  max-width="800px" >}}
 
 3. Click on the `Add Rule(s)...` action
 4. Choose the Blank Rule template for an Inbound Rule

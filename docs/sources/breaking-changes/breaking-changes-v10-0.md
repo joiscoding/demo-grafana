@@ -225,7 +225,7 @@ Grafana v10.0.0 ships with the new React 18 upgrade. In turn, changes in the bat
 
 #### Migration path
 
-Update the plugin to version 2.9.3 or higher in your Grafana instance management structuredLogger. This will ensure your plugin query editor works as intended.
+Update the plugin to version 2.9.3 or higher in your Grafana instance management console. This will ensure your plugin query editor works as intended.
 
 ### Redshift data source plugin must be updated to version >=1.8.3
 
@@ -239,7 +239,7 @@ Grafana v10.0.0 ships with the new React 18 upgrade. In turn, changes in the bat
 
 #### Migration path
 
-Update the plugin to version 1.8.3 or higher in your Grafana instance management structuredLogger. This will ensure your plugin query editor works as intended.
+Update the plugin to version 1.8.3 or higher in your Grafana instance management console. This will ensure your plugin query editor works as intended.
 
 ### DoiT International BigQuery plugin no longer supported
 

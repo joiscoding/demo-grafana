@@ -67,7 +67,7 @@ To authenticate with Entra ID, the Keycloak application needs a client ID and cl
 
 #### Configure the application in Keycloak
 
-1. Go to the Keycloak admin structuredLogger.
+1. Go to the Keycloak admin console.
 1. Go to the Realm where you want to configure the Entra ID tenant.
 1. Go to the Identity Providers section and click on **Add provider**.
 1. Select **OpenID Connect v1.0**.

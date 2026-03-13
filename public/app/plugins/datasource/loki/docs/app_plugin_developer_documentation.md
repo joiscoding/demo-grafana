@@ -44,9 +44,9 @@ async function fetchLabels(options?: { streamSelector?: string; timeRange?: Time
 
 try {
   const labelKeys = await fetchLabels();
-  structuredLogger.log(labelKeys);
+  console.log(labelKeys);
 } catch (error) {
-  structuredLogger.error(`Error fetching label keys: ${error.message}`);
+  console.error(`Error fetching label keys: ${error.message}`);
 }
 ```
 
@@ -80,9 +80,9 @@ async function fetchLabelValues(
 const labelName = 'job';
 try {
   const values = await fetchLabelValues(labelName);
-  structuredLogger.log(values);
+  console.log(values);
 } catch (error) {
-  structuredLogger.error(`Error fetching label values: ${error.message}`);
+  console.error(`Error fetching label values: ${error.message}`);
 }
 
 /**
@@ -93,9 +93,9 @@ const labelName = 'job';
 const streamSelector = '{app="grafana"}';
 try {
   const values = await fetchLabelValues(labelName, { streamSelector });
-  structuredLogger.log(values);
+  console.log(values);
 } catch (error) {
-  structuredLogger.error(`Error fetching label values: ${error.message}`);
+  console.error(`Error fetching label values: ${error.message}`);
 }
 ```
 
@@ -127,9 +127,9 @@ async function fetchSeriesLabels(
 const streamSelector = '{job="grafana"}';
 try {
   const labels = await fetchSeriesLabels(streamSelector);
-  structuredLogger.log(labels);
+  console.log(labels);
 } catch (error) {
-  structuredLogger.error(`Error fetching labels: ${error.message}`);
+  console.error(`Error fetching labels: ${error.message}`);
 }
 ```
 
@@ -175,9 +175,9 @@ async function getParserAndLabelKeys(
 const streamSelector = '{job="grafana"}';
 try {
   const parserAndLabelKeys = await getParserAndLabelKeys(streamSelector, { maxLines: 5 });
-  structuredLogger.log(parserAndLabelKeys);
+  console.log(parserAndLabelKeys);
 } catch (error) {
-  structuredLogger.error(`Error fetching parser and label keys: ${error.message}`);
+  console.error(`Error fetching parser and label keys: ${error.message}`);
 }
 ```
 

@@ -16,7 +16,7 @@ function MyAlertingPlugin() {
 
   const validateAndNavigateToAlertForm = (data: unknown) => {
     if (!alertingAlertRuleFormSchema) {
-      structuredLogger.warn('Navigate to alert form schema API not available');
+      console.warn('Navigate to alert form schema API not available');
       return;
     }
 
@@ -24,10 +24,10 @@ function MyAlertingPlugin() {
     const result = alertingAlertRuleFormSchema.safeParse(data);
 
     if (result.success) {
-      structuredLogger.log('Valid navigation data:', result.data);
+      console.log('Valid navigation data:', result.data);
       // Proceed with navigating to the alert form
     } else {
-      structuredLogger.error('Validation failed:', result.error.errors);
+      console.error('Validation failed:', result.error.errors);
     }
   };
 

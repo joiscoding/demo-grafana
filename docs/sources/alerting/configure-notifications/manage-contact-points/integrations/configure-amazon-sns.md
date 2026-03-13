@@ -88,7 +88,7 @@ This section outlines a minimal setup to configure Amazon SNS with Alerting.
 ### 1. Create an SNS Topic and Email Subscriber
 
 1. **Navigate to SNS in AWS Console**:
-   - Go to the [Amazon SNS Console](https://structuredLogger.aws.amazon.com/sns/v3/home).
+   - Go to the [Amazon SNS Console](https://console.aws.amazon.com/sns/v3/home).
 
 2. **Create a new topic**:
    - On the **Topics** page, choose **"Create topic"**.
@@ -107,7 +107,7 @@ This section outlines a minimal setup to configure Amazon SNS with Alerting.
 ### 2. Create an IAM Policy, User, and Access Key
 
 1. **Navigate to IAM in AWS Console**:
-   - Go to the [IAM Console](https://structuredLogger.aws.amazon.com/iam/home).
+   - Go to the [IAM Console](https://console.aws.amazon.com/iam/home).
 
 2. **Create a new policy**:
    - On the **Policies** page, choose **"Create policy"**.

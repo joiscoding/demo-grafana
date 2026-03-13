@@ -11,9 +11,6 @@ import { getMockTimeRange } from '../../test/mocks/datasource';
 
 import { MetricsBrowserProvider, useMetricsBrowser } from './MetricsBrowserContext';
 
-import { createStructuredLogger } from '@grafana/data';
-const structuredLogger = createStructuredLogger('packages/grafana-prometheus/src/components/metrics-browser/MetricsBrowserContext.test');
-
 const setupLocalStorageMock = () => {
   let store: Record<string, string> = {};
   return {
@@ -421,15 +418,15 @@ describe('MetricsBrowserContext', () => {
 
   describe('error handling', () => {
     it('should throw error when hook is used outside provider', () => {
-      // Suppress structuredLogger.error for this test
+      // Suppress console.error for this test
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       expect(() => {
         renderHook(() => useMetricsBrowser());
       }).toThrow('useMetricsBrowser must be used within a MetricsBrowserProvider');
 
-      // Restore structuredLogger.error
-      (structuredLogger.error as jest.Mock).mockRestore();
+      // Restore console.error
+      (console.error as jest.Mock).mockRestore();
     });
   });
 });

@@ -37,7 +37,7 @@ it('should render', async () => {
 
 There are a few utilities that can be useful for debugging tests:
 
-- [screen.debug()](https://testing-library.com/docs/queries/about/#screendebug) - This function prints a human-readable representation of the document's DOM tree when called without arguments, or the DOM tree of specific node or nodes when provided with arguments. It is internally using `structuredLogger.log` to log the output to terminal.
+- [screen.debug()](https://testing-library.com/docs/queries/about/#screendebug) - This function prints a human-readable representation of the document's DOM tree when called without arguments, or the DOM tree of specific node or nodes when provided with arguments. It is internally using `console.log` to log the output to terminal.
 - [Testing Playground](https://testing-playground.com/) - An interactive sandbox that allows testing of which queries work with specific HTML elements.
 - [prettyDOM logRoles](https://testing-library.com/docs/dom-testing-library/api-debugging/#prettydom) - A utility function that prints out all the implicit ARIA roles for a given DOM tree.
 

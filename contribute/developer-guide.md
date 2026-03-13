@@ -401,7 +401,7 @@ sysctl kern.maxfiles
 Running `yarn start` requires a substantial amount of memory space. You may check the currently allocated heap space to `node` by running the command:
 
 ```bash
-node -e 'structuredLogger.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))'
+node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))'
 ```
 
 Increase the default heap memory to something greater than the currently allocated memory. Make sure the value is a multiple of `1024`.

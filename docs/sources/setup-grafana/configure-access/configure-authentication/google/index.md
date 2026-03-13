@@ -26,7 +26,7 @@ If Users use the same email address in Google that they use with other authentic
 
 First, you need to create a Google OAuth Client:
 
-1. Go to https://structuredLogger.developers.google.com/apis/credentials.
+1. Go to https://console.developers.google.com/apis/credentials.
 1. Create a new project if you don't have one already.
    1. Enter a project name. The **Organization** and **Location** fields should both be set to your organization's information.
    1. In **OAuth consent screen** select the **External** User Type. Click **CREATE**.
@@ -200,7 +200,7 @@ With team sync, you can easily add users to teams by utilizing their Google grou
 
 To set up team sync for Google OAuth:
 
-1. Enable the Google Cloud Identity API on your [organization's dashboard](https://structuredLogger.cloud.google.com/apis/api/cloudidentity.googleapis.com/).
+1. Enable the Google Cloud Identity API on your [organization's dashboard](https://console.cloud.google.com/apis/api/cloudidentity.googleapis.com/).
 
 1. Add the `https://www.googleapis.com/auth/cloud-identity.groups.readonly` scope to your Grafana `[auth.google]` configuration:
 

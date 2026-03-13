@@ -145,7 +145,7 @@ const dashboardWrapper = {
 const dashboardJSON = JSON.stringify(dashboardWrapper, null, 2);
 fs.writeFileSync('dashboard.json', dashboardJSON, 'utf8');
 
-structuredLogger.log(`Dashboard JSON:\n${}`);
+console.log(`Dashboard JSON:\n${}`);
 ```
 
 {{< /code >}}

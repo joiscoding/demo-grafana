@@ -1,5 +1,4 @@
 import {
-
   recomposeColor,
   hexToRgb,
   rgbToHex,
@@ -15,14 +14,11 @@ import {
   onBackground,
 } from './colorManipulator';
 
-import { createStructuredLogger } from '../utils/structuredLogging';
-const structuredLogger = createStructuredLogger('packages/grafana-data/src/themes/colorManipulator.test');
-
 describe('utils/colorManipulator', () => {
-  const origError = structuredLogger.error;
+  const origError = console.error;
   const consoleErrorMock = jest.fn();
-  afterEach(() => (structuredLogger.error = origError));
-  beforeEach(() => (structuredLogger.error = consoleErrorMock));
+  afterEach(() => (console.error = origError));
+  beforeEach(() => (console.error = consoleErrorMock));
 
   describe('recomposeColor', () => {
     it('converts a decomposed rgb color object to a string` ', () => {
@@ -311,12 +307,16 @@ describe('utils/colorManipulator', () => {
 
     it("doesn't overshoot if an above-range coefficient is supplied", () => {
       expect(darken('rgb(0, 127, 255)', 1.5)).toEqual('rgb(0, 0, 0)');
-      expect(consoleErrorMock).toHaveBeenCalledWith('The value provided 1.5 is out of range [0, 1].');
+      expect(consoleErrorMock).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'The value provided 1.5 is out of range [0, 1].' })
+      );
     });
 
     it("doesn't overshoot if a below-range coefficient is supplied", () => {
       expect(darken('rgb(0, 127, 255)', -0.1)).toEqual('rgb(0, 127, 255)');
-      expect(consoleErrorMock).toHaveBeenCalledWith('The value provided 1.5 is out of range [0, 1].');
+      expect(consoleErrorMock).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'The value provided -0.1 is out of range [0, 1].' })
+      );
     });
 
     it('darkens rgb white to black when coefficient is 1', () => {
