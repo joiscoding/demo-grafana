@@ -10,7 +10,6 @@ concurrency:
   group: pr-commands-${{ github.event.number }}
 jobs:
   main:
-    if: github.repository == 'grafana/grafana'
     permissions:
       contents: read
       pull-requests: write
