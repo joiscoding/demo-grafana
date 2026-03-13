@@ -2,6 +2,8 @@
 
 // Trusted types must be initialised before the rest of the world is imported
 import './core/trustedTypePolicies';
+import { installStructuredConsoleLogging } from './core/utils/structuredConsole';
 import app from './app';
 
+installStructuredConsoleLogging();
 app.init();
