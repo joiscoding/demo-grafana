@@ -11,6 +11,9 @@ import { useLogListContext } from './panel/LogListContext';
 import { CONTROLS_WIDTH_EXPANDED, LogListControls } from './panel/LogListControls';
 import { LOG_LIST_CONTROLS_WIDTH } from './panel/virtualization';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/logs/components/ControlledLogsTable');
+
 export const ControlledLogsTable = ({
   loading,
   loadMoreLogs,
@@ -38,7 +41,7 @@ export const ControlledLogsTable = ({
   const styles = useStyles2(getStyles);
 
   if (!splitOpen || !width || !updatePanelState) {
-    console.error('<ControlledLogsTable>: Missing required props.');
+    structuredLogger.error('<ControlledLogsTable>: Missing required props.');
     return;
   }
 

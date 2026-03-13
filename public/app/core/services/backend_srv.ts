@@ -1,5 +1,6 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import {
+
   from,
   lastValueFrom,
   MonoTypeOperatorFunction,
@@ -46,6 +47,9 @@ import { FetchQueue } from './FetchQueue';
 import { FetchQueueWorker } from './FetchQueueWorker';
 import { ResponseQueue } from './ResponseQueue';
 import { ContextSrv, contextSrv } from './context_srv';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/core/services/backend_srv');
 
 const CANCEL_ALL_REQUESTS_REQUEST_ID = 'cancel_all_requests_request_id';
 
@@ -110,7 +114,7 @@ export class BackendSrv implements BackendService {
       const result = await fp.get();
       this.deviceID = result.visitorId;
     } catch (error) {
-      console.error(error);
+      structuredLogger.error(error);
     }
   }
 
@@ -235,7 +239,7 @@ export class BackendSrv implements BackendService {
             observer.complete();
           }) // runs in background
           .catch((e) => {
-            console.log(requestId, 'catch', e);
+            structuredLogger.log(requestId, 'catch', e);
             observer.error(e);
           }); // from abort
       },

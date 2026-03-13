@@ -1119,7 +1119,7 @@ For the existing backend mode users who have table visualization might see some 
 - **PublicDashboards:** Title logo config. (Enterprise)
 - **Caching:** Make cache payload serialization more resistant to out-of-memory crashes. (Enterprise)
 - **Caching:** Change error logs for cache items not found to debug logs. (Enterprise)
-- **Chore:** Add test console.warn catch. (Enterprise)
+- **Chore:** Add test structuredLogger.warn catch. (Enterprise)
 - **Emails:** Light theme. (Enterprise)
 - **Reporting:** Switch to using dashboard UID. (Enterprise)
 - **Recorded Queries:** Use new DS picker. (Enterprise)

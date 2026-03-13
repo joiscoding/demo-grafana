@@ -12,6 +12,9 @@ import { toKeyedAction } from '../state/keyedVariablesReducer';
 import { changeVariableProp } from '../state/sharedReducer';
 import { toVariablePayload } from '../utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/variables/textbox/TextBoxVariablePicker');
+
 export interface Props extends VariablePickerProps<TextBoxVariableModel> {}
 
 export function TextBoxVariablePicker({ variable, onVariableChange, readOnly }: Props): ReactElement {
@@ -23,7 +26,7 @@ export function TextBoxVariablePicker({ variable, onVariableChange, readOnly }: 
 
   const updateVariable = useCallback(() => {
     if (!variable.rootStateKey) {
-      console.error('Cannot update variable without rootStateKey');
+      structuredLogger.error('Cannot update variable without rootStateKey');
       return;
     }
 

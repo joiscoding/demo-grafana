@@ -1,3 +1,7 @@
+import * as structuredLogging from '../helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('scripts/cli/reportI18nStats');
+
 /// @ts-check
 
 import { readdir, stat, readFile } from 'fs/promises';
@@ -84,5 +88,5 @@ function eachMessage(value, callback) {
 function logStat(name, value) {
   // Note that this output format must match the parsing in ci-frontend-metrics.sh
   // which expects the two values to be separated by a space
-  console.log(`${name} ${value}`);
+  structuredLogger.log(`${name} ${value}`);
 }

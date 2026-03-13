@@ -7,6 +7,9 @@ import { IconButton, useStyles2, Stack, InlineToast, Tooltip, Icon } from '@graf
 
 import { SqlExpressionQuery } from '../types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/expressions/components/QueryToolbox');
+
 interface QueryToolboxProps {
   onFormatCode?: () => void;
   onExpand?: (isExpanded: boolean) => void;
@@ -39,7 +42,7 @@ export const QueryToolbox = ({ onFormatCode, onExpand, isExpanded, query }: Quer
       await navigator.clipboard.writeText(query.expression ?? '');
       setShowCopySuccess(true);
     } catch (e) {
-      console.error(e);
+      structuredLogger.error(e);
     }
   }, [query.expression]);
 

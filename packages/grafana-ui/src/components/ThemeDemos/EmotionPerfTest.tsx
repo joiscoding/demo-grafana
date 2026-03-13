@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/ThemeDemos/EmotionPerfTest');
+
 /* eslint-disable @grafana/i18n/no-untranslated-strings */
 /** @jsxImportSource @emotion/react */
 import { css, cx } from '@emotion/css';
@@ -11,7 +14,7 @@ import { Button } from '../Button/Button';
 import { Stack } from '../Layout/Stack/Stack';
 
 export function EmotionPerfTest() {
-  console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+  structuredLogger.log('process.env.NODE_ENV', process.env.NODE_ENV);
 
   return (
     <Stack direction="column">
@@ -126,7 +129,7 @@ function NoStyles({ index }: TestComponentProps) {
 
 function MeasureRender({ children, id }: { children: React.ReactNode; id: string }) {
   const onRender: ProfilerOnRenderCallback = (id, phase, actualDuration, baseDuration, startTime, commitTime) => {
-    console.log('Profile ' + id, actualDuration);
+    structuredLogger.log('Profile ' + id, actualDuration);
   };
 
   return (

@@ -6,6 +6,7 @@ import { Page } from 'app/core/components/Page/Page';
 import { Resource } from 'app/features/apiserver/types';
 import { getDashboardAPI } from 'app/features/dashboard/api/dashboard_api';
 import {
+
   DecoratedRevisionModel,
   RevisionModel,
   VERSIONS_FETCH_LIMIT,
@@ -17,6 +18,9 @@ import { VersionHistoryComparison } from '../VersionHistory/VersionHistoryCompar
 import { VersionHistoryTable } from '../VersionHistory/VersionHistoryTable';
 
 import { SettingsPageProps } from './types';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/components/DashboardSettings/VersionsSettings');
 
 interface Props extends SettingsPageProps {}
 
@@ -69,7 +73,7 @@ export class VersionsSettings extends PureComponent<Props, State> {
         // Update the continueToken for the next request, if available
         this.continueToken = result.metadata.continue ?? '';
       })
-      .catch((err) => console.log(err))
+      .catch((err) => structuredLogger.log(err))
       .finally(() => this.setState({ isAppending: false }));
   };
 

@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-prometheus/src/result_transformer');
+
 // Core Grafana history https://github.com/grafana/grafana/blob/v11.0.0-preview/public/app/plugins/datasource/prometheus/result_transformer.ts
 import { flatten, forOwn, groupBy, partition } from 'lodash';
 
@@ -437,7 +440,7 @@ export function sortSeriesByLabel(s1: DataFrame, s2: DataFrame): number {
     le2 = parseSampleValue(s2.fields[1].state?.displayName ?? s2.name ?? s2.fields[1].name);
   } catch (err) {
     // fail if not integer. might happen with bad queries
-    console.error(err);
+    structuredLogger.error(err);
     return 0;
   }
 

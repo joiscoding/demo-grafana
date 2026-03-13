@@ -9,6 +9,9 @@ import { getPublicOrAbsoluteUrl } from 'app/features/dimensions/resource';
 import { defaultStyleConfig, DEFAULT_SIZE, StyleConfigValues, StyleMaker } from './types';
 import { getDisplacement } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/geomap/style/markers');
+
 interface SymbolMaker extends RegistryItem {
   aliasIds: string[];
   make: StyleMaker;
@@ -297,7 +300,7 @@ async function prepareSVG(url: string, size?: number, backgroundOpacity?: number
       return `data:image/svg+xml,${svgURI}`;
     })
     .catch((error) => {
-      console.error(error); // eslint-disable-line no-console
+      structuredLogger.error(error);
       return '';
     });
 }

@@ -3,12 +3,16 @@ import { performanceUtils } from '@grafana/scenes';
 
 import { SLOW_OPERATION_THRESHOLD_MS } from './performanceConstants';
 import {
+
   registerPerformanceObserver,
   getPerformanceMemory,
   writePerformanceGroupStart,
   writePerformanceGroupLog,
   writePerformanceGroupEnd,
 } from './performanceUtils';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/services/DashboardAnalyticsAggregator');
 
 /**
  * Panel metrics structure for analytics
@@ -108,7 +112,7 @@ export class DashboardAnalyticsAggregator implements performanceUtils.ScenePerfo
     // Aggregate panel metrics without verbose logging (handled by ScenePerformanceLogger)
     const panel = this.panelMetrics.get(data.panelKey);
     if (!panel) {
-      console.warn('Panel not found for operation completion:', data.panelKey);
+      structuredLogger.warn('Panel not found for operation completion:', data.panelKey);
       return;
     }
 

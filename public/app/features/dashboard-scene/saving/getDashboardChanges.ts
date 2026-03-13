@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/saving/getDashboardChanges');
+
 // @ts-ignore
 
 import type { AdHocVariableModel, TextBoxVariableModel, TypedVariableModel } from '@grafana/data';
@@ -144,12 +147,12 @@ export function getHasTimeChanged(
 
 export function adHocVariableFiltersEqual(filtersA?: AdHocFilterWithLabels[], filtersB?: AdHocFilterWithLabels[]) {
   if (filtersA === undefined && filtersB === undefined) {
-    console.warn('Adhoc variable filter property is undefined');
+    structuredLogger.warn('Adhoc variable filter property is undefined');
     return true;
   }
 
   if ((filtersA === undefined && filtersB !== undefined) || (filtersB === undefined && filtersA !== undefined)) {
-    console.warn('Adhoc variable filter property is undefined');
+    structuredLogger.warn('Adhoc variable filter property is undefined');
     return false;
   }
 

@@ -9,6 +9,7 @@ import { AzureMetricQuery, AzureQueryType } from '../dataquery.gen';
 import TimegrainConverter from '../time_grain_converter';
 import { AzureMonitorQuery } from '../types/query';
 import {
+
   AzureAPIResponse,
   AzureMonitorDataSourceInstanceSettings,
   AzureMonitorDataSourceJsonData,
@@ -32,6 +33,9 @@ import migrateQuery from '../utils/migrateQuery';
 
 import ResponseParser from './response_parser';
 import UrlBuilder from './url_builder';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/azuremonitor/azure_monitor/azure_monitor_datasource');
 
 const defaultDropdownValue = 'select';
 
@@ -218,7 +222,7 @@ export default class AzureMonitorDatasource extends DataSourceWithBackend<
         return result;
       })
       .catch((reason) => {
-        console.error(`Failed to get metric namespaces: ${reason}`);
+        structuredLogger.error(`Failed to get metric namespaces: ${reason}`);
         return [];
       });
   }

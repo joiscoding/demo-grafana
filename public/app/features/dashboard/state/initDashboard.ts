@@ -11,6 +11,7 @@ import { dashboardLoaderSrv } from 'app/features/dashboard/services/DashboardLoa
 import { DashboardSrv, getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { getTimeSrv, TimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import {
+
   HOME_DASHBOARD_CACHE_KEY,
   getDashboardScenePageStateManager,
 } from 'app/features/dashboard-scene/pages/DashboardScenePageStateManager';
@@ -39,6 +40,9 @@ import { DashboardModel } from './DashboardModel';
 import { PanelModel } from './PanelModel';
 import { emitDashboardViewEvent } from './analyticsProcessor';
 import { dashboardInitCompleted, dashboardInitFailed, dashboardInitFetching, dashboardInitServices } from './reducers';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/state/initDashboard');
 
 const INIT_DASHBOARD_MEASUREMENT = 'initDashboard';
 
@@ -109,7 +113,7 @@ async function fetchDashboard(
               ...locationService.getLocation(),
               pathname: dashboardUrl,
             });
-            console.log('not correct url correcting', dashboardUrl, currentPath);
+            structuredLogger.log('not correct url correcting', dashboardUrl, currentPath);
           }
         }
         return dashDTO;
@@ -138,7 +142,7 @@ async function fetchDashboard(
         error: err,
       })
     );
-    console.error(err);
+    structuredLogger.error(err);
     return null;
   }
 }
@@ -206,7 +210,7 @@ export function initDashboard(args: InitDashboardArgs): ThunkResult<void> {
           error: err,
         })
       );
-      console.error(err);
+      structuredLogger.error(err);
       return;
     }
 
@@ -264,7 +268,7 @@ export function initDashboard(args: InitDashboardArgs): ThunkResult<void> {
       if (err instanceof Error) {
         dispatch(notifyApp(createErrorNotification('Dashboard init failed', err)));
       }
-      console.error(err);
+      structuredLogger.error(err);
     }
 
     // send open dashboard event

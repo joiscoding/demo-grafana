@@ -9,6 +9,7 @@ import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
+
   locationUtil,
   monacoLanguageRegistry,
   setLocale,
@@ -121,6 +122,9 @@ import { createSystemVariableAdapter } from './features/variables/system/adapter
 import { createTextBoxVariableAdapter } from './features/variables/textbox/adapter';
 import { configureStore } from './store/configureStore';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/app');
+
 // import symlinked extensions
 const extensionsIndex = require.context('.', true, /extensions\/index.ts/);
 const extensionsExports = extensionsIndex.keys().map((key) => {
@@ -145,7 +149,7 @@ export class GrafanaApp {
         try {
           await initOpenFeature();
         } catch (err) {
-          console.error('Failed to initialize OpenFeature provider', err);
+          structuredLogger.error('Failed to initialize OpenFeature provider', err);
         }
       }
 
@@ -284,7 +288,7 @@ export class GrafanaApp {
       try {
         cleanupOldExpandedFolders();
       } catch (err) {
-        console.warn('Failed to clean up old expanded folders', err);
+        structuredLogger.warn('Failed to clean up old expanded folders', err);
       }
 
       this.context = {
@@ -314,7 +318,7 @@ export class GrafanaApp {
 
       await postInitTasks();
     } catch (error) {
-      console.error('Failed to start Grafana', error);
+      structuredLogger.error('Failed to start Grafana', error);
       window.__grafana_load_failed();
     } finally {
       stopMeasure('frontend_app_init');

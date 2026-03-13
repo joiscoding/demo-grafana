@@ -1,6 +1,7 @@
 import { createDataFrame } from '../dataframe/processDataFrame';
 import { identityOverrideProcessor } from '../field/overrides/processors';
 import {
+
   StandardEditorsRegistryItem,
   standardEditorsRegistry,
   standardFieldConfigEditorRegistry,
@@ -13,6 +14,7 @@ import { PanelOptionsEditorBuilder } from '../utils/OptionsUIBuilders';
 
 import { PanelPlugin } from './PanelPlugin';
 import { getPanelDataSummary } from './suggestions/getPanelDataSummary';
+
 
 describe('PanelPlugin', () => {
   describe('declarative options', () => {

@@ -3,6 +3,7 @@ import { Unsubscribable, Observable, Subscriber } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import {
+
   EventBus,
   LegacyEmitter,
   BusEventHandler,
@@ -12,6 +13,9 @@ import {
   AppEvent,
   EventFilterOptions,
 } from './types';
+
+import { createStructuredLogger } from '../utils/structuredLogging';
+const structuredLogger = createStructuredLogger('packages/grafana-data/src/events/EventBus');
 
 /**
  * @alpha
@@ -56,7 +60,7 @@ export class EventBusSrv implements EventBus, LegacyEmitter {
    * Legacy functions
    */
   emit<T>(event: AppEvent<T> | string, payload?: T): void {
-    // console.log(`Deprecated emitter function used (emit), use $emit`);
+    // structuredLogger.log(`Deprecated emitter function used (emit), use $emit`);
 
     if (typeof event === 'string') {
       this.emitter.emit(event, { type: event, payload });
@@ -66,7 +70,7 @@ export class EventBusSrv implements EventBus, LegacyEmitter {
   }
 
   on<T>(event: AppEvent<T> | string, handler: LegacyEventHandler<T>) {
-    // console.log(`Deprecated emitter function used (on), use $on`);
+    // structuredLogger.log(`Deprecated emitter function used (on), use $on`);
 
     // need this wrapper to make old events compatible with old handlers
     handler.wrapper = (emittedEvent: BusEvent) => {

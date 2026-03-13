@@ -1,5 +1,9 @@
 import { test, expect } from '@grafana/plugin-e2e';
 
+import * as structuredLogging from '../../scripts/helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('e2e-playwright/various-suite/keybinds.spec');
+
 test.describe(
   'Keyboard shortcuts',
   {
@@ -105,7 +109,7 @@ test.describe(
       const modKey = process.platform === 'darwin' ? 'Meta' : 'Control';
 
       // Test that mod+o works in the main dashboard (should not trigger file dialog)
-      console.log('Testing mod+o in main dashboard view...');
+      structuredLogger.log('Testing mod+o in main dashboard view...');
       await page.keyboard.press(`${modKey}+o`);
       expect(page.url()).toBe(currentUrl); // Should not navigate away
 

@@ -2,6 +2,7 @@ import { lastValueFrom, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
+
   getDefaultTimeRange,
   DataFrame,
   DataFrameView,
@@ -34,6 +35,9 @@ import { SqlQueryEditorLazy } from '../components/QueryEditorLazy';
 import { MACRO_NAMES } from '../constants';
 import { DB, SQLQuery, SQLOptions, SqlQueryModel, QueryFormat, SQLDialect } from '../types';
 import migrateAnnotation from '../utils/migration';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-sql/src/datasource/SqlDatasource');
 
 export abstract class SqlDatasource extends DataSourceWithBackend<SQLQuery, SQLOptions> {
   uid: string;
@@ -215,7 +219,7 @@ export abstract class SqlDatasource extends DataSourceWithBackend<SQLQuery, SQLO
     try {
       response = await this.runMetaQuery(interpolatedQuery, range);
     } catch (error) {
-      console.error(error);
+      structuredLogger.error(error);
       throw new Error('error when executing the sql query');
     }
     return this.getResponseParser().transformMetricFindResponse(response);

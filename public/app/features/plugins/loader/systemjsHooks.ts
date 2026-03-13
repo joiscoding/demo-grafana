@@ -5,6 +5,10 @@ import { transformPluginSourceForCDN } from '../cdn/utils';
 
 import { LOAD_PLUGIN_CSS_REGEX, JS_CONTENT_TYPE_REGEX, SHARED_DEPENDENCY_PREFIX } from './constants';
 import { getPluginInfoFromCache, resolvePluginUrlWithCache } from './pluginInfoCache';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/plugins/loader/systemjsHooks');
+
 // SystemJS has to be imported before the sharedDependenciesMap
 import { SystemJS } from './systemjs';
 // eslint-disable-next-line import/order
@@ -102,7 +106,7 @@ export function decorateSystemJSResolve(
       const url = originalResolve.apply(this, [resolvedUrl, parentUrl]);
       return resolvePluginUrlWithCache(url);
     }
-    console.warn(`SystemJS: failed to resolve '${id}'`);
+    structuredLogger.warn(`SystemJS: failed to resolve '${id}'`);
     return id;
   }
 }

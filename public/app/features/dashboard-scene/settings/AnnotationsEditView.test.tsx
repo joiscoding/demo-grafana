@@ -2,6 +2,7 @@ import { map, of } from 'rxjs';
 import { MockDataSourceApi } from 'test/mocks/datasource_srv';
 
 import {
+
   AnnotationQuery,
   DataQueryRequest,
   DataSourceApi,
@@ -21,6 +22,7 @@ import { dashboardSceneGraph } from '../utils/dashboardSceneGraph';
 import { activateFullSceneTree } from '../utils/test-utils';
 
 import { AnnotationsEditView, MoveDirection } from './AnnotationsEditView';
+
 
 const runRequestMock = jest.fn().mockImplementation((ds: DataSourceApi, request: DataQueryRequest) => {
   const result: PanelData = {
@@ -110,7 +112,7 @@ describe('AnnotationsEditView', () => {
     it('should return undefined when datasource does not support annotations', () => {
       const ds = annotationsView.getDataSourceRefForAnnotation();
       expect(ds).toBe(undefined);
-      expect(console.error).toHaveBeenCalledWith('Default datasource does not support annotations');
+      expect(console.error).toHaveBeenCalledWith(expect.objectContaining({ message: 'Default datasource does not support annotations' }));
     });
 
     it('should add a new annotation and group it with the other annotations', () => {

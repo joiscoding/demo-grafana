@@ -10,6 +10,9 @@ import { notifyApp } from '../../../../core/reducers/appNotification';
 
 import { DashboardQueryRunnerWorkerResult } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/query/state/DashboardQueryRunner/utils');
+
 export function handleAnnotationQueryRunnerError(err: any): Observable<AnnotationEvent[]> {
   if (err.cancelled) {
     return of([]);
@@ -38,7 +41,7 @@ export function handleDashboardQueryRunnerWorkerError(err: any): Observable<Dash
 
 function notifyWithError(title: string, err: any) {
   const error = toDataQueryError(err);
-  console.error('handleAnnotationQueryRunnerError', error);
+  structuredLogger.error('handleAnnotationQueryRunnerError', error);
   const notification = createErrorNotification(title, error.message);
   dispatch(notifyApp(notification));
 }

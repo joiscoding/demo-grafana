@@ -1,6 +1,7 @@
 import { omitBy, pickBy, isNil, isNumber, isString } from 'lodash';
 
 import {
+
   ConfigOverrideRule,
   DynamicConfigValue,
   FieldColorModeId,
@@ -44,6 +45,9 @@ import { GrafanaQuery, GrafanaQueryType } from 'app/plugins/datasource/grafana/t
 
 import { defaultGraphConfig } from './config';
 import { Options } from './panelcfg.gen';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/timeseries/migrations');
 
 let dashboardRefreshDebouncer: ReturnType<typeof setTimeout> | null = null;
 
@@ -283,7 +287,7 @@ export function graphToTimeseriesOptions(angular: any): {
             });
             break;
           default:
-            console.log('Ignore override migration:', seriesOverride.alias, p, v);
+            structuredLogger.log('Ignore override migration:', seriesOverride.alias, p, v);
         }
       }
       if (dashOverride) {

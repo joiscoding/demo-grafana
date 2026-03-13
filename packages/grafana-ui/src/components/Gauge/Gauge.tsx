@@ -3,6 +3,7 @@ import { PureComponent } from 'react';
 import * as React from 'react';
 
 import {
+
   DisplayValue,
   formattedValueToString,
   FieldConfig,
@@ -19,6 +20,9 @@ import { calculateFontSize } from '../../utils/measureText';
 import { clearButtonStyles } from '../Button/Button';
 
 import { calculateGaugeAutoProps, DEFAULT_THRESHOLDS, getFormattedThresholds } from './utils';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Gauge/Gauge');
 
 export interface Props {
   height: number;
@@ -158,7 +162,7 @@ export class Gauge extends PureComponent<Props> {
         $.plot(this.canvasElement, [plotSeries], options);
       }
     } catch (err) {
-      console.error('Gauge rendering error', err, options, value);
+      structuredLogger.error('Gauge rendering error', err, options, value);
     }
   }
 

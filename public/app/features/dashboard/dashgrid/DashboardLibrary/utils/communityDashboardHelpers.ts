@@ -14,6 +14,9 @@ import { GnetDashboard, Link } from '../types';
 
 import { InputMapping, tryAutoMapDatasources, parseConstantInputs, isDataSourceInput } from './autoMapDatasources';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/dashgrid/DashboardLibrary/utils/communityDashboardHelpers');
+
 // Constants for community dashboard pagination and API params
 // We want to get the most 6 downloaded dashboards, but we first query 12
 // to be sure the next filters we apply to that list doesn not reduce it below 6
@@ -150,7 +153,7 @@ function canPanelContainJS(panel: PanelModel): boolean {
   try {
     panelJson = JSON.stringify(panelWithoutSanitizedFields);
   } catch (e) {
-    console.warn('Failed to stringify panel', e);
+    structuredLogger.warn('Failed to stringify panel', e);
     return true;
   }
 
@@ -181,7 +184,7 @@ function canPanelContainJS(panel: PanelModel): boolean {
 
   const hasSuspiciousValue = valuePatterns.some((pattern) => {
     if (pattern.test(panelJson)) {
-      console.warn('Panel contains JavaScript code in value');
+      structuredLogger.warn('Panel contains JavaScript code in value');
       return true;
     }
     return false;
@@ -189,7 +192,7 @@ function canPanelContainJS(panel: PanelModel): boolean {
 
   const hasSuspiciousKey = keyPatterns.some((pattern) => {
     if (pattern.test(panelJson)) {
-      console.warn('Panel contains JavaScript code in key');
+      structuredLogger.warn('Panel contains JavaScript code in key');
       return true;
     }
     return false;
@@ -301,7 +304,7 @@ export async function onUseCommunityDashboard({
       }
     }
   } catch (err) {
-    console.error('Error loading community dashboard:', err);
+    structuredLogger.error('Error loading community dashboard:', err);
     dispatch(
       notifyApp(
         createErrorNotification(t('dashboard-library.community-error-title', 'Error loading community dashboard'))

@@ -2,6 +2,10 @@ import fs from 'fs';
 import { OpenAPIV3 } from 'openapi-types';
 import path from 'path';
 
+import * as structuredLogging from '../../../../scripts/helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('packages/grafana-openapi/src/scripts/process-specs');
+
 /**
  * Process an OpenAPI spec to remove k8s metadata from names and paths:
  * - Remove paths containing "/watch/" as they're deprecated.
@@ -163,7 +167,7 @@ function processDirectory(sourceDir: string, outputDir: string) {
     const inputPath = path.join(sourceDir, file);
     const outputPath = path.join(outputDir, file);
 
-    console.log(`Processing file "${file}"...`);
+    structuredLogger.log(`Processing file "${file}"...`);
 
     const fileContent = fs.readFileSync(inputPath, 'utf-8');
 
@@ -171,13 +175,13 @@ function processDirectory(sourceDir: string, outputDir: string) {
     try {
       inputSpec = JSON.parse(fileContent);
     } catch (err) {
-      console.error(`Invalid JSON file "${file}". Skipping this file.`);
+      structuredLogger.error(`Invalid JSON file "${file}". Skipping this file.`);
       continue;
     }
 
     const outputSpec = processOpenAPISpec(inputSpec);
     fs.writeFileSync(outputPath, JSON.stringify(outputSpec, null, 2), 'utf-8');
-    console.log(`Processing completed for file "${file}".`);
+    structuredLogger.log(`Processing completed for file "${file}".`);
   }
 }
 

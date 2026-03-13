@@ -4,6 +4,7 @@ import { catchError, first, map, mergeMap, skipWhile, throwIfEmpty, tap } from '
 import { SemVer } from 'semver';
 
 import {
+
   DataFrame,
   DataLink,
   DataQueryRequest,
@@ -86,6 +87,9 @@ import {
   QueryType,
 } from './types';
 import { getScriptValue, isTimeSeriesQuery } from './utils';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/elasticsearch/datasource');
 
 export const REF_ID_STARTER_LOG_VOLUME = 'log-volume-';
 export const REF_ID_STARTER_LOG_SAMPLE = 'log-sample-';
@@ -1175,12 +1179,12 @@ export class ElasticDatasource
         try {
           return new SemVer(versionNumber);
         } catch (error) {
-          console.error(error);
+          structuredLogger.error(error);
           return null;
         }
       },
       (error) => {
-        console.error(error);
+        structuredLogger.error(error);
         return null;
       }
     );

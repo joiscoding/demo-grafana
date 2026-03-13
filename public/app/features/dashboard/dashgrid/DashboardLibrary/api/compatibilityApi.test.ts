@@ -5,6 +5,9 @@ import { DashboardJson } from 'app/features/manage-dashboards/types';
 
 import { checkDashboardCompatibility, CompatibilityCheckResult, DatasourceMapping } from './compatibilityApi';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/dashgrid/DashboardLibrary/api/compatibilityApi.test');
+
 // Mock dependencies
 jest.mock('@grafana/runtime', () => ({
   getBackendSrv: jest.fn(),
@@ -96,7 +99,7 @@ describe('compatibilityApi', () => {
     );
     // Mock getAPINamespace to return 'default' (typical dev environment)
     mockGetAPINamespace.mockReturnValue('default');
-    // Mock console.error to prevent test failures
+    // Mock structuredLogger.error to prevent test failures
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
   });
 

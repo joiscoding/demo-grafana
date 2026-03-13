@@ -6,6 +6,9 @@ import config from 'app/core/config';
 
 import { LoginDTO, AuthNRedirectDTO } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/core/components/Login/LoginCtrl');
+
 const isOauthEnabled = () => {
   return !!config.oauth && Object.keys(config.oauth).length > 0;
 };
@@ -107,7 +110,7 @@ export const LoginCtrl = memo(({ resetCode, children }: Props) => {
           .then(() => {
             toGrafana();
           })
-          .catch((err) => console.error(err));
+          .catch((err) => structuredLogger.error(err));
       }
     },
     [resetCode, toGrafana]

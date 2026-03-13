@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Observable, of } from 'rxjs';
 
 import {
+
   AbstractLabelMatcher,
   AbstractLabelOperator,
   CoreApp,
@@ -29,6 +30,7 @@ import { fromString } from './configuration/parseLokiLabelMappings';
 import { GraphiteDatasource } from './datasource';
 import { GraphiteQuery, GraphiteQueryType, GraphiteType } from './types';
 import { DEFAULT_GRAPHITE_VERSION } from './versions';
+
 
 const fetchMock = jest.fn();
 const postResourceMock = jest.fn();
@@ -426,7 +428,7 @@ describe('graphiteDatasource', () => {
         results = data;
       });
       expect(results).toEqual([]);
-      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Unable to get annotations/));
+      expect(errorSpy).toHaveBeenCalledWith(expect.objectContaining({ message: expect.stringMatching(/Unable to get annotations/) }));
     });
   });
 
@@ -540,7 +542,7 @@ describe('graphiteDatasource', () => {
         results = data;
       });
       expect(results).toEqual([]);
-      expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Unable to get annotations/));
+      expect(errorSpy).toHaveBeenCalledWith(expect.objectContaining({ message: expect.stringMatching(/Unable to get annotations/) }));
     });
   });
 

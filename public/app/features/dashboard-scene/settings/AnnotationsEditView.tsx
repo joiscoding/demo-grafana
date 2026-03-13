@@ -16,6 +16,9 @@ import { AnnotationSettingsEdit } from './annotations/AnnotationSettingsEdit';
 import { AnnotationSettingsList } from './annotations/AnnotationSettingsList';
 import { DashboardEditView, DashboardEditViewState, useDashboardEditPageNav } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/settings/AnnotationsEditView');
+
 export enum MoveDirection {
   UP = -1,
   DOWN = 1,
@@ -59,7 +62,7 @@ export class AnnotationsEditView extends SceneObjectBase<AnnotationsEditViewStat
     const defaultInstanceDS = getDataSourceSrv().getInstanceSettings(null);
     // check for an annotation flag in the plugin json to see if it supports annotations
     if (!defaultInstanceDS || !defaultInstanceDS.meta.annotations) {
-      console.error('Default datasource does not support annotations');
+      structuredLogger.error('Default datasource does not support annotations');
       return undefined;
     }
     return getDataSourceRef(defaultInstanceDS);

@@ -5,6 +5,9 @@ import { render, screen } from 'test/test-utils';
 import { StepperStateProvider, useStepperState } from './StepperState';
 import { StepKey, StepState } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/alerting/unified/components/import-to-gma/Wizard/StepperState.test');
+
 const wrapper = ({ children, initialStep }: { children: ReactNode; initialStep?: StepKey }) => (
   <StepperStateProvider initialStep={initialStep}>{children}</StepperStateProvider>
 );
@@ -42,7 +45,7 @@ describe('StepperStateProvider', () => {
 
 describe('useStepperState', () => {
   it('should throw error when used outside provider', () => {
-    // Suppress console.error for this test
+    // Suppress structuredLogger.error for this test
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => {

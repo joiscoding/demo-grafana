@@ -2,6 +2,9 @@ import { FieldType, DataFrame, dateTime } from '@grafana/data';
 
 import { Feed } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/news/utils');
+
 export function feedToDataFrame(feed: Feed): DataFrame {
   const date: number[] = [];
   const title: string[] = [];
@@ -23,7 +26,7 @@ export function feedToDataFrame(feed: Feed): DataFrame {
         content.push(body);
       }
     } catch (err) {
-      console.warn('Error reading news item:', err, item);
+      structuredLogger.warn('Error reading news item:', err, item);
     }
   }
 

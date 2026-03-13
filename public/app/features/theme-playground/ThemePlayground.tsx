@@ -29,6 +29,9 @@ import { getNavModel } from '../../core/selectors/navModel';
 import { ThemeProvider } from '../../core/utils/ConfigProvider';
 import { useDispatch, useSelector } from '../../types/store';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/theme-playground/ThemePlayground');
+
 const themeMap: Record<string, NewThemeOptions> = {
   dark: {
     name: 'Dark',
@@ -65,7 +68,7 @@ const experimentalDefinitions: Record<string, unknown> = {
 for (const [name, json] of Object.entries(experimentalDefinitions)) {
   const result = NewThemeOptionsSchema.safeParse(json);
   if (!result.success) {
-    console.error(`Invalid theme definition for theme ${name}: ${result.error.message}`);
+    structuredLogger.error(`Invalid theme definition for theme ${name}: ${result.error.message}`);
   } else {
     themeMap[result.data.id] = result.data;
   }

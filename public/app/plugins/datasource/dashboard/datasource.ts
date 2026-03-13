@@ -1,6 +1,7 @@
 import { Observable, debounce, debounceTime, defer, finalize, first, interval, map, of } from 'rxjs';
 
 import {
+
   DataSourceApi,
   DataQueryRequest,
   DataQueryResponse,
@@ -30,6 +31,9 @@ import {
 import { MIXED_REQUEST_PREFIX } from '../mixed/MixedDataSource';
 
 import { DashboardQuery } from './types';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/dashboard/datasource');
 
 /**
  * This should not really be called
@@ -270,7 +274,7 @@ export class DashboardDatasource extends DataSourceApi<DashboardQuery> {
         options: { value: filter.value },
       });
     } catch (error) {
-      console.warn('Failed to create value matcher for filter:', filter, error);
+      structuredLogger.warn('Failed to create value matcher for filter:', filter, error);
       return null;
     }
   }

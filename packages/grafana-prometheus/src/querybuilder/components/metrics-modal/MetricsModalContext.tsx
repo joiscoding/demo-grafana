@@ -1,5 +1,6 @@
 import debounce from 'debounce-promise';
 import {
+
   createContext,
   FC,
   PropsWithChildren,
@@ -22,6 +23,9 @@ import { formatPrometheusLabelFilters } from '../formatter';
 import { generateMetricData } from './helpers';
 import { MetricData, MetricsData } from './types';
 import { fuzzySearch } from './uFuzzy';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-prometheus/src/querybuilder/components/metrics-modal/MetricsModalContext');
 
 export const DEFAULT_RESULTS_PER_PAGE = 25;
 
@@ -167,7 +171,7 @@ export const MetricsModalContextProvider: FC<PropsWithChildren<MetricsModalConte
         } catch (error) {
           // Only update state if this is still the latest search
           if (searchId === latestSearchIdRef.current) {
-            console.error('Backend search failed:', error);
+            structuredLogger.error('Backend search failed:', error);
             setMetricsData([]); // Clear results on error
             setIsLoading(false);
           }

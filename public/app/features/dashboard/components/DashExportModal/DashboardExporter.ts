@@ -15,6 +15,9 @@ import { isConstant } from '../../../variables/guard';
 import { DashboardModel } from '../../state/DashboardModel';
 import { GridPos } from '../../state/PanelModel';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/components/DashExportModal/DashboardExporter');
+
 export interface InputUsage {
   libraryPanels?: LibraryPanel[];
 }
@@ -318,7 +321,7 @@ export class DashboardExporter {
 
       return newObj;
     } catch (err) {
-      console.error('Export failed:', err);
+      structuredLogger.error('Export failed:', err);
       return {
         error: err,
       };

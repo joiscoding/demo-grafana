@@ -12,6 +12,7 @@ import { AnnotationsWorker } from './AnnotationsWorker';
 import { SnapshotWorker } from './SnapshotWorker';
 import { UnifiedAlertStatesWorker } from './UnifiedAlertStatesWorker';
 import {
+
   DashboardQueryRunner,
   DashboardQueryRunnerOptions,
   DashboardQueryRunnerResult,
@@ -19,6 +20,9 @@ import {
   DashboardQueryRunnerWorkerResult,
 } from './types';
 import { getAnnotationsByPanelId } from './utils';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/query/state/DashboardQueryRunner/DashboardQueryRunner');
 
 class DashboardQueryRunnerImpl implements DashboardQueryRunner {
   private readonly results: ReplaySubject<DashboardQueryRunnerWorkerResult>;
@@ -73,7 +77,7 @@ class DashboardQueryRunnerImpl implements DashboardQueryRunner {
       takeUntil(this.runs.asObservable()),
       mergeAll(),
       reduce((acc: DashboardQueryRunnerWorkerResult, value: DashboardQueryRunnerWorkerResult) => {
-        // console.log({ acc: acc.annotations.length, value: value.annotations.length });
+        // structuredLogger.log({ acc: acc.annotations.length, value: value.annotations.length });
         // should we use scan or reduce here
         // reduce will only emit when all observables are completed
         // scan will emit when any observable is completed

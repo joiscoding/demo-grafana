@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Combobox/useOptions');
+
 /* Spreading unbound arrays can be very slow or even crash the browser if used for arguments */
 /* eslint no-restricted-syntax: ["error", "SpreadElement"] */
 
@@ -51,7 +54,7 @@ export function useOptions<T extends string | number>(
               setAsyncLoading(false);
 
               if (error) {
-                console.error('Error loading async options for Combobox', error);
+                structuredLogger.error('Error loading async options for Combobox', error);
               }
             }
           });

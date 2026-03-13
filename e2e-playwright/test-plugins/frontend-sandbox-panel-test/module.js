@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('e2e-playwright/test-plugins/frontend-sandbox-panel-test/module');
+
 /*
  * This is a dummy plugin to test the frontend sandbox
  * It is not meant to be used in any other way
@@ -127,20 +130,20 @@ define(['react', '@grafana/data'], function (React, grafanaData) {
     const globalTests = [
       function () {
         try {
-          console.log(window.Prism.languages);
+          structuredLogger.log(window.Prism.languages);
           return 'Prism';
         } catch (e) {}
       },
       function () {
         try {
-          console.log(window.jQuery.fn.jquery);
-          console.log(window.$.fn.jquery);
+          structuredLogger.log(window.jQuery.fn.jquery);
+          structuredLogger.log(window.$.fn.jquery);
           return 'jQuery';
         } catch (e) {}
       },
       function () {
         try {
-          console.log(window.locationSandbox);
+          structuredLogger.log(window.locationSandbox);
           return 'location';
         } catch (e) {}
       },

@@ -2,6 +2,7 @@ import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
+
   CustomVariableSupport,
   DataQueryRequest,
   DataQueryResponse,
@@ -17,6 +18,9 @@ import { migrateVariableQuery } from './migrations/variableQueryMigrations';
 import { ResourcesAPI } from './resources/ResourcesAPI';
 import { standardStatistics } from './standardStatistics';
 import { VariableQuery, VariableQueryType } from './types';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/cloudwatch/variables');
 
 export class CloudWatchVariableSupport extends CustomVariableSupport<CloudWatchDatasource, VariableQuery> {
   constructor(private readonly resources: ResourcesAPI) {
@@ -57,7 +61,7 @@ export class CloudWatchVariableSupport extends CustomVariableSupport<CloudWatchD
           return this.handleAccountsQuery(query);
       }
     } catch (error) {
-      console.error(`Could not run CloudWatchMetricFindQuery ${query}`, error);
+      structuredLogger.error(`Could not run CloudWatchMetricFindQuery ${query}`, error);
       return [];
     }
   }

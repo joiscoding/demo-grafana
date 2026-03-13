@@ -259,7 +259,7 @@ In **OpenSearch SQL**, you can specify log groups in multiple ways.
 For details, refer to the [Query log groups with OpenSearch SQL](#query-log-groups-with-opensearch-sql) section.
 {{< /admonition >}}
 
-Click **View in CloudWatch console** to interactively view, search, and analyze your log data in the CloudWatch Logs Insights console. If you're not logged in to the CloudWatch console, the link forwards you to the login page.
+Click **View in CloudWatch console** to interactively view, search, and analyze your log data in the CloudWatch Logs Insights structuredLogger. If you're not logged in to the CloudWatch console, the link forwards you to the login page.
 
 ### Query log groups with OpenSearch SQL
 

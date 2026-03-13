@@ -6,6 +6,9 @@ import { FeatureToggles } from '@grafana/data';
 import { config } from '../../config';
 import { logError } from '../../utils/logging';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-runtime/src/internal/openFeature/index');
+
 function checkDefaultProvider(event?: EventDetails) {
   if (event?.domain) {
     return;
@@ -18,7 +21,7 @@ function checkDefaultProvider(event?: EventDetails) {
       'OpenFeature default domain provider has been unexpectedly changed. This may be caused by a plugin that is incorrectly using the default domain.',
       { cause: OpenFeature.getProvider() }
     );
-    console.error(err);
+    structuredLogger.error(err);
     logError(err);
   }
 }

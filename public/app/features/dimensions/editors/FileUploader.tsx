@@ -8,6 +8,9 @@ import { SanitizedSVG } from 'app/core/components/SVG/SanitizedSVG';
 
 import { MediaType } from '../types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dimensions/editors/FileUploader');
+
 interface Props {
   setFormData: Dispatch<SetStateAction<FormData>>;
   mediaType: MediaType;
@@ -47,7 +50,7 @@ export const FileUploader = ({ mediaType, setFormData, setUpload, error }: Props
   const onFileRemove = (file: DropzoneFile) => {
     fetch(`/api/storage/delete/upload/${file.file.name}`, {
       method: 'DELETE',
-    }).catch((error) => console.error('cannot delete file', error));
+    }).catch((error) => structuredLogger.error('cannot delete file', error));
   };
 
   const acceptableFiles =

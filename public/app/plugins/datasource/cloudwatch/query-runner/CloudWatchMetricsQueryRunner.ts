@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { catchError, map, Observable, of } from 'rxjs';
 
 import {
+
   AppEvents,
   DataFrame,
   DataQueryError,
@@ -25,8 +26,11 @@ import { filterMetricsQuery } from '../utils/utils';
 
 import { CloudWatchRequest } from './CloudWatchRequest';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/cloudwatch/query-runner/CloudWatchMetricsQueryRunner');
+
 const getThrottlingErrorMessage = (region: string, message: string) =>
-  `Please visit the AWS Service Quotas console at https://${region}.console.aws.amazon.com/servicequotas/home?region=${region}#!/services/monitoring/quotas/L-5E141212 to request a quota increase or see our documentation at https://grafana.com/docs/grafana/latest/datasources/cloudwatch/#manage-service-quotas to learn more. ${message}`;
+  `Please visit the AWS Service Quotas console at https://${region}.structuredLogger.aws.amazon.com/servicequotas/home?region=${region}#!/services/monitoring/quotas/L-5E141212 to request a quota increase or see our documentation at https://grafana.com/docs/grafana/latest/datasources/cloudwatch/#manage-service-quotas to learn more. ${message}`;
 
 const displayAlert = (datasourceName: string, region: string) =>
   getAppEvents().publish({

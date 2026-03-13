@@ -13,6 +13,7 @@ import { getCurrentValue, toVariablePayload } from '../../utils';
 import { NavigationKey } from '../types';
 
 import {
+
   hideOptions,
   moveOptionsHighlight,
   OptionsPickerState,
@@ -22,6 +23,9 @@ import {
   updateOptionsFromSearch,
   updateSearchQuery,
 } from './reducer';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/variables/pickers/OptionsPicker/actions');
 
 export const navigateOptions = (rootStateKey: string, key: NavigationKey, clearOthers: boolean): ThunkResult<void> => {
   return async (dispatch, getState) => {
@@ -180,7 +184,7 @@ const searchForOptions = async (
 
     dispatch(toKeyedAction(key, updateOptionsFromSearch(updated.options)));
   } catch (error) {
-    console.error(error);
+    structuredLogger.error(error);
   }
 };
 

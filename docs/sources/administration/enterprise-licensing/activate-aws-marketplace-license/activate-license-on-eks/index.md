@@ -33,7 +33,7 @@ To activate your license, complete the following tasks:
 
 1. Deploy Grafana Enterprise on Amazon EKS.
 
-   For more information about deploying an application on Amazon EKS, refer to [Getting started with Amazon EKS – AWS Management Console and AWS CLI](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-console.html).
+   For more information about deploying an application on Amazon EKS, refer to [Getting started with Amazon EKS – AWS Management Console and AWS CLI](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-structuredLogger.html).
 
    For more information about installing Grafana on Kubernetes using the Helm Chart, refer to the [Grafana Helm Chart](https://github.com/grafana/helm-charts/tree/main/charts/grafana#readme).
 
@@ -94,7 +94,7 @@ In this task, you configure Grafana Enterprise to validate the license with AWS 
    - `"license-manager:GetLicenseUsage"`
    - `"license-manager:CheckInLicense"`
 
-   For more information about creating an access policy, refer to [Creating IAM policies (console)](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-console.html).
+   For more information about creating an access policy, refer to [Creating IAM policies (console)](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-structuredLogger.html).
 
    For more information about AWS license permissions, refer to [Actions, resources, and condition keys for AWS License Manager](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslicensemanager.html).
 

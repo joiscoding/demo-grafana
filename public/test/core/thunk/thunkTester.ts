@@ -2,6 +2,10 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 
+import * as structuredLogging from '../../../../scripts/helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('public/test/core/thunk/thunkTester');
+
 const mockStore = configureMockStore([thunk]);
 
 export interface ThunkGiven {
@@ -28,7 +32,7 @@ export const thunkTester = (initialState: unknown, debug?: boolean): ThunkGiven 
 
     dispatchedActions = store.getActions();
     if (debug) {
-      console.log('resultingActions:', JSON.stringify(dispatchedActions, null, 2));
+      structuredLogger.log('resultingActions:', JSON.stringify(dispatchedActions, null, 2));
     }
 
     return dispatchedActions;

@@ -1,4 +1,5 @@
 import {
+
   Action,
   ActionModel,
   ActionType,
@@ -25,6 +26,9 @@ import { getTimeSrv } from '../dashboard/services/TimeSrv';
 import { getNextRequestId } from '../query/state/PanelQueryRunner';
 
 import { reportActionTrigger } from './analytics';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/actions/utils');
 
 /** @internal */
 export const isInfinityActionWithAuth = (action: Action): boolean => {
@@ -120,7 +124,7 @@ export const getActions = (
                   appEvents.emit(AppEvents.alertError, [
                     'An error has occurred. Check console output for more details.',
                   ]);
-                  console.error(error);
+                  structuredLogger.error(error);
                 },
                 complete: () => {
                   appEvents.emit(AppEvents.alertSuccess, ['API call was successful']);
@@ -128,7 +132,7 @@ export const getActions = (
               });
           } catch (error) {
             appEvents.emit(AppEvents.alertError, ['An error has occurred. Check console output for more details.']);
-            console.error(error);
+            structuredLogger.error(error);
             return;
           }
         },

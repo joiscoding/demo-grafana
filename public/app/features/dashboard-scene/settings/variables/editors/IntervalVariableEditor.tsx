@@ -5,11 +5,15 @@ import { SelectableValue } from '@grafana/data';
 import { IntervalVariable, SceneVariable } from '@grafana/scenes';
 import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneItemDescriptor';
 import {
+
   getIntervalsFromQueryString,
   getIntervalsQueryFromNewIntervalModel,
 } from 'app/features/dashboard-scene/utils/utils';
 
 import { IntervalVariableForm } from '../components/IntervalVariableForm';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/settings/variables/editors/IntervalVariableEditor');
 
 interface IntervalVariableEditorProps {
   variable: IntervalVariable;
@@ -65,7 +69,7 @@ export function IntervalVariableEditor({ variable, onRunQuery, inline }: Interva
 
 export function getIntervalVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof IntervalVariable)) {
-    console.warn('getIntervalVariableOptions: variable is not an IntervalVariable');
+    structuredLogger.warn('getIntervalVariableOptions: variable is not an IntervalVariable');
     return [];
   }
 

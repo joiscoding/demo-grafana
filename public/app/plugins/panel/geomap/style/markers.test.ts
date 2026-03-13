@@ -1,6 +1,7 @@
 import { getPublicOrAbsoluteUrl } from 'app/features/dimensions/resource';
 
 import {
+
   getWebGLStyle,
   baseCircleStyle,
   baseShapeStyle,
@@ -12,6 +13,9 @@ import {
   circleMarker,
 } from './markers';
 import { defaultStyleConfig } from './types';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/geomap/style/markers.test');
 
 // Mock dependencies
 jest.mock('app/features/dimensions/resource', () => ({
@@ -89,7 +93,7 @@ describe('getWebGLStyle', () => {
   });
 
   it('handles fetch error gracefully', async () => {
-    // Mock console.error to suppress output and verify it's called
+    // Mock structuredLogger.error to suppress output and verify it's called
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     (getPublicOrAbsoluteUrl as jest.Mock).mockReturnValue('error.svg');
@@ -97,7 +101,7 @@ describe('getWebGLStyle', () => {
     const result = await getWebGLStyle('error.svg');
     expect(result['icon-src']).toBe(''); // Empty SVG
 
-    // Verify console.error was called with the expected error
+    // Verify structuredLogger.error was called with the expected error
     expect(consoleErrorSpy).toHaveBeenCalledWith(new Error('Fetch failed'));
 
     // Clean up the spy

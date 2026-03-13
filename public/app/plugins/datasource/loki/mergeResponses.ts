@@ -1,4 +1,5 @@
 import {
+
   closestIdx,
   DataFrame,
   DataFrameType,
@@ -13,6 +14,9 @@ import {
 } from '@grafana/data';
 
 import { LOADING_FRAME_NAME } from './querySplitting';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/loki/mergeResponses');
 
 function getFrameKey(frame: DataFrame): string | undefined {
   // Metric range query data
@@ -142,7 +146,7 @@ export function mergeFrames(dest: DataFrame, source: DataFrame) {
   const sourceIdField = source.fields.find((field) => field.type === FieldType.string && field.name === 'id');
 
   if (!destTimeField || !sourceTimeField) {
-    console.error(new Error(`Time fields not found in the data frames`));
+    structuredLogger.error(new Error(`Time fields not found in the data frames`));
     return;
   }
 

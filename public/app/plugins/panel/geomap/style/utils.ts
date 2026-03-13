@@ -3,6 +3,7 @@ import { TextDimensionMode } from '@grafana/schema';
 
 import { getMarkerMaker } from './markers';
 import {
+
   HorizontalAlign,
   VerticalAlign,
   defaultStyleConfig,
@@ -12,6 +13,9 @@ import {
   SymbolAlign,
   ColorValue,
 } from './types';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/geomap/style/utils');
 
 /** Indicate if the style wants to show text values */
 export function styleUsesText(config: StyleConfig): boolean {
@@ -106,7 +110,7 @@ export function getRGBValues(colorString: string): ColorValue | null {
 
   // Handle other color formats if needed
   else {
-    console.warn(`Unsupported color format: ${colorString}`);
+    structuredLogger.warn(`Unsupported color format: ${colorString}`);
   }
   return null;
 }
@@ -142,10 +146,10 @@ function getRGBFromRGBString(rgbString: string): ColorValue | null {
         a: parseFloat(matches[3]), // Using parseFloat for alpha as it can be decimal (0-1)
       };
     } else {
-      console.warn(`Unsupported color format: ${rgbString}`);
+      structuredLogger.warn(`Unsupported color format: ${rgbString}`);
     }
   } else {
-    console.warn(`Unsupported color format: ${rgbString}`);
+    structuredLogger.warn(`Unsupported color format: ${rgbString}`);
   }
   return null;
 }

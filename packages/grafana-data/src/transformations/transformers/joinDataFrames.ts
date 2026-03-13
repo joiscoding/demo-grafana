@@ -6,6 +6,9 @@ import { FieldMatcherID } from '../matchers/ids';
 
 import { JoinMode } from './joinByField';
 
+import { createStructuredLogger } from '../../utils/structuredLogging';
+const structuredLogger = createStructuredLogger('packages/grafana-data/src/transformations/transformers/joinDataFrames');
+
 export function pickBestJoinField(data: DataFrame[]): FieldMatcher {
   const { timeField } = getTimeField(data[0]);
   if (timeField) {
@@ -266,7 +269,7 @@ export function joinDataFrames(options: JoinOptions): DataFrame | undefined {
  * SQL-style join of tables, using the first column in each
  */
 function joinTabular(tables: AlignedData[], outer = false) {
-  // console.time('joinTabular');
+  // structuredLogger.time('joinTabular');
 
   let ltable = tables[0];
   let lfield = ltable[0];
@@ -281,7 +284,7 @@ function joinTabular(tables: AlignedData[], outer = false) {
      * Build an inverted index of the right table's join column like { "foo": [1,2,3], "bar": [7,12], ... }
      * where the keys are unique values and the arrays are indices where these values were found
      */
-    // console.time('index right');
+    // structuredLogger.time('index right');
     let index: Record<string | number, number[]> = {};
 
     for (let i = 0; i < rfield.length; i++) {
@@ -295,7 +298,7 @@ function joinTabular(tables: AlignedData[], outer = false) {
 
       idxs.push(i);
     }
-    // console.timeEnd('index right');
+    // structuredLogger.timeEnd('index right');
 
     /**
      * Loop over the left table's join column and match each non-null value to the right index,
@@ -308,7 +311,7 @@ function joinTabular(tables: AlignedData[], outer = false) {
     let unmatchedLeft = [];
     let unmatchedRight = [];
 
-    // console.time('match left');
+    // structuredLogger.time('match left');
     let matched: Array<[lidx: number, ridxs: number[]]> = [];
 
     // count of total number of output rows, so we can
@@ -333,12 +336,12 @@ function joinTabular(tables: AlignedData[], outer = false) {
       }
     }
     count += unmatchedLeft.length;
-    // console.timeEnd('match left');
+    // structuredLogger.timeEnd('match left');
 
     /**
      * For outer joins, also loop over the right index to record unmatched values
      */
-    // console.time('unmatched right');
+    // structuredLogger.time('unmatched right');
     if (outer) {
       for (let k in index) {
         if (!matchedKeys.has(k)) {
@@ -347,7 +350,7 @@ function joinTabular(tables: AlignedData[], outer = false) {
       }
       count += unmatchedRight.length;
     }
-    // console.timeEnd('unmatched right');
+    // structuredLogger.timeEnd('unmatched right');
 
     /**
      * Now we can use matched, unmatchedLeft, unmatchedRight, ltable, and rtable to assemble the final table
@@ -391,7 +394,7 @@ function joinTabular(tables: AlignedData[], outer = false) {
      *   return joined;
      * }
      */
-    // console.time('materialize');
+    // structuredLogger.time('materialize');
     let outFieldsTpl = Array.from({ length: ltable.length + rtable.length - 1 }, () => `Array(${count})`).join(',');
     let copyLeftRowTpl = ltable.map((c, i) => `joined[${i}][rowIdx] = ltable[${i}][lidx]`).join(';');
     // (skips join field in right table)
@@ -447,13 +450,13 @@ function joinTabular(tables: AlignedData[], outer = false) {
     );
 
     let joined = materialize(matched, unmatchedLeft, unmatchedRight, ltable, rtable);
-    // console.timeEnd('materialize');
+    // structuredLogger.timeEnd('materialize');
 
     ltable = joined;
     lfield = ltable[0];
   }
 
-  // console.timeEnd('joinTabular');
+  // structuredLogger.timeEnd('joinTabular');
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return ltable as Array<Array<string | number | null | undefined>>;

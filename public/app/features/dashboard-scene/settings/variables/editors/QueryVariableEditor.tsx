@@ -16,6 +16,7 @@ import { getVariableQueryEditor } from 'app/features/variables/editor/getVariabl
 import { QueryVariableRefreshSelect } from 'app/features/variables/query/QueryVariableRefreshSelect';
 import { QueryVariableSortSelect } from 'app/features/variables/query/QueryVariableSortSelect';
 import {
+
   QueryVariableStaticOptions,
   StaticOptionsOrderType,
   StaticOptionsType,
@@ -24,6 +25,9 @@ import {
 import { QueryVariableEditorForm } from '../components/QueryVariableForm';
 import { VariableValuesPreview } from '../components/VariableValuesPreview';
 import { hasVariableOptions } from '../utils';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/settings/variables/editors/QueryVariableEditor');
 
 interface QueryVariableEditorProps {
   variable: QueryVariable;
@@ -133,7 +137,7 @@ export function QueryVariableEditor({ variable, onRunQuery }: QueryVariableEdito
 
 export function getQueryVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof QueryVariable)) {
-    console.warn('getQueryVariableOptions: variable is not a QueryVariable');
+    structuredLogger.warn('getQueryVariableOptions: variable is not a QueryVariable');
     return [];
   }
 

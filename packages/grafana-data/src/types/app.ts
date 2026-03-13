@@ -6,11 +6,15 @@ import { KeyValue } from './data';
 import { NavModel } from './navModel';
 import { PluginMeta, GrafanaPlugin, PluginIncludeType } from './plugin';
 import {
+
   PluginExtensionExposedComponentConfig,
   PluginExtensionAddedComponentConfig,
   PluginExtensionAddedLinkConfig,
   PluginExtensionAddedFunctionConfig,
 } from './pluginExtensions';
+
+import { createStructuredLogger } from '../utils/structuredLogging';
+const structuredLogger = createStructuredLogger('packages/grafana-data/src/types/app');
 
 /**
  * @public
@@ -93,7 +97,7 @@ export class AppPlugin<T extends KeyValue = KeyValue> extends GrafanaPlugin<AppP
           const exp = pluginExports[include.component];
 
           if (!exp) {
-            console.warn('App Page uses unknown component: ', include.component, this.meta);
+            structuredLogger.warn('App Page uses unknown component: ', include.component, this.meta);
             continue;
           }
         }

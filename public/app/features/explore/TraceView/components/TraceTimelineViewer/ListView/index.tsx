@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/explore/TraceView/components/TraceTimelineViewer/ListView/index');
+
 // Copyright (c) 2017 Uber Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -387,8 +390,7 @@ export default class ListView extends React.Component<TListViewProps> {
         // use `.getAttribute(...)` instead of `.dataset` for jest / JSDOM
         const itemKey = node.getAttribute('data-item-key');
         if (!itemKey) {
-          // eslint-disable-next-line no-console
-          console.warn('itemKey not found');
+                    structuredLogger.warn('itemKey not found');
           continue;
         }
         // measure the first child, if it's available, otherwise the node itself

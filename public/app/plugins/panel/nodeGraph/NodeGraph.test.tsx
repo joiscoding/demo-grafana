@@ -5,6 +5,9 @@ import { NodeGraph } from './NodeGraph';
 import { LayoutAlgorithm, ZoomMode } from './panelcfg.gen';
 import { makeEdgesDataFrame, makeNodesDataFrame } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/nodeGraph/NodeGraph.test');
+
 jest.mock('./layout', () => {
   const actual = jest.requireActual('./layout');
   return {
@@ -140,8 +143,8 @@ describe('NodeGraph', () => {
 
     // We mock this because for some reason the simulated click events don't have pageX/Y values resulting in some NaNs
     // for positioning and this creates a warning message.
-    const origError = console.error;
-    console.error = jest.fn();
+    const origError = structuredLogger.error;
+    structuredLogger.error = jest.fn();
 
     const node = await screen.findByTestId('node-click-rect-0');
     await userEvent.click(node);
@@ -150,7 +153,7 @@ describe('NodeGraph', () => {
     const edge = await screen.findByLabelText(/Edge from/);
     await userEvent.click(edge);
     await screen.findByText(/Edge traces/);
-    console.error = origError;
+    structuredLogger.error = origError;
   });
 
   it('lays out 3 nodes in single line', async () => {

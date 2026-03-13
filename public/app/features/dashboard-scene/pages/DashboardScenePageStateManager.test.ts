@@ -7,6 +7,7 @@ import { createFetchResponse } from 'test/helpers/createFetchResponse';
 import { store } from '@grafana/data';
 import { BackendSrv, config, locationService, setBackendSrv } from '@grafana/runtime';
 import {
+
   Spec as DashboardV2Spec,
   defaultSpec as defaultDashboardV2Spec,
 } from '@grafana/schema/apis/dashboard.grafana.app/v2';
@@ -31,6 +32,9 @@ import {
   UnifiedDashboardScenePageStateManager,
   DASHBOARD_CACHE_TTL,
 } from './DashboardScenePageStateManager';
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/pages/DashboardScenePageStateManager.test');
+
 const fetchMock = jest.fn();
 
 jest.mock('@grafana/runtime', () => {
@@ -587,7 +591,7 @@ describe('DashboardScenePageStateManager v1', () => {
 
         // Reset playlist service state
         playlistSrv.state.isPlaying = false;
-        // Mock console.log to prevent test failures
+        // Mock structuredLogger.log to prevent test failures
         jest.spyOn(console, 'log').mockImplementation(() => {});
       });
 
@@ -595,7 +599,7 @@ describe('DashboardScenePageStateManager v1', () => {
         // Restore original location service methods
         locationService.replace = originalReplace;
         locationService.getLocation = originalGetLocation;
-        // Restore console.log
+        // Restore structuredLogger.log
         jest.restoreAllMocks();
       });
 

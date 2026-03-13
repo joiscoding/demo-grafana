@@ -22,6 +22,9 @@ import { QueryTypeSelector } from './QueryTypeSelector';
 import { RawQueryEditor } from './RawQueryEditor';
 import { changeAliasPattern, changeEditorTypeAndResetQuery, changeQuery } from './state';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/elasticsearch/components/QueryEditor/index');
+
 export type ElasticQueryEditorProps = QueryEditorProps<
   ElasticDatasourceLike,
   ElasticsearchDataQuery,
@@ -42,7 +45,7 @@ function useElasticVersion(datasource: ElasticDatasourceLike): SemVer | null {
       },
       (error) => {
         // we do nothing
-        console.log(error);
+        structuredLogger.log(error);
       }
     );
 

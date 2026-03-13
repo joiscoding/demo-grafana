@@ -4,6 +4,7 @@ import { DataQueryRequest, DataSourceApi, LoadingState, PanelPlugin } from '@gra
 import { getPanelPlugin } from '@grafana/data/test';
 import { config } from '@grafana/runtime';
 import {
+
   CancelActivationHandler,
   CustomVariable,
   SceneDataTransformer,
@@ -32,6 +33,9 @@ import { findVizPanelByKey, getQueryRunnerFor } from '../utils/utils';
 import { PanelDataPane } from './PanelDataPane/PanelDataPane';
 import { PanelDataPaneNext } from './PanelEditNext/PanelDataPaneNext';
 import { buildPanelEditScene } from './PanelEditor';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/panel-edit/PanelEditor.test');
 
 const runRequestMock = jest.fn().mockImplementation((ds: DataSourceApi, request: DataQueryRequest) => {
   return of({
@@ -455,7 +459,7 @@ async function setup(options: SetupOptions = {}) {
   deactivate = activateFullSceneTree(dashboard);
 
   if (!options.skipWait) {
-    //console.log('pluginResolve(pluginToLoad)');
+    //structuredLogger.log('pluginResolve(pluginToLoad)');
     pluginResolve(pluginToLoad);
     await new Promise((r) => setTimeout(r, 1));
   }

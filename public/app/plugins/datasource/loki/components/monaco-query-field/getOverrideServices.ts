@@ -1,5 +1,8 @@
 import { monacoTypes } from '@grafana/ui';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/loki/components/monaco-query-field/getOverrideServices');
+
 // this thing here is a workaround in a way.
 // what we want to achieve, is that when the autocomplete-window
 // opens, the "second, extra popup" with the extra help,
@@ -81,7 +84,7 @@ function makeStorageService() {
     },
 
     logStorage: (): void => {
-      console.log('logStorage: not implemented');
+      structuredLogger.log('logStorage: not implemented');
     },
 
     migrate: (): Promise<void> => {

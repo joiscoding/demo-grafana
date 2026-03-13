@@ -2,6 +2,7 @@ import { Point } from 'ol/geom';
 import { SortColumn } from 'react-data-grid';
 
 import {
+
   createDataFrame,
   createTheme,
   DataFrame,
@@ -54,6 +55,9 @@ import {
   prepareSparklineValue,
   SINGLE_LINE_ESTIMATE_THRESHOLD,
 } from './utils';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Table/TableNG/utils.test');
 
 describe('TableNG utils', () => {
   describe('alignment', () => {
@@ -1882,13 +1886,13 @@ describe('TableNG utils', () => {
       expect(parseStyleJson(value)).toBeUndefined();
     });
 
-    it('returns void and does not throw if this is invalid JSON (but it does console.error)', () => {
+    it('returns void and does not throw if this is invalid JSON (but it does structuredLogger.error)', () => {
       jest.spyOn(console, 'error').mockImplementation();
       expect(parseStyleJson('{"mal": "formed}')).toBeUndefined();
       expect(console.error).toHaveBeenCalled();
     });
 
-    it('only calls console.error once for a given malformed style', () => {
+    it('only calls structuredLogger.error once for a given malformed style', () => {
       jest.spyOn(console, 'error').mockImplementation();
       for (let i = 0; i < 100; i++) {
         parseStyleJson('{"mal": "formed-in-a-new-way}');

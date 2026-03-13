@@ -6,6 +6,9 @@ import { generateOptions } from '../Select/mockOptions';
 import { ValuePicker } from './ValuePicker';
 import mdx from './ValuePicker.mdx';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/ValuePicker/ValuePicker.story');
+
 const meta: Meta<typeof ValuePicker> = {
   title: 'Pickers/ValuePicker',
   component: ValuePicker,
@@ -43,7 +46,7 @@ const options = generateOptions();
 export const Simple: StoryFn<typeof ValuePicker> = (args) => {
   return (
     <div style={{ width: '200px' }}>
-      <ValuePicker {...args} options={options} onChange={(v) => console.log(v)} />
+      <ValuePicker {...args} options={options} onChange={(v) => structuredLogger.log(v)} />
     </div>
   );
 };

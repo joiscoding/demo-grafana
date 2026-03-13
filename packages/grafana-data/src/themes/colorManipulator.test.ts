@@ -1,4 +1,5 @@
 import {
+
   recomposeColor,
   hexToRgb,
   rgbToHex,
@@ -14,11 +15,14 @@ import {
   onBackground,
 } from './colorManipulator';
 
+import { createStructuredLogger } from '../utils/structuredLogging';
+const structuredLogger = createStructuredLogger('packages/grafana-data/src/themes/colorManipulator.test');
+
 describe('utils/colorManipulator', () => {
-  const origError = console.error;
+  const origError = structuredLogger.error;
   const consoleErrorMock = jest.fn();
-  afterEach(() => (console.error = origError));
-  beforeEach(() => (console.error = consoleErrorMock));
+  afterEach(() => (structuredLogger.error = origError));
+  beforeEach(() => (structuredLogger.error = consoleErrorMock));
 
   describe('recomposeColor', () => {
     it('converts a decomposed rgb color object to a string` ', () => {

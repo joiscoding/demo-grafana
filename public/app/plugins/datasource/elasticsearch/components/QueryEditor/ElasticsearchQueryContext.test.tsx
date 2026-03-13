@@ -8,6 +8,7 @@ import { ElasticDatasource } from '../../datasource';
 
 import { ElasticsearchProvider, useQuery } from './ElasticsearchQueryContext';
 
+
 const query: ElasticsearchDataQuery = {
   refId: 'A',
   query: '',

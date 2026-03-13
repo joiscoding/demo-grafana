@@ -5,6 +5,7 @@ import { DashboardCursorSync, PanelProps, TimeRange } from '@grafana/data';
 import { PanelDataErrorView } from '@grafana/runtime';
 import { ScaleDistributionConfig } from '@grafana/schema';
 import {
+
   TooltipPlugin2,
   TooltipDisplayMode,
   UPlotChart,
@@ -30,6 +31,9 @@ import { quantizeScheme } from './palettes';
 import { Options } from './panelcfg.gen';
 import { calculateYSizeDivisor, prepConfig } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/heatmap/HeatmapPanel');
+
 interface HeatmapPanelProps extends PanelProps<Options> {}
 
 type HeatmapDataForViz = Required<Pick<HeatmapData, 'heatmap'>> & Omit<HeatmapData, 'warning' | 'heatmap'>;
@@ -54,7 +58,7 @@ export const HeatmapPanel = (props: HeatmapPanelProps) => {
         timeRange,
       });
     } catch (ex) {
-      console.error(ex);
+      structuredLogger.error(ex);
       return { warning: `${ex}` };
     }
   }, [data.series, data.annotations, options, palette, theme, replaceVariables, timeRange]);

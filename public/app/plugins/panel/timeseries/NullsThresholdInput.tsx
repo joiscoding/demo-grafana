@@ -4,6 +4,9 @@ import { rangeUtil } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { Input } from '@grafana/ui';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/timeseries/NullsThresholdInput');
+
 export enum InputPrefix {
   LessThan = 'lessthan',
   GreaterThan = 'greaterthan',
@@ -31,7 +34,7 @@ export const NullsThresholdInput = ({ value, onChange, inputPrefix, isTime }: Pr
           val = Number(txt);
         }
       } catch (err) {
-        console.warn('ERROR', err);
+        structuredLogger.warn('ERROR', err);
       }
     }
     onChange(val);

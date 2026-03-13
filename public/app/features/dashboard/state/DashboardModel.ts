@@ -2,6 +2,7 @@ import { cloneDeep, defaults as _defaults, filter, indexOf, isEqual, map, maxBy,
 import { Subscription } from 'rxjs';
 
 import {
+
   AnnotationQuery,
   AppEvent,
   DashboardCursorSync,
@@ -51,6 +52,9 @@ import { DashboardMigrator } from './DashboardMigrator';
 import { PanelModel } from './PanelModel';
 import { TimeModel } from './TimeModel';
 import { deleteScopeVars, isOnTheSameGridRow } from './utils';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/state/DashboardModel');
 
 export interface CloneOptions {
   saveVariables?: boolean;
@@ -1119,13 +1123,13 @@ export class DashboardModel implements TimeModel {
 
   /** @deprecated */
   on<T>(event: AppEvent<T>, callback: (payload?: T) => void) {
-    console.log('DashboardModel.on is deprecated use events.subscribe');
+    structuredLogger.log('DashboardModel.on is deprecated use events.subscribe');
     this.events.on(event, callback);
   }
 
   /** @deprecated */
   off<T>(event: AppEvent<T>, callback: (payload?: T) => void) {
-    console.log('DashboardModel.off is deprecated');
+    structuredLogger.log('DashboardModel.off is deprecated');
     this.events.off(event, callback);
   }
 

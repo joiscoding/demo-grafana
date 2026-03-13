@@ -4,6 +4,7 @@ import { PureComponent } from 'react';
 import { Unsubscribable, PartialObserver } from 'rxjs';
 
 import {
+
   GrafanaTheme2,
   PanelProps,
   LiveChannelStatusEvent,
@@ -26,6 +27,9 @@ import { TablePanel } from '../table/TablePanel';
 
 import { LivePublish } from './LivePublish';
 import { LivePanelOptions, MessageDisplayMode, MessagePublishMode } from './types';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/live/LivePanel');
 
 interface Props extends PanelProps<LivePanelOptions> {}
 
@@ -72,7 +76,7 @@ export class LivePanel extends PureComponent<Props, State> {
       } else if (isLiveChannelMessageEvent(event)) {
         this.setState({ message: event.message, changed: Date.now() });
       } else {
-        console.log('ignore', event);
+        structuredLogger.log('ignore', event);
       }
     },
   };
@@ -87,7 +91,7 @@ export class LivePanel extends PureComponent<Props, State> {
   async loadChannel() {
     const addr = this.props.options?.channel;
     if (!isValidLiveChannelAddress(addr)) {
-      console.log('INVALID', addr);
+      structuredLogger.log('INVALID', addr);
       this.unsubscribe();
       this.setState({
         addr: undefined,
@@ -96,13 +100,13 @@ export class LivePanel extends PureComponent<Props, State> {
     }
 
     if (isEqual(addr, this.state.addr)) {
-      console.log('Same channel', this.state.addr);
+      structuredLogger.log('Same channel', this.state.addr);
       return;
     }
 
     const live = getGrafanaLiveSrv();
     if (!live) {
-      console.log('INVALID', addr);
+      structuredLogger.log('INVALID', addr);
       this.unsubscribe();
       this.setState({
         addr: undefined,
@@ -111,7 +115,7 @@ export class LivePanel extends PureComponent<Props, State> {
     }
     this.unsubscribe();
 
-    console.log('LOAD', addr);
+    structuredLogger.log('LOAD', addr);
 
     // Subscribe to new events
     try {

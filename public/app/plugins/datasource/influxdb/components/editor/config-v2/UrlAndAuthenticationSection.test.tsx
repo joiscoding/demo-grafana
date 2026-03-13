@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/influxdb/components/editor/config-v2/UrlAndAuthenticationSection.test');
+
 const backendSrv = {
   fetch: jest.fn(),
 } as unknown as BackendSrv;
@@ -61,7 +64,7 @@ describe('UrlAndAuthenticationSection', () => {
   };
 
   beforeEach(() => {
-    // Mock console.error to suppress React act() warnings
+    // Mock structuredLogger.error to suppress React act() warnings
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     jest.clearAllMocks();
   });

@@ -10,6 +10,9 @@ import { getMockTimeRange } from '../../test/mocks/datasource';
 import * as selectorBuilderModule from './selectorBuilder';
 import { useMetricsLabelsValues } from './useMetricsLabelsValues';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-prometheus/src/components/metrics-browser/useMetricsLabelsValues.test');
+
 // Test utilities to reduce boilerplate
 const setupMocks = () => {
   // Mock the buildSelector module
@@ -98,7 +101,7 @@ describe('useMetricsLabelsValues', () => {
   beforeEach(() => {
     mocks = setupMocks();
     jest.clearAllMocks();
-    // Spy on console.error to handle React warnings
+    // Spy on structuredLogger.error to handle React warnings
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 

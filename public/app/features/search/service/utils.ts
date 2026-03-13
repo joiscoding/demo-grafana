@@ -11,6 +11,9 @@ import { DashboardSearchHit, DashboardSearchItemType, DashboardViewItem, Dashboa
 import { DashboardQueryResult, SearchQuery, SearchResultMeta } from './types';
 import { SearchHit } from './unified';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/search/service/utils');
+
 /** prepare the query replacing folder:current */
 export async function replaceCurrentFolderQuery(query: SearchQuery): Promise<SearchQuery> {
   if (query.query && query.query.indexOf('folder:current') >= 0) {
@@ -35,7 +38,7 @@ async function getCurrentFolderUID(): Promise<string | undefined> {
     }
     return Promise.resolve(dash?.meta?.folderUid);
   } catch (e) {
-    console.error(e);
+    structuredLogger.error(e);
   }
   return undefined;
 }

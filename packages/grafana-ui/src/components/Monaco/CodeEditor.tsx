@@ -12,6 +12,9 @@ import { ReactMonacoEditorLazy } from './ReactMonacoEditorLazy';
 import { registerSuggestions } from './suggestions';
 import { CodeEditorProps, Monaco, MonacoEditor as MonacoEditorType, MonacoOptions } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Monaco/CodeEditor');
+
 type Props = CodeEditorProps & Themeable2;
 
 class UnthemedCodeEditor extends PureComponent<Props> {
@@ -43,7 +46,7 @@ class UnthemedCodeEditor extends PureComponent<Props> {
       }
 
       if (!this.monaco) {
-        console.warn('Monaco instance not loaded yet');
+        structuredLogger.warn('Monaco instance not loaded yet');
         return;
       }
 

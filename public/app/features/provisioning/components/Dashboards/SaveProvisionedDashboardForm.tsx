@@ -17,6 +17,7 @@ import { validationSrv } from 'app/features/manage-dashboards/services/Validatio
 import { PROVISIONING_URL } from 'app/features/provisioning/constants';
 import { useCreateOrUpdateRepositoryFile } from 'app/features/provisioning/hooks/useCreateOrUpdateRepositoryFile';
 import {
+
   ProvisionedOperationInfo,
   useProvisionedRequestHandler,
 } from 'app/features/provisioning/hooks/useProvisionedRequestHandler';
@@ -30,6 +31,9 @@ import { ResourceEditFormSharedFields } from '../Shared/ResourceEditFormSharedFi
 import { getProvisionedMeta } from '../utils/getProvisionedMeta';
 
 import { SaveProvisionedDashboardProps } from './SaveProvisionedDashboard';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/provisioning/components/Dashboards/SaveProvisionedDashboardForm');
 
 export interface Props extends SaveProvisionedDashboardProps {
   isNew: boolean;
@@ -178,7 +182,7 @@ export function SaveProvisionedDashboardForm({
   }: ProvisionedDashboardFormData) => {
     // Validate required fields
     if (!repo || !path) {
-      console.error('Missing required fields for saving:', { repo, path });
+      structuredLogger.error('Missing required fields for saving:', { repo, path });
       return;
     }
 

@@ -10,6 +10,9 @@ import { LIST_ITEM_SIZE } from '../../constants';
 import { useMetricsBrowser } from './MetricsBrowserContext';
 import { getStylesMetricsBrowser, getStylesValueSelector } from './styles';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-prometheus/src/components/metrics-browser/ValueSelector');
+
 export function ValueSelector() {
   const styles = useStyles2(getStylesValueSelector);
   const sharedStyles = useStyles2(getStylesMetricsBrowser);
@@ -59,7 +62,7 @@ export function ValueSelector() {
         <div className={styles.valueListArea}>
           {Object.entries(filteredLabelValues).map(([lk, lv]) => {
             if (!lk || !lv) {
-              console.error('label values are empty:', { lk, lv });
+              structuredLogger.error('label values are empty:', { lk, lv });
               return null;
             }
             return (

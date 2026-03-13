@@ -2,6 +2,7 @@ import { map } from 'lodash';
 import { of, throwError } from 'rxjs';
 
 import {
+
   CoreApp,
   DataQueryRequest,
   DateTime,
@@ -18,7 +19,10 @@ import { ElasticsearchDataQuery, Filters } from './dataquery.gen';
 import { ElasticDatasource } from './datasource';
 import { createElasticDatasource, createElasticQuery, mockResponseFrames } from './mocks';
 
-const originalConsoleError = console.error;
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/elasticsearch/datasource.test');
+
+const originalConsoleError = structuredLogger.error;
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
   reportInteraction: jest.fn(),
@@ -73,14 +77,14 @@ describe('ElasticDatasource', () => {
   let origBackendSrv: BackendSrv;
   let ds: ElasticDatasource;
   beforeEach(() => {
-    console.error = jest.fn();
+    structuredLogger.error = jest.fn();
     origBackendSrv = getBackendSrv();
     setBackendSrv({ ...origBackendSrv, fetch: jest.fn().mockReturnValue(of({ data: {} })) });
     ds = createElasticDatasource();
   });
 
   afterEach(() => {
-    console.error = originalConsoleError;
+    structuredLogger.error = originalConsoleError;
     setBackendSrv(origBackendSrv);
     jest.clearAllMocks();
   });

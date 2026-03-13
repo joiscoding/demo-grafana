@@ -5,6 +5,7 @@ import { toDataQueryResponse } from '@grafana/runtime';
 
 import { MetricQueryType, MetricEditorMode, CloudWatchMetricsQuery } from '../dataquery.gen';
 import {
+
   namespaceVariable,
   metricVariable,
   labelsVariable,
@@ -16,6 +17,9 @@ import {
 import { initialVariableModelState } from '../mocks/CloudWatchVariables';
 import { setupMockedMetricsQueryRunner } from '../mocks/MetricsQueryRunner';
 import { validMetricSearchBuilderQuery, validMetricSearchCodeQuery } from '../mocks/queries';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/cloudwatch/query-runner/CloudWatchMetricsQueryRunner.test');
 
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
@@ -144,9 +148,9 @@ describe('CloudWatchMetricsQueryRunner', () => {
         },
       };
       const expectedUsEast1Message =
-        'Please visit the AWS Service Quotas console at https://us-east-1.console.aws.amazon.com/servicequotas/home?region=us-east-1#!/services/monitoring/quotas/L-5E141212 to request a quota increase or see our documentation at https://grafana.com/docs/grafana/latest/datasources/cloudwatch/#manage-service-quotas to learn more. Throttling: exception';
+        'Please visit the AWS Service Quotas console at https://us-east-1.structuredLogger.aws.amazon.com/servicequotas/home?region=us-east-1#!/services/monitoring/quotas/L-5E141212 to request a quota increase or see our documentation at https://grafana.com/docs/grafana/latest/datasources/cloudwatch/#manage-service-quotas to learn more. Throttling: exception';
       const expectedUsEast2Message =
-        'Please visit the AWS Service Quotas console at https://us-east-2.console.aws.amazon.com/servicequotas/home?region=us-east-2#!/services/monitoring/quotas/L-5E141212 to request a quota increase or see our documentation at https://grafana.com/docs/grafana/latest/datasources/cloudwatch/#manage-service-quotas to learn more. Throttling: exception';
+        'Please visit the AWS Service Quotas console at https://us-east-2.structuredLogger.aws.amazon.com/servicequotas/home?region=us-east-2#!/services/monitoring/quotas/L-5E141212 to request a quota increase or see our documentation at https://grafana.com/docs/grafana/latest/datasources/cloudwatch/#manage-service-quotas to learn more. Throttling: exception';
 
       const { runner, request, queryMock } = setupMockedMetricsQueryRunner({
         response: toDataQueryResponse(dataWithThrottlingError),

@@ -16,6 +16,9 @@ import { ServiceAccountDTO, ServiceAccountCreateApiResponse } from 'app/types/se
 
 import { OrgRolePicker } from '../admin/OrgRolePicker';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/serviceaccounts/ServiceAccountCreatePage');
+
 export interface Props {}
 
 const createServiceAccount = async (sa: ServiceAccountDTO) => {
@@ -68,7 +71,7 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
           setRoleOptions(options);
         }
       } catch (e) {
-        console.error('Error loading options', e); // TODO: handle error
+        structuredLogger.error('Error loading options', e); // TODO: handle error
       }
     }
     if (contextSrv.licensedAccessControlEnabled()) {
@@ -101,7 +104,7 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
           await updateUserRoles(pendingRoles, newAccount.id, newAccount.orgId);
         }
       } catch (e) {
-        console.error(e); // TODO: handle error
+        structuredLogger.error(e); // TODO: handle error
       }
       locationService.push(`/org/serviceaccounts/${response.uid}`);
     },

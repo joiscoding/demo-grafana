@@ -10,6 +10,7 @@ import { PanelProps, store, systemDateFormats, SystemDateFormatsState } from '@g
 import { getPanelPlugin } from '@grafana/data/test';
 import { selectors } from '@grafana/e2e-selectors';
 import {
+
   LocationServiceProvider,
   config,
   locationSearchToObject,
@@ -34,6 +35,9 @@ import {
   DashboardScenePageStateManagerV2,
   getDashboardScenePageStateManager,
 } from './DashboardScenePageStateManager';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/pages/DashboardScenePage.test');
 
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
@@ -409,10 +413,10 @@ describe('DashboardScenePage', () => {
   });
 
   describe('errors rendering', () => {
-    const origError = console.error;
+    const origError = structuredLogger.error;
     const consoleErrorMock = jest.fn();
-    afterEach(() => (console.error = origError));
-    beforeEach(() => (console.error = consoleErrorMock));
+    afterEach(() => (structuredLogger.error = origError));
+    beforeEach(() => (structuredLogger.error = consoleErrorMock));
 
     it('should render dashboard not found notice when dashboard... not found', async () => {
       setupLoadDashboardMockReject({

@@ -10,6 +10,9 @@ import { spin } from '../../utils/keyframes';
 
 import { getIconPath, getSvgSize } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Icon/Icon');
+
 export interface IconProps extends Omit<React.SVGProps<SVGElement>, 'onLoad' | 'onError' | 'ref'> {
   name: IconName;
   size?: IconSize;
@@ -96,7 +99,7 @@ export const Icon = memo(
       const { nameToUse: name, handleLoad } = useIconWorkaround(nameProp);
 
       if (!isIconName(name)) {
-        console.warn('Icon component passed an invalid icon name', name);
+        structuredLogger.warn('Icon component passed an invalid icon name', name);
       }
 
       // handle the deprecated 'fa fa-spinner'

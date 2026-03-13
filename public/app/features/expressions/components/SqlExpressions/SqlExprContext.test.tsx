@@ -2,6 +2,9 @@ import { render, screen } from 'test/test-utils';
 
 import { SqlExprContextValue, SqlExprProvider, useSqlExprContext } from './SqlExprContext';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/expressions/components/SqlExpressions/SqlExprContext.test');
+
 describe('SqlExprContext', () => {
   const mockContextValue: SqlExprContextValue = {
     explanation: 'Test explanation',
@@ -52,7 +55,7 @@ describe('SqlExprContext', () => {
         return <div>Should not render</div>;
       };
 
-      // Suppress console.error for this test
+      // Suppress structuredLogger.error for this test
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
       expect(() => {

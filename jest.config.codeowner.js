@@ -1,6 +1,9 @@
 const fs = require('fs');
 const open = require('open').default;
 const path = require('path');
+const { createStructuredLogger } = require('./scripts/helpers/structuredLogging');
+const structuredLogger = createStructuredLogger('jest.config.codeowner');
+
 
 const baseConfig = require('./jest.config.js');
 const { CODEOWNER_KIND, getCodeownerKind, createCodeownerSlug } = require('./scripts/codeowners-manifest/utils.js');
@@ -9,7 +12,7 @@ const CODEOWNERS_MANIFEST_FILENAMES_BY_TEAM_PATH = 'codeowners-manifest/filename
 
 const codeownerName = process.env.CODEOWNER_NAME;
 if (!codeownerName) {
-  console.error('ERROR: CODEOWNER_NAME environment variable is required');
+  structuredLogger.error('ERROR: CODEOWNER_NAME environment variable is required');
   process.exit(1);
 }
 
@@ -19,8 +22,8 @@ const COVERAGE_SUMMARY_OUTPUT_PATH = './coverage-summary.json';
 const codeownersFilePath = path.join(__dirname, CODEOWNERS_MANIFEST_FILENAMES_BY_TEAM_PATH);
 
 if (!fs.existsSync(codeownersFilePath)) {
-  console.error(`Codeowners file not found at ${codeownersFilePath} ...`);
-  console.error('Please run: yarn codeowners-manifest first to generate the mapping file');
+  structuredLogger.error(`Codeowners file not found at ${codeownersFilePath} ...`);
+  structuredLogger.error('Please run: yarn codeowners-manifest first to generate the mapping file');
   process.exit(1);
 }
 
@@ -28,8 +31,8 @@ const codeownersData = JSON.parse(fs.readFileSync(codeownersFilePath, 'utf8'));
 const teamFiles = codeownersData[codeownerName] || [];
 
 if (teamFiles.length === 0) {
-  console.error(`ERROR: No files found for team "${codeownerName}"`);
-  console.error('Available teams:', Object.keys(codeownersData).join(', '));
+  structuredLogger.error(`ERROR: No files found for team "${codeownerName}"`);
+  structuredLogger.error('Available teams:', Object.keys(codeownersData).join(', '));
   process.exit(1);
 }
 
@@ -64,11 +67,11 @@ const testFiles = teamFiles.filter((file) => {
 });
 
 if (testFiles.length === 0) {
-  console.log(`No test files found for team ${codeownerName}`);
+  structuredLogger.log(`No test files found for team ${codeownerName}`);
   process.exit(0);
 }
 
-console.log(
+structuredLogger.log(
   `🧪 Collecting coverage for ${sourceFiles.length} testable files and running ${testFiles.length} test files of ${teamFiles.length} files owned by ${codeownerName}.`
 );
 
@@ -100,7 +103,7 @@ module.exports = {
         cleanCache: true,
         onEnd: (coverageResults) => {
           const reportURL = `file://${path.resolve(outputDir)}/index.html`;
-          console.log(`📄 Coverage report saved to ${reportURL}`);
+          structuredLogger.log(`📄 Coverage report saved to ${reportURL}`);
 
           if (process.env.SHOULD_OPEN_COVERAGE_REPORT === 'true') {
             openCoverageReport(reportURL);
@@ -160,9 +163,9 @@ function writeCoverageSummaryArtifact(coverageResults) {
 
   try {
     fs.writeFileSync(COVERAGE_SUMMARY_OUTPUT_PATH, JSON.stringify(summary, null, 2));
-    console.log(`📊 Coverage summary written to ${COVERAGE_SUMMARY_OUTPUT_PATH}`);
+    structuredLogger.log(`📊 Coverage summary written to ${COVERAGE_SUMMARY_OUTPUT_PATH}`);
   } catch (err) {
-    console.error(`Failed to write coverage summary: ${err}`);
+    structuredLogger.error(`Failed to write coverage summary: ${err}`);
   }
 }
 
@@ -192,6 +195,6 @@ async function openCoverageReport(reportURL) {
   try {
     await open(reportURL);
   } catch (err) {
-    console.error(`Failed to open coverage report: ${err}`);
+    structuredLogger.error(`Failed to open coverage report: ${err}`);
   }
 }

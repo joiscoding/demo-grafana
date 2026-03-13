@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '../utils/structuredLogging';
+const structuredLogger = createStructuredLogger('packages/grafana-data/src/dataframe/processDataFrame');
+
 // Libraries
 import { isArray, isBoolean, isNumber, isString } from 'lodash';
 
@@ -340,7 +343,7 @@ export function toDataFrame(data: any): DataFrame {
     return arrayToDataFrame(data);
   }
 
-  console.warn('Can not convert', data);
+  structuredLogger.warn('Can not convert', data);
   throw new Error('Unsupported data format');
 }
 

@@ -1,4 +1,5 @@
 import {
+
   generatedAPI,
   type ConnectionSpec,
   type ConnectionStatus,
@@ -25,6 +26,9 @@ import { PAGE_SIZE } from '../../../../features/browse-dashboards/api/services';
 import { refetchChildren } from '../../../../features/browse-dashboards/state/actions';
 import { handleError } from '../../../utils';
 import { createOnCacheEntryAdded } from '../utils/createOnCacheEntryAdded';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/api/clients/provisioning/v0alpha1/index');
 
 const handleProvisioningFormError = (e: unknown, dispatch: ThunkDispatch, title: string) => {
   if (typeof e === 'object' && e && 'error' in e && isFetchError(e.error)) {
@@ -296,7 +300,7 @@ export const provisioningAPIv0alpha1 = generatedAPI.enhanceEndpoints({
             dispatch(clearFolders(childrenKeys));
           }
         } catch (e) {
-          console.error('Error in getRepositoryJobsWithPath:', e);
+          structuredLogger.error('Error in getRepositoryJobsWithPath:', e);
         }
       },
     },

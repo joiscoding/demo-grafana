@@ -131,7 +131,7 @@ _Generally available in Grafana Open Source and Grafana Cloud Free, Pro, and Adv
 The Google Cloud monitoring data source UI has been brought up to date with the latest Grafana UI design.
 This new interface provides a more consistent experience as you switch between different data sources.
 It also groups query builder items together more logically, so it's easier to write queries.
-In the case of Cloud monitoring, the query builder's groupings should more closely match the groupings in Google's Cloud console.
+In the case of Cloud monitoring, the query builder's groupings should more closely match the groupings in Google's Cloud structuredLogger.
 
 {{< figure src="/static/img/docs/queries/gcloud-data-source-query-grouping-9-2.png" max-width="750px" caption="Query builder groupings for Google Cloud monitoring" >}}
 

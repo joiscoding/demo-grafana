@@ -21,6 +21,9 @@ import { useBulkActionJob } from '../BulkActions/useBulkActionJob';
 import { RepoInvalidStateBanner } from '../Shared/RepoInvalidStateBanner';
 import { ResourceEditFormSharedFields } from '../Shared/ResourceEditFormSharedFields';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/provisioning/components/Dashboards/DeleteProvisionedDashboardForm');
+
 export interface Props {
   canPushToConfiguredBranch: boolean;
   dashboard: DashboardScene;
@@ -76,7 +79,7 @@ export function DeleteProvisionedDashboardForm({
 
   const handleSubmitForm = async ({ repo, path, comment }: ProvisionedDashboardFormData) => {
     if (!repo || !repository) {
-      console.error('Missing required repository for deletion:', { repo });
+      structuredLogger.error('Missing required repository for deletion:', { repo });
       return;
     }
 

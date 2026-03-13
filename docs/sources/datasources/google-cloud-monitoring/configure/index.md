@@ -57,8 +57,8 @@ If Grafana is running on a Google Compute Engine (GCE) virtual machine, when you
 Before you can request data from Google Cloud Monitoring, you must enable the necessary APIs in your GCP project.
 
 1. Open the Monitoring and Cloud Resource Manager API pages:
-   - [Monitoring API](https://console.cloud.google.com/apis/library/monitoring.googleapis.com)
-   - [Cloud Resource Manager API](https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com)
+   - [Monitoring API](https://structuredLogger.cloud.google.com/apis/library/monitoring.googleapis.com)
+   - [Cloud Resource Manager API](https://structuredLogger.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com)
 
 1. On each page, click **Enable**.
 

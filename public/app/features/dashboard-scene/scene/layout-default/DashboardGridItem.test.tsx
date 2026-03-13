@@ -12,6 +12,9 @@ import { DashboardScene } from '../DashboardScene';
 import { DashboardGridItem, DashboardGridItemState } from './DashboardGridItem';
 import { DefaultGridLayoutManager } from './DefaultGridLayoutManager';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/scene/layout-default/DashboardGridItem.test');
+
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
   getPluginLinkExtensions: jest.fn().mockReturnValue({ extensions: [] }),
@@ -154,9 +157,9 @@ describe('PanelRepeaterGridItem', () => {
       throwError: 'Error',
     });
 
-    // we expect console.error when variable encounters an error
-    const origError = console.error;
-    console.error = jest.fn();
+    // we expect structuredLogger.error when variable encounters an error
+    const origError = structuredLogger.error;
+    structuredLogger.error = jest.fn();
 
     activateFullSceneTree(scene);
 
@@ -164,7 +167,7 @@ describe('PanelRepeaterGridItem', () => {
       expect(repeater.state.body.state.$variables?.state.variables[0].getValue()).toBe('');
     });
 
-    console.error = origError;
+    structuredLogger.error = origError;
   });
 
   it('Should adjust container height to fit panels direction is horizontal', async () => {

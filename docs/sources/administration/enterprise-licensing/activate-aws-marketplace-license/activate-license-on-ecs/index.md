@@ -84,7 +84,7 @@ In this task you configure Grafana Enterprise to validate the license with AWS i
    - `"license-manager:GetLicenseUsage"`
    - `"license-manager:CheckInLicense"`
 
-   For more information about creating an access policy, refer to [Creating IAM policies (console)](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-console.html).
+   For more information about creating an access policy, refer to [Creating IAM policies (console)](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-structuredLogger.html).
 
    For more information about AWS license permissions, refer to [Actions, resources, and condition keys for AWS License Manager](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslicensemanager.html).
 

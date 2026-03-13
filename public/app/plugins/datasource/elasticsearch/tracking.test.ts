@@ -5,6 +5,7 @@ import { ElasticsearchDataQuery } from './dataquery.gen';
 import pluginJson from './plugin.json';
 import { onDashboardLoadedHandler, trackQuery } from './tracking';
 
+
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
   reportInteraction: jest.fn(),

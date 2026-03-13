@@ -4,6 +4,7 @@ import { toArray } from 'rxjs/operators';
 import { CoreApp, Field } from '@grafana/data';
 
 import {
+
   CloudWatchLogsQuery,
   CloudWatchMetricsQuery,
   LogsQueryLanguage,
@@ -23,6 +24,9 @@ import { validLogsQuery, validMetricSearchBuilderQuery } from './mocks/queries';
 import { TimeRangeMock } from './mocks/timeRange';
 import { CloudWatchQuery, CloudWatchLogsRequest, CloudWatchDefaultQuery } from './types';
 import * as templateUtils from './utils/templateVariableUtils';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/cloudwatch/datasource.test');
 
 describe('datasource', () => {
   beforeEach(() => {
@@ -346,7 +350,7 @@ describe('datasource', () => {
       expect(emits[0].data[0].fields.find((f: Field) => f.name === '').config.links).toMatchObject([
         {
           title: 'View in CloudWatch console',
-          url: "https://us-west-1.console.aws.amazon.com/cloudwatch/home?region=us-west-1#logs-insights:queryDetail=~(end~'2016-12-31T16*3a00*3a00.000Z~start~'2016-12-31T15*3a00*3a00.000Z~timeType~'ABSOLUTE~tz~'UTC~editorString~'some*20query~isLiveTail~false~source~(~'test))",
+          url: "https://us-west-1.structuredLogger.aws.amazon.com/cloudwatch/home?region=us-west-1#logs-insights:queryDetail=~(end~'2016-12-31T16*3a00*3a00.000Z~start~'2016-12-31T15*3a00*3a00.000Z~timeType~'ABSOLUTE~tz~'UTC~editorString~'some*20query~isLiveTail~false~source~(~'test))",
         },
       ]);
     });

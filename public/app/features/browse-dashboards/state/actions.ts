@@ -7,6 +7,9 @@ import { DashboardViewItemWithUIItems, UIDashboardViewItem } from '../types';
 
 import { findItem } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/browse-dashboards/state/actions');
+
 interface FetchNextChildrenPageArgs {
   parentUID: string | undefined;
 
@@ -114,7 +117,7 @@ export const fetchNextChildrenPage = createAsyncThunk(
       fetchKind = 'folder';
     } else if (collection.lastFetchedKind === 'dashboard' && !collection.lastKindHasMoreItems) {
       // There's nothing to load at all
-      console.warn(`fetchNextChildrenPage called for ${uid} but that collection is fully loaded`);
+      structuredLogger.warn(`fetchNextChildrenPage called for ${uid} but that collection is fully loaded`);
       // return;
     } else if (collection.lastFetchedKind === 'folder' && collection.lastKindHasMoreItems) {
       // Load additional pages of folders

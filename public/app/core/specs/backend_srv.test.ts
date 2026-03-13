@@ -10,6 +10,9 @@ import { ShowModalReactEvent } from '../../types/events';
 import { BackendSrv, BackendSrvDependencies } from '../services/backend_srv';
 import { ContextSrv, User } from '../services/context_srv';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/core/specs/backend_srv.test');
+
 const getTestContext = (overides?: object, mockFromFetch = true) => {
   const defaults = {
     data: { test: 'hello world' },
@@ -943,7 +946,7 @@ describe('backendSrv', () => {
 
   describe('chunked', () => {
     beforeEach(() => {
-      // we do a bunch of console.log in the chunked function
+      // we do a bunch of structuredLogger.log in the chunked function
       jest.spyOn(console, 'log').mockImplementation(() => {});
     });
 

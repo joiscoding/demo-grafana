@@ -16,6 +16,7 @@ import { CONTENT_KINDS, CREATION_ORIGINS, DISCOVERY_METHODS, EVENT_LOCATIONS, SO
 import { SuggestedDashboardInteractions } from './interactions';
 import { GnetDashboard } from './types';
 import {
+
   getThumbnailUrl,
   getLogoUrl,
   buildDashboardDetails,
@@ -24,6 +25,9 @@ import {
   COMMUNITY_RESULT_SIZE,
 } from './utils/communityDashboardHelpers';
 import { getProvisionedDashboardImageUrl } from './utils/provisionedDashboardHelpers';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/dashgrid/DashboardLibrary/SuggestedDashboards');
 
 interface Props {
   datasourceUid?: string;
@@ -130,7 +134,7 @@ export const SuggestedDashboards = ({ datasourceUid }: Props) => {
 
       return { dashboards: mixed, hasMoreDashboards };
     } catch (error) {
-      console.error('Error loading suggested dashboards', error);
+      structuredLogger.error('Error loading suggested dashboards', error);
       return { dashboards: [], hasMoreDashboards: false };
     }
   }, [datasourceUid]);

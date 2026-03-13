@@ -1,6 +1,7 @@
 import { map, Observable, ReplaySubject, Subject, Subscriber, Subscription } from 'rxjs';
 
 import {
+
   DataFrameJSON,
   DataQueryError,
   Field,
@@ -18,6 +19,9 @@ import { LiveDataStreamOptions, StreamingFrameAction, StreamingFrameOptions, toD
 import { StreamingResponseDataType } from '../data/utils';
 
 import { DataStreamSubscriptionKey, StreamingDataQueryResponse } from './service';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/live/centrifuge/LiveDataStream');
 
 const bufferIfNot =
   (canEmitObservable: Observable<boolean>) =>
@@ -149,7 +153,7 @@ export class LiveDataStream<T = unknown> {
   };
 
   private onError = (err: unknown) => {
-    console.log('LiveQuery [error]', { err }, this.deps.channelId);
+    structuredLogger.log('LiveQuery [error]', { err }, this.deps.channelId);
     this.stream.next({
       type: InternalStreamMessageType.Error,
       error: toDataQueryError(err),
@@ -158,7 +162,7 @@ export class LiveDataStream<T = unknown> {
   };
 
   private onComplete = () => {
-    console.log('LiveQuery [complete]', this.deps.channelId);
+    structuredLogger.log('LiveQuery [complete]', this.deps.channelId);
     this.shutdown();
   };
 
@@ -275,7 +279,7 @@ export class LiveDataStream<T = unknown> {
       }
 
       if (!messages.length) {
-        console.warn(`expected to find at least one non error message ${messages.map(({ type }) => type)}`);
+        structuredLogger.warn(`expected to find at least one non error message ${messages.map(({ type }) => type)}`);
         // send empty frame
         return {
           key: subKey,
@@ -353,7 +357,7 @@ export class LiveDataStream<T = unknown> {
 
         const newValueSameSchemaMessages = filterMessages(messages, InternalStreamMessageType.NewValuesSameSchema);
         if (newValueSameSchemaMessages.length !== messages.length) {
-          console.warn(`unsupported message type ${messages.map(({ type }) => type)}`);
+          structuredLogger.warn(`unsupported message type ${messages.map(({ type }) => type)}`);
         }
 
         return getNewValuesSameSchemaResponseData(newValueSameSchemaMessages);

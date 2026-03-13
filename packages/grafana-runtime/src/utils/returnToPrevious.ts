@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-runtime/src/utils/returnToPrevious');
+
 type ReturnToPreviousHook = () => (title: string, href?: string) => void;
 
 let rtpHook: ReturnToPreviousHook | undefined = undefined;
@@ -16,7 +19,7 @@ export const useReturnToPrevious: ReturnToPreviousHook = () => {
     if (process.env.NODE_ENV !== 'production') {
       throw new Error('useReturnToPrevious hook not found in @grafana/runtime');
     }
-    return () => console.error('ReturnToPrevious hook not found');
+    return () => structuredLogger.error('ReturnToPrevious hook not found');
   }
 
   return rtpHook();

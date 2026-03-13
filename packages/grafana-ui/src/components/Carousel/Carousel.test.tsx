@@ -3,6 +3,9 @@ import userEvent from '@testing-library/user-event';
 
 import { Carousel } from './Carousel';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Carousel/Carousel.test');
+
 const testImages = [
   {
     path: 'https://grafana.com/static/img/alerting/grafana-alerting-enterprise-scale-mimir-and-loki.png/apple-touch-icon.png',
@@ -136,8 +139,8 @@ describe('Carousel', () => {
   });
 
   it('shows warning when all images fail to load', async () => {
-    const originalConsoleError = console.error;
-    console.error = jest.fn();
+    const originalConsoleError = structuredLogger.error;
+    structuredLogger.error = jest.fn();
 
     render(<Carousel images={testImages} />);
 
@@ -150,6 +153,6 @@ describe('Carousel', () => {
       expect(screen.getByTestId('alert-warning')).toBeInTheDocument();
     });
 
-    console.error = originalConsoleError;
+    structuredLogger.error = originalConsoleError;
   });
 });

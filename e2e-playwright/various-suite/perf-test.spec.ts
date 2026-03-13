@@ -5,6 +5,10 @@ import { test, expect } from '@grafana/plugin-e2e';
 
 import { RequestsRecorder } from '../utils/RequestsRecorder';
 
+import * as structuredLogging from '../../scripts/helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('e2e-playwright/various-suite/perf-test.spec');
+
 const DASH_PATH = '/d/bds35fot3cv7kb/mostly-blank-dashboard';
 
 test('payload-size', { tag: '@performance' }, async ({ page }) => {
@@ -50,7 +54,7 @@ test('payload-size', { tag: '@performance' }, async ({ page }) => {
   const instance = new URL(process.env.GRAFANA_URL || 'http://undefined').host;
   promRegistry.setDefaultLabels({ instance });
   const metricsText = await promRegistry.metrics();
-  console.log(metricsText);
+  structuredLogger.log(metricsText);
   fs.writeFileSync(process.env.METRICS_OUTPUT_PATH || '/tmp/asset-metrics.txt', metricsText);
 
   await stopListening();

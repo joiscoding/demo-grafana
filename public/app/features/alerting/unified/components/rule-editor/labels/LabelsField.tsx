@@ -20,6 +20,9 @@ import { useGetLabelsFromDataSourceName } from '../useAlertRuleSuggestions';
 
 import { AddButton, RemoveButton } from './LabelsButtons';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/alerting/unified/components/rule-editor/labels/LabelsField');
+
 const useGetOpsLabelsKeys = (skip: boolean) => {
   const { currentData, isLoading: isloadingLabels } = labelsApi.endpoints.getLabels.useQuery(undefined, {
     skip,
@@ -182,7 +185,7 @@ export function useCombinedLabels(
               opsValues = result.values.map((value) => value.name);
             }
           } catch (error) {
-            console.error('Failed to fetch label values for key:', key, error);
+            structuredLogger.error('Failed to fetch label values for key:', key, error);
           }
         }
 

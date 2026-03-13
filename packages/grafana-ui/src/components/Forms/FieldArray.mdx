@@ -1,6 +1,9 @@
 import { Meta, ArgTypes } from '@storybook/blocks';
 import { FieldArray } from './FieldArray';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Forms/FieldArray');
+
 <Meta title="MDX|FieldArray" component={FieldArray} />
 
 # FieldArray
@@ -14,7 +17,7 @@ import { FieldArray } from './FieldArray';
 ```jsx
 import { Form, FieldArray } from '@grafana/ui';
 
-<Form onSubmit={() => console.log('form submitted')}>
+<Form onSubmit={() => structuredLogger.log('form submitted')}>
   ({control, register}) => (
     <FieldArray control={control} name="People">
       {({ fields, append }) => (

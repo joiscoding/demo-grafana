@@ -4,6 +4,9 @@ import { createLogLine } from '../mocks/logRow';
 
 import { generateLogGrammar, generateTextMatchGrammar } from './grammar';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/logs/components/panel/grammar.test');
+
 describe('generateLogGrammar', () => {
   function generateScenario(entry: string, labels: Record<string, string> = { place: 'luna', source: 'logs' }) {
     const log = createLogLine({ labels, entry });
@@ -98,12 +101,12 @@ describe('generateLogGrammar', () => {
 });
 
 describe('generateTextMatchGrammar', () => {
-  const originalErr = console.error;
+  const originalErr = structuredLogger.error;
   beforeEach(() => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
   afterAll(() => {
-    console.error = originalErr;
+    structuredLogger.error = originalErr;
   });
 
   test('Generates text match grammars for search words', () => {

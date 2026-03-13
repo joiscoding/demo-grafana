@@ -14,12 +14,15 @@ import { toKeyedVariableIdentifier } from '../utils';
 
 import { initDataSourceVariableEditor } from './actions';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/variables/datasource/DataSourceVariableEditor');
+
 const mapStateToProps = (state: StoreState, ownProps: OwnProps) => {
   const {
     variable: { rootStateKey },
   } = ownProps;
   if (!rootStateKey) {
-    console.error('DataSourceVariableEditor: variable has no rootStateKey');
+    structuredLogger.error('DataSourceVariableEditor: variable has no rootStateKey');
     return {
       extended: getDatasourceVariableEditorState(initialVariableEditorState),
     };
@@ -46,7 +49,7 @@ export class DataSourceVariableEditorUnConnected extends PureComponent<Props> {
   componentDidMount() {
     const { rootStateKey } = this.props.variable;
     if (!rootStateKey) {
-      console.error('DataSourceVariableEditor: variable has no rootStateKey');
+      structuredLogger.error('DataSourceVariableEditor: variable has no rootStateKey');
       return;
     }
 

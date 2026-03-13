@@ -39,6 +39,7 @@ import { getLayersExtent } from './utils/getLayersExtent';
 import { applyLayerFilter, initLayer } from './utils/layers';
 import { pointerClickListener, pointerMoveListener, setTooltipListeners } from './utils/tooltip';
 import {
+
   updateMap,
   getNewOpenLayersMap,
   notifyPanelEditor,
@@ -46,6 +47,9 @@ import {
   hasLayerData,
 } from './utils/utils';
 import { centerPointRegistry, MapCenterID } from './view';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/geomap/GeomapPanel');
 
 // Allows multiple panels to share the same view instance
 let sharedView: View | undefined = undefined;
@@ -323,7 +327,7 @@ export class GeomapPanel extends Component<Props, State> {
         layers.push(await initLayer(this, map, lyr, false));
       }
     } catch (ex) {
-      console.error('error loading layers', ex);
+      structuredLogger.error('error loading layers', ex);
     }
 
     for (const lyr of layers) {

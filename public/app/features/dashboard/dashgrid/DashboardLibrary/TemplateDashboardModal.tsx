@@ -11,6 +11,7 @@ import { Box, Grid, Modal, Text, useStyles2 } from '@grafana/ui';
 
 import { DashboardCard } from './DashboardCard';
 import {
+
   CONTENT_KINDS,
   DISCOVERY_METHODS,
   EVENT_LOCATIONS,
@@ -20,6 +21,9 @@ import {
 import { TemplateDashboardInteractions } from './interactions';
 import { GnetDashboard, GnetDashboardsResponse, Link } from './types';
 import { getTemplateDashboardUrl } from './utils/templateDashboardHelpers';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/dashgrid/DashboardLibrary/TemplateDashboardModal');
 
 const SourceEntryPointMap: Record<string, SourceEntryPoint> = {
   quickAdd: TemplateDashboardSourceEntryPoint.QUICK_ADD_BUTTON,
@@ -85,7 +89,7 @@ export const TemplateDashboardModal = () => {
 
       return response.items;
     } catch (error) {
-      console.error('Error loading template dashboards ', error);
+      structuredLogger.error('Error loading template dashboards ', error);
       return [];
     }
   }, [isOpen]);

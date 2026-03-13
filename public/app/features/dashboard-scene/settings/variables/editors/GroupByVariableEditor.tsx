@@ -9,6 +9,9 @@ import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/Pan
 
 import { GroupByVariableForm } from '../components/GroupByVariableForm';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/settings/variables/editors/GroupByVariableEditor');
+
 interface GroupByVariableEditorProps {
   variable: GroupByVariable;
   onRunQuery: () => void;
@@ -101,7 +104,7 @@ export function GroupByVariableEditor(props: GroupByVariableEditorProps) {
 
 export function getGroupByVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof GroupByVariable)) {
-    console.warn('getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
+    structuredLogger.warn('getAdHocFilterOptions: variable is not an AdHocFiltersVariable');
     return [];
   }
 

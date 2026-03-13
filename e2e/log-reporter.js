@@ -1,3 +1,6 @@
+const { createStructuredLogger } = require('../scripts/helpers/structuredLogging');
+const structuredLogger = createStructuredLogger('e2e/log-reporter');
+
 'use strict';
 
 const Mocha = require('mocha');
@@ -41,7 +44,7 @@ class LogReporter extends Mocha.reporters.Spec {
     // Example
     // CypressStats suites=1 tests=2 testPasses=1 pending=0 failures=1
     // start=1668783563731 end=1668783645198 duration=81467
-    console.log(`CypressStats ${objToLogAttributes(stats)}`);
+    structuredLogger.log(`CypressStats ${objToLogAttributes(stats)}`);
   }
 
   reportResults() {
@@ -50,7 +53,7 @@ class LogReporter extends Mocha.reporters.Spec {
       // CypressTestResult title="Login scenario, create test data source, dashboard, panel, and export scenario"
       // suite="Smoke tests" file=../../e2e/smoke-tests-suite/1-smoketests.spec.ts duration=68694
       // currentRetry=0 speed=undefined err=false
-      console.log(`CypressTestResult ${objToLogAttributes(test)}`);
+      structuredLogger.log(`CypressTestResult ${objToLogAttributes(test)}`);
     });
   }
 
@@ -63,7 +66,7 @@ class LogReporter extends Mocha.reporters.Spec {
       // Example
       // CypressError suite="Smoke tests" test="Login scenario, create test data source, dashboard,
       // panel, and export scenario" error=false
-      console.error(`CypressError ${objToLogAttributes({ suite, test, error })}`);
+      structuredLogger.error(`CypressError ${objToLogAttributes({ suite, test, error })}`);
     });
   }
 }

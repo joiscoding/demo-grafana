@@ -1,6 +1,7 @@
 import { SyntaxNode } from '@lezer/common';
 
 import {
+
   And,
   BinOpExpr,
   Bool,
@@ -68,6 +69,9 @@ import {
 } from './parsingUtils';
 import { LokiOperationId, LokiVisualQuery, LokiVisualQueryBinary } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/loki/querybuilder/parsing');
+
 interface Context {
   query: LokiVisualQuery;
   errors: ParsingError[];
@@ -105,7 +109,7 @@ export function buildVisualQueryFromString(expr: string): Context {
     handleExpression(replacedExpr, node, context);
   } catch (err) {
     // Not ideal to log it here, but otherwise we would lose the stack trace.
-    console.error(err);
+    structuredLogger.error(err);
     if (err instanceof Error) {
       context.errors.push({
         text: err.message,

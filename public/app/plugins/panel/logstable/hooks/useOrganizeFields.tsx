@@ -14,6 +14,9 @@ import type { Options as LogsTableOptions } from '../panelcfg.gen';
 import { organizeLogsFieldsTransform } from '../transforms/organizeLogsFieldsTransform';
 import { BuildLinkToLogLine, isBuildLinkToLogLine } from '../types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/logstable/hooks/useOrganizeFields');
+
 interface Props {
   extractedFrame: DataFrame | null;
   timeFieldName: string;
@@ -59,7 +62,7 @@ export function useOrganizeFields({
         }
       })
       .catch((err) => {
-        console.error('LogsTable: Organize fields transform error', err);
+        structuredLogger.error('LogsTable: Organize fields transform error', err);
       });
   }, [
     bodyFieldName,

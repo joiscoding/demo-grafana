@@ -5,6 +5,9 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { Labels, LogLevel } from '@grafana/data';
 import { config, createMonitoringLogger } from '@grafana/runtime';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/plugins/extensions/logs/log');
+
 export type ExtensionsLogItem = {
   level: LogLevel;
   timestamp: number;
@@ -41,15 +44,15 @@ export class ExtensionsLog {
 
   warning(message: string, labels?: Labels): void {
     monitoringLogger.logWarning(message, { ...this.baseLabels, ...labels });
-    config.buildInfo.env === 'development' && console.warn(message, { ...this.baseLabels, ...labels });
+    config.buildInfo.env === 'development' && structuredLogger.warn(message, { ...this.baseLabels, ...labels });
     this.log(LogLevel.warning, message, labels);
   }
 
   error(message: string, labels?: Labels): void {
     // TODO: If Faro has console instrumentation, then the following will track the same error message twice
-    // (first: `monitoringLogger.logError()`, second: `console.error()` which gets picked up by Faro)
+    // (first: `monitoringLogger.logError()`, second: `structuredLogger.error()` which gets picked up by Faro)
     monitoringLogger.logError(new Error(message), { ...this.baseLabels, ...labels });
-    console.error(message, { ...this.baseLabels, ...labels });
+    structuredLogger.error(message, { ...this.baseLabels, ...labels });
     this.log(LogLevel.error, message, labels);
   }
 

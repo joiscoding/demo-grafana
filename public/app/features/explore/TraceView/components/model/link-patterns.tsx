@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/explore/TraceView/components/model/link-patterns');
+
 // Copyright (c) 2017 The Jaeger Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -111,8 +114,7 @@ export function processLinkPattern(pattern: any): ProcessedLinkPattern | null {
       parameters: _uniq(url.parameters.concat(text.parameters)),
     };
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(`Ignoring invalid link pattern: ${error}`, pattern);
+        structuredLogger.error(`Ignoring invalid link pattern: ${error}`, pattern);
     return null;
   }
 }

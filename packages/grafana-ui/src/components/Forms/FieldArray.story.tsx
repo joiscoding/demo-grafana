@@ -11,6 +11,9 @@ import { FieldArray } from './FieldArray';
 import mdx from './FieldArray.mdx';
 import { Form } from './Form';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Forms/FieldArray.story');
+
 const meta: Meta = {
   title: 'Forms/FieldArray',
   component: FieldArray,
@@ -36,7 +39,7 @@ export const Simple: StoryFn = (args) => {
     people: [{ firstName: 'Janis', lastName: 'Joplin' }],
   };
   return (
-    <Form onSubmit={(values) => console.log(values)} defaultValues={defaultValues}>
+    <Form onSubmit={(values) => structuredLogger.log(values)} defaultValues={defaultValues}>
       {({ control, register }) => (
         <div>
           <FieldArray control={control} name="people">

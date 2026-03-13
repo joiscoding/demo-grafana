@@ -1,3 +1,6 @@
+import { createStructuredLogger } from './structuredLogging';
+const structuredLogger = createStructuredLogger('packages/grafana-data/src/utils/url');
+
 /**
  * @preserve jquery-param (c) 2015 KNOWLEDGECODE | MIT
  */
@@ -226,7 +229,7 @@ export const urlUtil = {
  */
 export function serializeStateToUrlParam(urlState: Partial<ExploreUrlState>, compact?: boolean): string {
   if (compact !== undefined) {
-    console.warn('`compact` parameter is deprecated and will be removed in a future release');
+    structuredLogger.warn('`compact` parameter is deprecated and will be removed in a future release');
   }
   return JSON.stringify(urlState);
 }

@@ -1,6 +1,9 @@
 import { Meta, ArgTypes } from '@storybook/blocks';
 import { ConfirmButton } from './ConfirmButton';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/ConfirmButton/ConfirmButton');
+
 <Meta title="MDX|ConfirmButton" component={ConfirmButton} />
 
 # ConfirmButton
@@ -22,7 +25,7 @@ Apart from the button variant, you can also modify the button size and the butto
   confirmText="Are you sure?"
   confirmVariant="secondary"
   onConfirm={() => {
-    console.log('Action confirmed!');
+    structuredLogger.log('Action confirmed!');
   }}
 >
   Click me
@@ -40,7 +43,7 @@ You can pass a custom button as a child to the `ConfirmButton`. The child will a
   confirmText="Are you sure?"
   confirmVariant="secondary"
   onConfirm={() => {
-    console.log('Action confirmed!');
+    structuredLogger.log('Action confirmed!');
   }}
 >
   <Button variant="secondary">Click me</Button>

@@ -1,6 +1,9 @@
 import { ArgTypes } from '@storybook/blocks';
 import { FileDropzone } from './FileDropzone';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/FileDropzone/FileDropzone');
+
 # FileDropzone
 
 A dropzone component to use for file uploads.
@@ -10,7 +13,7 @@ A dropzone component to use for file uploads.
 ```jsx
 import { FileDropzone } from '@grafana/ui';
 
-<FileDropzone onLoad={(result) => console.log(result)} />;
+<FileDropzone onLoad={(result) => structuredLogger.log(result)} />;
 ```
 
 ### Props

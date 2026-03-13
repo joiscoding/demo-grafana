@@ -55,7 +55,7 @@ To retrieve your license, Grafana Enterprise requires access to your AWS account
 
 1. To limit the policy to obtain usage data just for Grafana Enterprise, in the **Resources** section of the policy, specify your license ARN.
 
-   You can find your license ID in the **Granted Licenses** section of [AWS License Manager](https://console.aws.amazon.com/license-manager/home).
+   You can find your license ID in the **Granted Licenses** section of [AWS License Manager](https://structuredLogger.aws.amazon.com/license-manager/home).
 
    The policy JSON should look similar to the following example:
 

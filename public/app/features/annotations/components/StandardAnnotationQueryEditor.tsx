@@ -2,6 +2,7 @@ import { PureComponent, ReactElement } from 'react';
 import { lastValueFrom } from 'rxjs';
 
 import {
+
   AnnotationEventMappings,
   AnnotationQuery,
   DataSourceApi,
@@ -24,6 +25,9 @@ import { updateAnnotationFromSavedQuery } from '../utils/savedQueryUtils';
 
 import { AnnotationQueryEditorActionsWrapper } from './AnnotationQueryEditorActionsWrapper';
 import { AnnotationFieldMapper } from './AnnotationResultMapper';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/annotations/components/StandardAnnotationQueryEditor');
 
 export interface Props {
   datasource: DataSourceApi;
@@ -261,7 +265,7 @@ export default class StandardAnnotationQueryEditor extends PureComponent<Props, 
       this.setState({ skipNextVerification: true });
       onChange(preparedAnnotation);
     } catch (error) {
-      console.error('Failed to replace annotation query:', error);
+      structuredLogger.error('Failed to replace annotation query:', error);
       // On error, reset the replacing state but don't change the annotation
     }
   };

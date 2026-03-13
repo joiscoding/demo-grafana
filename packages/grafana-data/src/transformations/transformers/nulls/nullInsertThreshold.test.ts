@@ -3,6 +3,9 @@ import { FieldType } from '../../../types/dataFrame';
 
 import { applyNullInsertThreshold } from './nullInsertThreshold';
 
+import { createStructuredLogger } from '../../../utils/structuredLogging';
+const structuredLogger = createStructuredLogger('packages/grafana-data/src/transformations/transformers/nulls/nullInsertThreshold.test');
+
 function randInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -326,10 +329,8 @@ describe('nullInsertThreshold Transformer', () => {
     // 10 fields x 3,000 values with 50% skip (output = 10 fields x 6,000 values)
     let bigFrameA = genFrame();
 
-    // eslint-disable-next-line no-console
-    console.time('insertValues-10x3k');
+        structuredLogger.time('insertValues-10x3k');
     applyNullInsertThreshold({ frame: bigFrameA });
-    // eslint-disable-next-line no-console
-    console.timeEnd('insertValues-10x3k');
+        structuredLogger.timeEnd('insertValues-10x3k');
   });
 });

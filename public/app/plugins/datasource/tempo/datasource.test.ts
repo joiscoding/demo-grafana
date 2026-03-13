@@ -1,6 +1,7 @@
 import { lastValueFrom, Observable, of } from 'rxjs';
 
 import {
+
   DataFrame,
   dataFrameToJSON,
   DataSourceInstanceSettings,
@@ -52,12 +53,15 @@ import { createTempoDatasource } from './test/mocks';
 import { initTemplateSrv } from './test/test_utils';
 import { TempoJsonData, TempoQuery } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/tempo/datasource.test');
+
 describe('Tempo data source', () => {
   // Mock the console error so that running the test suite doesnt throw the error
-  const origError = console.error;
+  const origError = structuredLogger.error;
   const consoleErrorMock = jest.fn();
-  afterEach(() => (console.error = origError));
-  beforeEach(() => (console.error = consoleErrorMock));
+  afterEach(() => (structuredLogger.error = origError));
+  beforeEach(() => (structuredLogger.error = consoleErrorMock));
 
   describe('runs correctly', () => {
     const handleStreamingQuery = jest.spyOn(TempoDatasource.prototype, 'handleStreamingQuery');

@@ -1,6 +1,9 @@
 import { ArgTypes } from '@storybook/blocks';
 import { FieldSet } from './FieldSet';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Forms/FieldSet');
+
 # FieldSet
 
 Component used to group form elements inside a form, equivalent to HTML's [fieldset](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset) tag.
@@ -11,7 +14,7 @@ Accepts optional label, which, if provided, is used as a text for the set's lege
 ```jsx
 import { FieldSet } from '@grafana/ui';
 
-<Form onSubmit={() => console.log('Submit')}>
+<Form onSubmit={() => structuredLogger.log('Submit')}>
   {() => (
     <>
       <FieldSet label="Details">

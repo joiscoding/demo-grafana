@@ -1,6 +1,7 @@
 import { xor } from 'lodash';
 
 import {
+
   DataFrame,
   LoadingState,
   PanelData,
@@ -16,6 +17,9 @@ import { ClassicCondition, ExpressionQueryType } from 'app/features/expressions/
 import { AlertQuery } from 'app/types/unified-alerting-dto';
 
 import { createDagFromQueries, getOriginOfRefId } from './dag';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/alerting/unified/components/rule-editor/util');
 
 export function queriesWithUpdatedReferences(
   queries: AlertQuery[],
@@ -210,7 +214,7 @@ export function getThresholdsForQueries(queries: AlertQuery[], condition: string
           }
         });
       } catch (err) {
-        console.error('Failed to parse thresholds', err);
+        structuredLogger.error('Failed to parse thresholds', err);
         return;
       }
     });

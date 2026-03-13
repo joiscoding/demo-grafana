@@ -3,6 +3,7 @@ import { GrafanaEdition } from '@grafana/data/internal';
 import { Faro, Instrumentation } from '@grafana/faro-core';
 import * as faroWebSdkModule from '@grafana/faro-web-sdk';
 import {
+
   BrowserConfig,
   FetchTransport,
   SessionInstrumentation,
@@ -17,6 +18,9 @@ import { TracingInstrumentation } from '@grafana/faro-web-tracing';
 import { EchoSrvTransport } from './EchoSrvTransport';
 import { GrafanaJavascriptAgentBackend, TRACKING_URLS } from './GrafanaJavascriptAgentBackend';
 import { GrafanaJavascriptAgentBackendOptions } from './types';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/core/services/echo/backends/grafana-javascript-agent/GrafanaJavascriptAgentBackend.test');
 
 describe('GrafanaJavascriptAgentEchoBackend', () => {
   let mockedSetUser: jest.Mock;
@@ -223,7 +227,7 @@ describe('GrafanaJavascriptAgentEchoBackend', () => {
   //     const [url, reqInit]: [string, RequestInit] = fetchSpy.mock.calls[0];
   //     expect(url).toEqual('/log-grafana-javascript-agent');
   //     // expect((JSON.parse(reqInit.body as string) as EchoEvent).exception!.values![0].value).toEqual('test error');
-  //     console.log(JSON.parse(reqInit.body as string));
+  //     structuredLogger.log(JSON.parse(reqInit.body as string));
 
   //     // check that our custom backend got it too
   //     expect(myCustomErrorBackend.addEvent).toHaveBeenCalledTimes(1);

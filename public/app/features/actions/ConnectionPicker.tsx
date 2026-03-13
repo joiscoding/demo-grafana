@@ -7,6 +7,9 @@ import { Select } from '@grafana/ui';
 
 import { INFINITY_DATASOURCE_TYPE } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/actions/ConnectionPicker');
+
 interface ConnectionOption {
   label: string;
   value: string;
@@ -78,7 +81,7 @@ export const ConnectionPicker = ({ actionType, datasourceUid, onChange }: Connec
       if (selectedDatasource) {
         onChange(selectedDatasource);
       } else {
-        console.error('ConnectionPicker: Could not find datasource with UID:', selectedValue);
+        structuredLogger.error('ConnectionPicker: Could not find datasource with UID:', selectedValue);
       }
     }
   };

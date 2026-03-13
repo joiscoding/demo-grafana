@@ -8,6 +8,7 @@ import { SaveDashboardAsOptions } from 'app/features/dashboard/components/SaveDa
 import { DASHBOARD_SCHEMA_VERSION } from 'app/features/dashboard/state/DashboardMigrator';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import {
+
   getPanelPluginCounts,
   getV1SchemaVariables,
   getV2SchemaVariables,
@@ -24,6 +25,9 @@ import { getVizPanelKeyForPanelId } from '../utils/utils';
 
 import { transformSceneToSaveModel } from './transformSceneToSaveModel';
 import { transformSceneToSaveModelSchemaV2 } from './transformSceneToSaveModelSchemaV2';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/serialization/DashboardSceneSerializer');
 
 /**
  * T is the type of the save model
@@ -353,7 +357,7 @@ export class V2DashboardSerializer
           }
         } else {
           const warningMsg = 'Dashboard serializer: Undefined variable found in dashboard save model, ignoring it';
-          console.warn(warningMsg);
+          structuredLogger.warn(warningMsg);
           logWarning(warningMsg);
         }
       }

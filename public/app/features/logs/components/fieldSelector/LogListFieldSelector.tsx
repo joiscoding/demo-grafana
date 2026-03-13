@@ -16,6 +16,9 @@ import { getFieldsWithStats } from './getFieldsWithStats';
 import { logsFieldSelectorWrapperStyles } from './styles';
 import { getSuggestedFieldsFromLogList } from './suggestedFields';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/logs/components/fieldSelector/LogListFieldSelector');
+
 /**
  * FieldSelector wrapper for the LogList visualization.
  */
@@ -100,7 +103,7 @@ export const LogListFieldSelector = ({ containerElement, dataFrames, logs }: Log
   const fields = useMemo(() => getFieldsWithStats(dataFrames), [dataFrames]);
 
   if (!onClickShowField || !onClickHideField || !setDisplayedFields) {
-    console.warn(
+    structuredLogger.warn(
       'LogListFieldSelector: Missing required props: onClickShowField, onClickHideField, setDisplayedFields'
     );
     return null;

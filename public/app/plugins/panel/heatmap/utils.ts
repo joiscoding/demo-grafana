@@ -2,6 +2,7 @@ import { RefObject } from 'react';
 import uPlot, { Cursor } from 'uplot';
 
 import {
+
   DataFrameType,
   formattedValueToString,
   getValueFormat,
@@ -24,6 +25,9 @@ import { pointWithin, Quadtree, Rect } from '../barchart/quadtree';
 
 import { HeatmapData } from './fields';
 import { FieldConfig, HeatmapSelectionMode, YAxisConfig } from './panelcfg.gen';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/heatmap/utils');
 
 /** Validates and returns a safe log base (2 or 10), defaults to 2 if invalid */
 export function toLogBase(value: number | undefined): 2 | 10 {
@@ -721,7 +725,7 @@ export function heatmapPathsPoints(opts: PointsBuilderOpts, exemplarColor: strin
         rect,
         arc
       ) => {
-        //console.time('heatmapPathsSparse');
+        //structuredLogger.time('heatmapPathsSparse');
 
         let points = new Path2D();
         let fillPaths = [points];
@@ -798,7 +802,7 @@ export function heatmapPathsSparse(opts: PathbuilderOpts) {
         rect,
         arc
       ) => {
-        //console.time('heatmapPathsSparse');
+        //structuredLogger.time('heatmapPathsSparse');
 
         let d = u.data[seriesIdx];
         const xMaxs = d[0] as unknown as number[]; // xMax, do we get interval?
@@ -879,7 +883,7 @@ export function heatmapPathsSparse(opts: PathbuilderOpts) {
         });
         u.ctx.restore();
 
-        //console.timeEnd('heatmapPathsSparse');
+        //structuredLogger.timeEnd('heatmapPathsSparse');
       }
     );
 

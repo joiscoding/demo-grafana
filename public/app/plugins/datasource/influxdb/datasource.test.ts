@@ -13,6 +13,9 @@ import { mockInfluxQueryRequest } from './mocks/request';
 import { mockInfluxFetchResponse, mockMetricFindQueryResponse } from './mocks/response';
 import { InfluxQuery, InfluxVersion } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/influxdb/datasource.test');
+
 const fetchMock = mockBackendService(mockInfluxFetchResponse());
 
 describe('datasource initialization', () => {
@@ -274,7 +277,7 @@ describe('interpolateQueryExpr', () => {
   } as unknown as TemplateSrv;
   let ds = getMockInfluxDS(getMockDSInstanceSettings(), templateSrvStub);
 
-  // Mock console.warn as we expect tests to use it
+  // Mock structuredLogger.warn as we expect tests to use it
   beforeEach(() => {
     jest.spyOn(console, 'warn').mockImplementation();
   });

@@ -5,6 +5,9 @@ import { Select } from '@grafana/ui';
 
 import { NamespaceContext, ResourceContext } from './plugins';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/swagger/K8sNameLookup');
+
 type Props = {
   value?: string;
   onChange: (v?: string) => void;
@@ -41,12 +44,12 @@ export function K8sNameLookup(props: Props) {
           },
         });
         if (!response.ok) {
-          console.warn('error loading names');
+          structuredLogger.warn('error loading names');
           setLoading(false);
           return;
         }
         const table = await response.json();
-        console.log('LIST', url, table);
+        structuredLogger.log('LIST', url, table);
         const options: Array<SelectableValue<string>> = [];
         if (table.rows?.length) {
           for (const row of table.rows) {

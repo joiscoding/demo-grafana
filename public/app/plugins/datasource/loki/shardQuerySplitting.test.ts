@@ -11,15 +11,18 @@ import { LOKI_MAX_QUERY_BYTES_READ_ERROR_MSG_PREFIX, LOKI_TIMEOUT_ERROR_MSG } fr
 import { runShardSplitQuery } from './shardQuerySplitting';
 import { LokiQuery } from './types';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/loki/shardQuerySplitting.test');
+
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('uuid'),
 }));
 
 const originalLokiQueryLimitsContextState = config.featureToggles.lokiQueryLimitsContext;
 
-const originalLog = console.log;
-const originalWarn = console.warn;
-const originalErr = console.error;
+const originalLog = structuredLogger.log;
+const originalWarn = structuredLogger.warn;
+const originalErr = structuredLogger.error;
 beforeEach(() => {
   jest.spyOn(console, 'log').mockImplementation(() => {});
   jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -29,9 +32,9 @@ beforeAll(() => {
   config.featureToggles.lokiQueryLimitsContext = true;
 });
 afterAll(() => {
-  console.log = originalLog;
-  console.warn = originalWarn;
-  console.error = originalErr;
+  structuredLogger.log = originalLog;
+  structuredLogger.warn = originalWarn;
+  structuredLogger.error = originalErr;
   config.featureToggles.lokiQueryLimitsContext = originalLokiQueryLimitsContextState;
 });
 

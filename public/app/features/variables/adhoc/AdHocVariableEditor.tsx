@@ -13,11 +13,14 @@ import { toKeyedVariableIdentifier } from '../utils';
 
 import { changeVariableDatasource } from './actions';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/variables/adhoc/AdHocVariableEditor');
+
 const mapStateToProps = (state: StoreState, ownProps: OwnProps) => {
   const { rootStateKey } = ownProps.variable;
 
   if (!rootStateKey) {
-    console.error('AdHocVariableEditor: variable has no rootStateKey');
+    structuredLogger.error('AdHocVariableEditor: variable has no rootStateKey');
     return {
       extended: getAdhocVariableEditorState(initialVariableEditorState),
     };
@@ -44,7 +47,7 @@ export class AdHocVariableEditorUnConnected extends PureComponent<Props> {
   componentDidMount() {
     const { rootStateKey } = this.props.variable;
     if (!rootStateKey) {
-      console.error('AdHocVariableEditor: variable has no rootStateKey');
+      structuredLogger.error('AdHocVariableEditor: variable has no rootStateKey');
       return;
     }
   }

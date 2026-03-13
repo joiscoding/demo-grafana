@@ -4,6 +4,7 @@ import { DataSourceInstanceSettings, DataSourceRef, PanelPluginMeta, TypedVariab
 import { setPanelPluginMetas } from '@grafana/runtime/internal';
 import { Dashboard, DashboardCursorSync, ThresholdsMode } from '@grafana/schema';
 import {
+
   DatasourceVariableKind,
   LibraryPanelKind,
   PanelKind,
@@ -24,6 +25,9 @@ import { createDataSourceVariableAdapter } from '../../../variables/datasource/a
 import { createQueryVariableAdapter } from '../../../variables/query/adapter';
 
 import { makeExportableV1, makeExportableV2, LibraryElementExport, ExportLabel } from './exporters';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/scene/export/exporters.test');
 
 jest.mock('@grafana/data', () => ({
   ...jest.requireActual('@grafana/data'),
@@ -835,7 +839,7 @@ describe('dashboard exporter v2', () => {
   });
 
   it('should handle library panel conversion errors gracefully', async () => {
-    // Mock console.error to avoid Jest warnings
+    // Mock structuredLogger.error to avoid Jest warnings
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     const setupWithInvalidLibraryPanel = async () => {
@@ -873,10 +877,10 @@ describe('dashboard exporter v2', () => {
     expect((placeholderPanel as PanelKind).spec.vizConfig.kind).toBe('VizConfig');
     expect((placeholderPanel as PanelKind).spec.vizConfig.group).toBe('text');
 
-    // Verify console.error was called
+    // Verify structuredLogger.error was called
     expect(consoleSpy).toHaveBeenCalledWith('Failed to load library panel invalid-uid:', expect.any(Error));
 
-    // Restore console.error
+    // Restore structuredLogger.error
     consoleSpy.mockRestore();
   });
 });

@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/explore/TraceView/components/ScrollManager');
+
 // Copyright (c) 2017 Uber Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -105,8 +108,7 @@ export default class ScrollManager {
     const isUp = direction < 0;
     const position = xrs.getRowPosition(rowIndex);
     if (!position) {
-      // eslint-disable-next-line no-console
-      console.warn('Invalid row index');
+            structuredLogger.warn('Invalid row index');
       return;
     }
     let { y } = position;

@@ -17,6 +17,9 @@ import mdx from './Form.mdx';
 import { Legend } from './Legend';
 import { RadioButtonGroup } from './RadioButtonGroup/RadioButtonGroup';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Forms/Form.story');
+
 export default {
   title: 'Forms/Form',
   decorators: [withStoryContainer],
@@ -70,11 +73,11 @@ const renderForm = (defaultValues?: FormDTO) => {
     <Form
       defaultValues={defaultValues}
       onSubmit={(data: FormDTO) => {
-        console.log(data);
+        structuredLogger.log(data);
       }}
     >
       {({ register, control, errors }) => {
-        console.log(errors);
+        structuredLogger.log(errors);
         return (
           <>
             <Legend>Edit user</Legend>
@@ -162,7 +165,7 @@ export const AsyncValidation: StoryFn = ({ passAsyncValidation }) => {
         }}
       >
         {({ register, control, errors, formState }) => {
-          console.log(errors);
+          structuredLogger.log(errors);
           return (
             <>
               <Legend>Edit user</Legend>
@@ -201,7 +204,7 @@ const validateAsync = (shouldPass: boolean) => async () => {
     });
     return true;
   } catch (e) {
-    console.log(e);
+    structuredLogger.log(e);
     return false;
   }
 };

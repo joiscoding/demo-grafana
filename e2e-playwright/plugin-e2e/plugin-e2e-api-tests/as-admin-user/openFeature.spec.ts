@@ -1,5 +1,9 @@
 import { expect, test } from '@grafana/plugin-e2e';
 
+import * as structuredLogging from '../../../../scripts/helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('e2e-playwright/plugin-e2e/plugin-e2e-api-tests/as-admin-user/openFeature.spec');
+
 test.use({
   openFeature: {
     flags: {
@@ -46,7 +50,7 @@ test(
         expect(testFlagFalse.variant).toBe('playwright-override');
       }
     } catch {
-      console.log('OFREP endpoint not called - OpenFeature may not be enabled');
+      structuredLogger.log('OFREP endpoint not called - OpenFeature may not be enabled');
     }
   }
 );
@@ -92,7 +96,7 @@ test(
       expect(testFlagFalse?.value).toBe(false);
       expect(testFlagFalse?.variant).toBe('playwright-override');
     } catch {
-      console.log('OFREP endpoint not called - OpenFeature may not be enabled');
+      structuredLogger.log('OFREP endpoint not called - OpenFeature may not be enabled');
     }
   }
 );

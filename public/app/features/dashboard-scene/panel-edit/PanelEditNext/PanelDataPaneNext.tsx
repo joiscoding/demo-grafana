@@ -1,6 +1,7 @@
 import { throttle } from 'lodash';
 
 import {
+
   CoreApp,
   DataSourceApi,
   DataSourceInstanceSettings,
@@ -31,6 +32,9 @@ import { getUpdatedHoverHeader } from '../getPanelFrameOptions';
 import { QueryEditorContent } from './QueryEditor/QueryEditorContent';
 import { filterDataTransformerConfigs } from './QueryEditor/utils';
 import { TRANSFORMATION_EDIT_INTERACTION_THROTTLE_TIME } from './constants';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/panel-edit/PanelEditNext/PanelDataPaneNext');
 
 const reportTransformationEditInteraction = throttle((context: string, type: string) => {
   reportInteraction('grafana_panel_transformations_clicked', {
@@ -204,7 +208,7 @@ export class PanelDataPaneNext extends SceneObjectBase<PanelDataPaneNextState> {
       this.setState({ datasource, dsSettings, dsError: undefined });
       storeLastUsedDataSourceInLocalStorage(getDataSourceRef(dsSettings) || { default: true });
     } catch (err) {
-      console.error('Failed to load datasource:', err);
+      structuredLogger.error('Failed to load datasource:', err);
 
       // Fallback to default datasource (parity with PanelDataQueriesTab)
       try {
@@ -218,7 +222,7 @@ export class PanelDataPaneNext extends SceneObjectBase<PanelDataPaneNextState> {
           // resolveDatasourceRef() handles the stale-ref case on the next activation.
         }
       } catch (fallbackErr) {
-        console.error('Failed to load default datasource:', fallbackErr);
+        structuredLogger.error('Failed to load default datasource:', fallbackErr);
         this.setState({
           datasource: undefined,
           dsSettings: undefined,

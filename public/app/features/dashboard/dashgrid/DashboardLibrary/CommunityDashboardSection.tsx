@@ -17,6 +17,7 @@ import { CONTENT_KINDS, DISCOVERY_METHODS, EVENT_LOCATIONS, SOURCE_ENTRY_POINTS 
 import { DashboardLibraryInteractions } from './interactions';
 import { GnetDashboard, isGnetDashboard } from './types';
 import {
+
   getThumbnailUrl,
   getLogoUrl,
   buildDashboardDetails,
@@ -25,6 +26,9 @@ import {
   COMMUNITY_PAGE_SIZE_QUERY,
   COMMUNITY_RESULT_SIZE,
 } from './utils/communityDashboardHelpers';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/dashgrid/DashboardLibrary/CommunityDashboardSection');
 
 interface Props {
   onShowMapping: (context: MappingContext) => void;
@@ -108,7 +112,7 @@ export const CommunityDashboardSection = ({ onShowMapping, datasourceType }: Pro
         datasourceType: ds.type,
       };
     } catch (err) {
-      console.error('Error loading community dashboards', err);
+      structuredLogger.error('Error loading community dashboards', err);
       throw err;
     }
   }, [datasourceUid, debouncedSearchQuery]);
@@ -221,7 +225,7 @@ export const CommunityDashboardSection = ({ onShowMapping, datasourceType }: Pro
           eventLocation: EVENT_LOCATIONS.MODAL_COMMUNITY_TAB,
         });
       } catch (err) {
-        console.error('Error checking dashboard compatibility:', err);
+        structuredLogger.error('Error checking dashboard compatibility:', err);
 
         const errorMessage = isFetchError(err) ? err.data?.message : 'Failed to check compatibility';
         const errorCode = isFetchError(err) ? err.data?.code : undefined;

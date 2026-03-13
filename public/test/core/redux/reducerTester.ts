@@ -4,6 +4,10 @@ import { Action } from 'redux';
 
 import { StoreState } from 'app/types/store';
 
+import * as structuredLogging from '../../../../scripts/helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('public/test/core/redux/reducerTester');
+
 type GrafanaReducer<S = StoreState, A extends Action = AnyAction> = (state: S, action: A) => S;
 
 export interface Given<State> {
@@ -82,7 +86,7 @@ export const reducerTester = <State>(): Given<State> => {
 
   const thenStateShouldEqual = (state: State): When<State> => {
     if (showDebugOutput) {
-      console.log(JSON.stringify(resultingState, null, 2));
+      structuredLogger.log(JSON.stringify(resultingState, null, 2));
     }
     expect(resultingState).toEqual(state);
 
@@ -91,7 +95,7 @@ export const reducerTester = <State>(): Given<State> => {
 
   const thenStatePredicateShouldEqual = (predicate: (resultingState: State) => boolean): When<State> => {
     if (showDebugOutput) {
-      console.log(JSON.stringify(resultingState, null, 2));
+      structuredLogger.log(JSON.stringify(resultingState, null, 2));
     }
     expect(predicate(resultingState)).toBe(true);
 

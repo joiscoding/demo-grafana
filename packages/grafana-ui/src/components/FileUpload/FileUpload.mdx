@@ -1,6 +1,9 @@
 import { ArgTypes } from '@storybook/blocks';
 import { FileUpload } from './FileUpload';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/FileUpload/FileUpload');
+
 # FileUpload
 
 A button-styled input that triggers file upload popup. Button text and accepted file extensions can be customized via `label` and `accepted` props respectively.
@@ -11,7 +14,7 @@ A button-styled input that triggers file upload popup. Button text and accepted 
 import { FileUpload } from '@grafana/ui';
 
 <FileUpload
-  onFileUpload={({ currentTarget }) => console.log('file', currentTarget?.files && currentTarget.files[0])}
+  onFileUpload={({ currentTarget }) => structuredLogger.log('file', currentTarget?.files && currentTarget.files[0])}
 />;
 ```
 

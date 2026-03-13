@@ -4,6 +4,9 @@ import { scopeAPIv0alpha1 } from 'app/api/clients/scope/v0alpha1';
 
 import { ScopesApiClient } from './ScopesApiClient';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/scopes/ScopesApiClient.test');
+
 // Helper to create a mock subscription with unsubscribe method
 const createMockSubscription = <T>(data: T): Promise<T> & { unsubscribe: jest.Mock } => {
   const subscription = Promise.resolve(data) as Promise<T> & { unsubscribe: jest.Mock };
@@ -142,7 +145,7 @@ describe('ScopesApiClient', () => {
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(expectedScope);
       expect(result[0].metadata.name).toBe('grafana');
-      // Validate: console.warn is called when some scopes fail
+      // Validate: structuredLogger.warn is called when some scopes fail
       expect(consoleWarnSpy).toHaveBeenCalled();
       consoleErrorSpy.mockRestore();
       consoleWarnSpy.mockRestore();

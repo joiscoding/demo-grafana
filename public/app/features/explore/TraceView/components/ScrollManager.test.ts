@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/explore/TraceView/components/ScrollManager.test');
+
 // Copyright (c) 2017 Uber Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,16 +77,13 @@ describe('ScrollManager', () => {
     });
 
     it('is a noop if an invalid rowPosition is returned by the accessors', () => {
-      // eslint-disable-next-line no-console
-      const oldWarn = console.warn;
-      // eslint-disable-next-line no-console
-      console.warn = () => {};
+            const oldWarn = structuredLogger.warn;
+            structuredLogger.warn = () => {};
       manager._scrollPast(-2, 1);
       expect(jest.mocked(accessors.getRowPosition).mock.calls.length).toBe(1);
       expect(jest.mocked(accessors.getViewHeight).mock.calls.length).toBe(0);
       expect(jest.mocked(scrollTo).mock.calls.length).toBe(0);
-      // eslint-disable-next-line no-console
-      console.warn = oldWarn;
+            structuredLogger.warn = oldWarn;
     });
 
     it('scrolls up with direction is `-1`', () => {

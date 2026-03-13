@@ -8,6 +8,9 @@ import { AccessControlAction, Role } from 'app/types/accessControl';
 
 import { RolePicker } from './RolePicker';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/core/components/RolePicker/UserRolePicker');
+
 export interface Props {
   basicRole: OrgRole;
   roles?: Role[];
@@ -90,7 +93,7 @@ export const UserRolePicker = ({
           },
         }).unwrap();
       } catch (error) {
-        console.error('Error updating user roles', error);
+        structuredLogger.error('Error updating user roles', error);
       }
     } else if (onApplyRoles) {
       onApplyRoles(newRoles, userId, orgId);

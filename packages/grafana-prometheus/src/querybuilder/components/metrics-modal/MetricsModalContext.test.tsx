@@ -9,6 +9,9 @@ import { getMockTimeRange } from '../../../test/mocks/datasource';
 import { DEFAULT_RESULTS_PER_PAGE, MetricsModalContextProvider, useMetricsModal } from './MetricsModalContext';
 import { generateMetricData } from './helpers';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-prometheus/src/querybuilder/components/metrics-modal/MetricsModalContext.test');
+
 // Mock dependencies
 jest.mock('./helpers', () => ({
   generateMetricData: jest.fn(),
@@ -47,7 +50,7 @@ describe('MetricsModalContext', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Mock console.error to suppress React act() warnings
+    // Mock structuredLogger.error to suppress React act() warnings
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     // Default mock implementations

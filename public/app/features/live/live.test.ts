@@ -7,6 +7,7 @@ import { CentrifugeSrv, StreamingDataQueryResponse } from './centrifuge/service'
 import { StreamingResponseDataType } from './data/utils';
 import { GrafanaLiveService } from './live';
 
+
 describe('GrafanaLiveService', () => {
   const mockGetDataStream = jest.fn();
   const deps = {

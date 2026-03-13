@@ -1,6 +1,9 @@
 import { ArgTypes } from '@storybook/blocks';
 import { RoutingTreeSelector } from './RoutingTreeSelector';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-alerting/src/grafana/notificationPolicies/components/RoutingTreeSelector/RoutingTreeSelector');
+
 # RoutingTreeSelector
 
 A component for selecting notification policy routing trees in Grafana. Only works with the built-in Grafana Alertmanager.
@@ -11,7 +14,7 @@ A component for selecting notification policy routing trees in Grafana. Only wor
 import { RoutingTreeSelector } from '@grafana/alerting/unstable';
 
 function MyComponent() {
-  return <RoutingTreeSelector onChange={(tree) => console.log('Selected:', tree.metadata.name)} />;
+  return <RoutingTreeSelector onChange={(tree) => structuredLogger.log('Selected:', tree.metadata.name)} />;
 }
 ```
 

@@ -5,12 +5,15 @@ import { updateNavIndex } from 'app/core/reducers/navModel';
 import { buildNavModel } from 'app/features/folders/state/navModel';
 import { store } from 'app/store/store';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/pages/utils');
+
 export async function updateNavModel(folderUid: string) {
   try {
     const folder = await getFolderByUidFacade(folderUid);
     store.dispatch(updateNavIndex(buildNavModel(folder)));
   } catch (err) {
-    console.warn('Error fetching parent folder', folderUid, 'for dashboard', err);
+    structuredLogger.warn('Error fetching parent folder', folderUid, 'for dashboard', err);
   }
 }
 

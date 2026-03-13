@@ -4,6 +4,7 @@ import { usePrevious } from 'react-use';
 
 import { DataSourceApi, getDefaultTimeRange, LoadingState, PanelData, SelectableValue, TimeRange } from '@grafana/data';
 import {
+
   EditorRow,
   LabelFilters,
   OperationExplainedBox,
@@ -29,6 +30,9 @@ import { LokiOperationId, LokiVisualQuery } from '../types';
 
 import { EXPLAIN_LABEL_FILTER_CONTENT } from './LokiQueryBuilderExplained';
 import { NestedQueryList } from './NestedQueryList';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/loki/querybuilder/components/LokiQueryBuilder');
 
 export const TIME_SPAN_TO_TRIGGER_SAMPLES = 5 * 60 * 1000;
 export interface Props {
@@ -127,7 +131,7 @@ export const LokiQueryBuilder = memo<Props>(({ datasource, query, onChange, onRu
         Math.abs(timeRange.from.valueOf() - prevTimeRange.from.valueOf()) > TIME_SPAN_TO_TRIGGER_SAMPLES);
     const updateBasedOnChangedQuery = !isEqual(prevQuery, query);
     if (updateBasedOnChangedTimeRange || updateBasedOnChangedQuery) {
-      onGetSampleData().catch(console.error);
+      onGetSampleData().catch(structuredLogger.error);
     }
   }, [datasource, query, timeRange, prevQuery, prevTimeRange]);
 

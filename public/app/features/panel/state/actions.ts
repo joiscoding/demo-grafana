@@ -9,6 +9,9 @@ import { ThunkResult } from 'app/types/store';
 
 import { changePanelKey, panelModelAndPluginReady, removePanel } from './reducers';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/panel/state/actions');
+
 export function initPanelState(panel: PanelModel): ThunkResult<Promise<void>> {
   return async (dispatch, getStore) => {
     if (panel.libraryPanel?.uid && !('model' in panel.libraryPanel)) {
@@ -165,7 +168,7 @@ export function loadLibraryPanelAndUpdate(panel: PanelModel): ThunkResult<void> 
 
       await dispatch(initPanelState(panel));
     } catch (ex) {
-      console.log('ERROR: ', ex);
+      structuredLogger.log('ERROR: ', ex);
       dispatch(
         panelModelAndPluginReady({
           key: panel.key,

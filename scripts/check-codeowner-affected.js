@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+const { createStructuredLogger } = require('./helpers/structuredLogging');
+const structuredLogger = createStructuredLogger('scripts/check-codeowner-affected');
+
 const CODEOWNERS_MANIFEST_PATH = '../codeowners-manifest/filenames-by-team.json';
 
 /**
@@ -14,7 +17,7 @@ function isCodeownerAffected(codeowner, changedFiles, manifestPath = CODEOWNERS_
   const teamFiles = manifest[codeowner] || [];
 
   if (teamFiles.length === 0) {
-    console.warn(`Warning: No files found for codeowner "${codeowner}"`);
+    structuredLogger.warn(`Warning: No files found for codeowner "${codeowner}"`);
     return false;
   }
 
@@ -28,14 +31,14 @@ function isCodeownerAffected(codeowner, changedFiles, manifestPath = CODEOWNERS_
  */
 function checkCodeownerAffected(codeowner, changedFiles) {
   if (!codeowner) {
-    console.error('Usage: node check-codeowner-affected.js <codeowner> <space-separated-files>');
-    console.error('   or: node check-codeowner-affected.js <codeowner> <file1> <file2> ...');
+    structuredLogger.error('Usage: node check-codeowner-affected.js <codeowner> <space-separated-files>');
+    structuredLogger.error('   or: node check-codeowner-affected.js <codeowner> <file1> <file2> ...');
     process.exit(1);
   }
 
   const filesArray = typeof changedFiles === 'string' ? changedFiles.split(/\s+/).filter(Boolean) : changedFiles;
   const isAffected = isCodeownerAffected(codeowner, filesArray);
-  console.log(isAffected ? 'true' : 'false');
+  structuredLogger.log(isAffected ? 'true' : 'false');
 }
 
 if (require.main === module) {

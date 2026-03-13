@@ -9,6 +9,7 @@ import { findElementByTarget } from 'app/features/canvas/runtime/sceneElementMan
 
 import { ConnectionState } from '../../types';
 import {
+
   calculateAngle,
   calculateCoordinates2,
   getConnections,
@@ -28,6 +29,9 @@ import {
 } from './ConnectionAnchors';
 import { ConnectionAnchors } from './ConnectionAnchors2';
 import { ConnectionSVG } from './ConnectionSVG2';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/canvas/components/connections/Connections2');
 
 export const CONNECTION_VERTEX_ID = 'vertex';
 export const CONNECTION_VERTEX_ADD_ID = 'vertexAdd';
@@ -126,7 +130,7 @@ export class Connections2 {
     let element: ElementState | undefined = this.findElementTarget(event.target);
 
     if (!element) {
-      console.log('no element');
+      structuredLogger.log('no element');
       return;
     }
 
@@ -135,7 +139,7 @@ export class Connections2 {
     } else {
       this.connectionSource = element;
       if (!this.connectionSource) {
-        console.log('no connection source');
+        structuredLogger.log('no connection source');
         return;
       }
     }

@@ -9,6 +9,9 @@ import { AstNode, Parser } from './parser';
 import { GraphiteSegment } from './types';
 import { arrayMove } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/graphite/graphite_query');
+
 export type GraphiteTagOperator = '=' | '=~' | '!=' | '!=~';
 
 export type GraphiteTag = {
@@ -94,7 +97,7 @@ export default class GraphiteQuery {
       }
     } catch (err) {
       if (err instanceof Error) {
-        console.error('error parsing target:', err.message);
+        structuredLogger.error('error parsing target:', err.message);
         this.error = err.message;
       }
       this.target.textEditor = true;

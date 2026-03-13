@@ -1,4 +1,5 @@
 import {
+
   DataFrame,
   DataLink,
   DataLinkPostProcessor,
@@ -31,6 +32,9 @@ import { ExploreFieldLinkModel, getFieldLinksForExplore, getVariableUsageInfo } 
 
 import { SpanLinkDef, SpanLinkFunc, SpanLinkType } from './components/types/links';
 import { Trace, TraceSpan, TraceSpanReference } from './components/types/trace';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/explore/TraceView/createSpanLink');
 
 /**
  * This is a factory for the link creator. It returns the function mainly so it can return undefined in which case
@@ -123,7 +127,7 @@ export function createSpanLinkFactory({
         spanLinks.push.apply(spanLinks, newSpanLinks);
       } catch (error) {
         // It's fairly easy to crash here for example if data source defines wrong interpolation in the data link
-        console.error(error);
+        structuredLogger.error(error);
         return spanLinks;
       }
     }

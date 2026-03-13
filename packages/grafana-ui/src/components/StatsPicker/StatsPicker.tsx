@@ -5,6 +5,9 @@ import { fieldReducers, SelectableValue, FieldReducerInfo } from '@grafana/data'
 
 import { Select } from '../Select/Select';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/StatsPicker/StatsPicker');
+
 export interface Props {
   placeholder?: string;
   onChange: (stats: string[]) => void;
@@ -36,13 +39,13 @@ export const StatsPicker = memo<Props>(
       if (current.length !== stats.length) {
         const found = current.map((v) => v.id);
         const notFound = difference(stats, found);
-        console.warn('Unknown stats', notFound, stats);
+        structuredLogger.warn('Unknown stats', notFound, stats);
         onChange(current.map((stat) => stat.id));
       }
 
       // Make sure there is only one
       if (!allowMultiple && stats.length > 1) {
-        console.warn('Removing extra stat', stats);
+        structuredLogger.warn('Removing extra stat', stats);
         onChange([stats[0]]);
       }
 

@@ -5,6 +5,7 @@ import { SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
 import {
+
   SceneComponentProps,
   SceneDataTransformer,
   sceneGraph,
@@ -43,6 +44,9 @@ import {
   isLibraryPanel,
 } from '../utils/utils';
 import { isGridLayoutItemKind, isPanelKindV2 } from '../v2schema/validation';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/inspect/InspectJsonTab');
 
 export type ShowContent = 'panel-json' | 'panel-data' | 'data-frames' | 'panel-layout';
 
@@ -165,7 +169,7 @@ export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
     const gridItem = panel.parent;
 
     if (!(gridItem instanceof DashboardGridItem)) {
-      console.error('Cannot update layout: panel parent is not a DashboardGridItem');
+      structuredLogger.error('Cannot update layout: panel parent is not a DashboardGridItem');
       return;
     }
 
@@ -259,7 +263,7 @@ export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
     const newState = sceneUtils.cloneSceneObjectState(gridItem.state);
 
     if (!(panel.parent instanceof DashboardGridItem)) {
-      console.error('Cannot update state of panel', panel, gridItem);
+      structuredLogger.error('Cannot update state of panel', panel, gridItem);
       return;
     }
 

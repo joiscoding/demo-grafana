@@ -1,5 +1,8 @@
 import { urlUtil } from '@grafana/data';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/logs/components/panel/panelState/getLogsPanelState');
+
 interface LogsPermalinkUrlState {
   logs?: {
     id?: string;
@@ -18,7 +21,7 @@ export function getLogsPanelState(): LogsPermalinkUrlState | undefined {
     try {
       return JSON.parse(panelStateEncoded[0]);
     } catch (e) {
-      console.error('error parsing logsPanelState', e);
+      structuredLogger.error('error parsing logsPanelState', e);
     }
   }
 

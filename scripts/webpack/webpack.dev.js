@@ -1,3 +1,6 @@
+const { createStructuredLogger } = require('../helpers/structuredLogging');
+const structuredLogger = createStructuredLogger('scripts/webpack/webpack.dev');
+
 'use strict';
 const { getPackagesSync } = require('@manypkg/get-packages');
 const browserslist = require('browserslist');
@@ -36,11 +39,11 @@ function scenesModule() {
   try {
     const status = fs.lstatSync(scenesPath);
     if (status.isSymbolicLink()) {
-      console.log(`scenes is linked to local scenes repo`);
+      structuredLogger.log(`scenes is linked to local scenes repo`);
       return path.resolve(scenesPath + '/src');
     }
   } catch (error) {
-    console.error(`Error checking scenes path: ${error.message}`);
+    structuredLogger.error(`Error checking scenes path: ${error.message}`);
   }
   return scenesPath;
 }

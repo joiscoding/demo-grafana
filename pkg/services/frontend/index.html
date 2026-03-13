@@ -172,6 +172,42 @@
       // are explicitly assigned to the `window` object.
       (() => {
         const publicDashboardAccessToken = [[.PublicDashboardAccessToken]]
+        function normalizeStructuredLogValue(value) {
+          if (value instanceof Error) {
+            return {
+              name: value.name,
+              message: value.message,
+              stack: value.stack,
+            };
+          }
+
+          if (value === null || value === undefined || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+            return value;
+          }
+
+          if (typeof value === 'object') {
+            try {
+              return JSON.parse(JSON.stringify(value));
+            } catch {
+              return String(value);
+            }
+          }
+
+          return String(value);
+        }
+
+        function writeStructuredBootLog(level, message, details) {
+          const browserConsole = window['console'];
+          const method = level === 'warn' ? 'warn' : 'error';
+          browserConsole?.[method]?.({
+            timestamp: new Date().toISOString(),
+            level,
+            source: 'pkg/services/frontend/index',
+            message,
+            details: details?.map(normalizeStructuredLogValue),
+          });
+        }
+
         // Grafana can only fail to load once
         // However, it can fail to load in multiple different places
         // To avoid double reporting the error, we use this boolean to check if we've already failed
@@ -181,7 +217,7 @@
             return;
           }
           hasFailedToBoot = true;
-          console.error('Failed to load Grafana', err);
+          writeStructuredBootLog('error', 'Failed to load Grafana', [err]);
           document.querySelector('.fs-variant-loader').classList.add('fs-hidden');
           document.querySelector('.fs-variant-error').classList.remove('fs-hidden');
 
@@ -193,7 +229,7 @@
             method: 'GET',
             cache: "no-store",
           }).catch(err => {
-            console.error('Failed to report boot error to backend: ', err);
+            writeStructuredBootLog('error', 'Failed to report boot error to backend', [err]);
           });
         };
 
@@ -310,7 +346,7 @@
                 }
               } catch (error) {
                 // Just ignore any errors in session rotation. The user can just log in again.
-                console.warn("Failed to rotate session", error);
+                writeStructuredBootLog('warn', 'Failed to rotate session', [error]);
               }
 
               try {
@@ -397,7 +433,7 @@
 
         window.__grafana_boot_data_promise = initGrafana()
         window.__grafana_boot_data_promise.catch((err) => {
-          console.error("__grafana_boot_data_promise rejected", err);
+          writeStructuredBootLog('error', '__grafana_boot_data_promise rejected', [err]);
           window.__grafana_load_failed(err);
         });
       })();

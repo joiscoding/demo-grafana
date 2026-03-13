@@ -8,6 +8,9 @@ import { ElasticQueryEditorProps, QueryEditor } from './components/QueryEditor';
 import { ElasticsearchDataQuery } from './dataquery.gen';
 import { ElasticDatasource } from './datasource';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/datasource/elasticsearch/ElasticsearchVariableEditor.test');
+
 jest.mock('./components/QueryEditor', () => ({
   QueryEditor: jest.fn(({ query }) => <div data-testid="query-editor">Query: {query.query}</div>),
   ElasticQueryEditorProps: {},
@@ -92,7 +95,7 @@ describe('ElasticsearchVariableEditor', () => {
   });
 
   it('should handle query errors gracefully', async () => {
-    // Mock console.error to suppress error output in tests
+    // Mock structuredLogger.error to suppress error output in tests
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     const errorObservable = {

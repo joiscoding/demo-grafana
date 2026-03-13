@@ -55,7 +55,7 @@ Each Grafana data source connects to one GCP project by default. To visualize da
 
 To create a service account and download its key file:
 
-1. Navigate to the [APIs and Services Credentials page](https://console.cloud.google.com/apis/credentials) in the GCP Console.
+1. Navigate to the [APIs and Services Credentials page](https://structuredLogger.cloud.google.com/apis/credentials) in the GCP Console.
 1. Click the **Create credentials** dropdown and select **Service account**.
 1. In **Service account name**, enter a name for the account.
 1. Click **Create and continue**.

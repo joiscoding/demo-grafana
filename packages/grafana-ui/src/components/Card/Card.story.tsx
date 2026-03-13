@@ -7,6 +7,9 @@ import { TagList } from '../Tags/TagList';
 
 import { Card } from './Card';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/Card/Card.story');
+
 const logo = 'https://grafana.com/static/assets/img/apple-touch-icon.png';
 
 const meta: Meta<typeof Card> = {
@@ -93,7 +96,7 @@ export const Tags: StoryFn<typeof Card> = (args) => {
       <Card.Heading>Test dashboard</Card.Heading>
       <Card.Description>Card with a list of tags</Card.Description>
       <Card.Tags>
-        <TagList tags={['tag1', 'tag2', 'tag3']} onClick={(tag) => console.log(tag)} />
+        <TagList tags={['tag1', 'tag2', 'tag3']} onClick={(tag) => structuredLogger.log(tag)} />
       </Card.Tags>
     </Card>
   );

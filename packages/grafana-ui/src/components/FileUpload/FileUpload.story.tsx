@@ -3,6 +3,9 @@ import { Meta, StoryFn } from '@storybook/react';
 import { FileUpload } from './FileUpload';
 import mdx from './FileUpload.mdx';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/FileUpload/FileUpload.story');
+
 const meta: Meta<typeof FileUpload> = {
   title: 'Inputs/FileUpload',
   component: FileUpload,
@@ -28,7 +31,7 @@ export const Basic: StoryFn<typeof FileUpload> = (args) => {
   return (
     <FileUpload
       size={args.size}
-      onFileUpload={({ currentTarget }) => console.log('file', currentTarget?.files && currentTarget.files[0])}
+      onFileUpload={({ currentTarget }) => structuredLogger.log('file', currentTarget?.files && currentTarget.files[0])}
     />
   );
 };

@@ -5,6 +5,7 @@ import { selectors as e2eSelectors } from '@grafana/e2e-selectors';
 import { Trans, t } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
 import {
+
   Avatar,
   Box,
   Button,
@@ -30,6 +31,9 @@ import { AccessControlAction, Role } from 'app/types/accessControl';
 import { OrgUser } from 'app/types/user';
 
 import { OrgRolePicker } from '../OrgRolePicker';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/admin/Users/OrgUsersTable');
 
 type Cell<T extends keyof OrgUser = keyof OrgUser> = CellProps<OrgUser, OrgUser[T]>;
 
@@ -79,7 +83,7 @@ export const OrgUsersTable = ({
           setRoleOptions(options);
         }
       } catch (e) {
-        console.error('Error loading options');
+        structuredLogger.error('Error loading options');
       }
     }
     if (contextSrv.licensedAccessControlEnabled()) {

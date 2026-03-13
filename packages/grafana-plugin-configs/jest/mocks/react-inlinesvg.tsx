@@ -1,6 +1,10 @@
+import * as structuredLogging from '../../../../scripts/helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('packages/grafana-plugin-configs/jest/mocks/react-inlinesvg');
+
 // Due to the grafana/ui Icon component making fetch requests to
 // `/public/img/icon/<icon_name>.svg` we need to mock react-inlinesvg to prevent
-// the failed fetch requests from displaying errors in console.
+// the failed fetch requests from displaying errors in structuredLogger.
 
 import { Ref } from 'react';
 

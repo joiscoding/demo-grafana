@@ -2,6 +2,7 @@ import { FormEvent, PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import {
+
   DataSourceInstanceSettings,
   getDataSourceRef,
   QueryVariableModel,
@@ -22,10 +23,13 @@ import { toKeyedVariableIdentifier } from '../utils';
 
 import { changeQueryVariableDataSource, changeQueryVariableQuery, initQueryVariableEditor } from './actions';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/variables/query/QueryVariableEditor');
+
 const mapStateToProps = (state: StoreState, ownProps: OwnProps) => {
   const { rootStateKey } = ownProps.variable;
   if (!rootStateKey) {
-    console.error('QueryVariableEditor: variable has no rootStateKey');
+    structuredLogger.error('QueryVariableEditor: variable has no rootStateKey');
     return {
       extended: getQueryVariableEditorState(initialVariableEditorState),
     };

@@ -1,3 +1,6 @@
+const { createStructuredLogger } = require('../helpers/structuredLogging');
+const structuredLogger = createStructuredLogger('scripts/webpack/webpack.prod');
+
 'use strict';
 
 const browserslist = require('browserslist');
@@ -113,7 +116,7 @@ module.exports = (env = {}) =>
       function () {
         this.hooks.done.tap('Done', function (stats) {
           if (stats.compilation.errors && stats.compilation.errors.length) {
-            console.log(stats.compilation.errors);
+            structuredLogger.log(stats.compilation.errors);
             process.exit(1);
           }
         });

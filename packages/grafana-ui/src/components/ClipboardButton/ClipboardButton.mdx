@@ -1,6 +1,9 @@
 import { Meta, ArgTypes } from '@storybook/blocks';
 import { ClipboardButton } from './ClipboardButton';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/ClipboardButton/ClipboardButton');
+
 <Meta title="MDX|ClipboardButton" component={ClipboardButton} />
 
 # ClipboardButton
@@ -15,7 +18,7 @@ Commonly it is passed in the `addonAfter` prop on `<Input />`
 <ClipboardButton
   variant="secondary"
   getText={() => 'Text to be copied'}
-  onClipboardCopy={() => console.log('text copied')}
+  onClipboardCopy={() => structuredLogger.log('text copied')}
 >
   Copy to clipboard
 </ClipboardButton>

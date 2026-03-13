@@ -5,6 +5,10 @@ import path from 'node:path';
 
 import { AxeA11yReport, AxeA11yReportViolation } from './types';
 
+import * as structuredLogging from '../../../scripts/helpers/structuredLogging';
+const { createStructuredLogger } = structuredLogging;
+const structuredLogger = createStructuredLogger('e2e-playwright/utils/axe-a11y/reporter');
+
 class AxeA11yReporter implements Reporter {
   private violations: AxeA11yReportViolation[] = [];
 
@@ -39,7 +43,7 @@ class AxeA11yReporter implements Reporter {
     for (const report of axeReports) {
       const reportJson = report.body?.toString();
       if (!reportJson) {
-        console.warn(`Axe a11y report for "${testName}" has no body.`);
+        structuredLogger.warn(`Axe a11y report for "${testName}" has no body.`);
         continue;
       }
 
@@ -55,7 +59,7 @@ class AxeA11yReporter implements Reporter {
         );
         this.failedTests += result.status === 'failed' ? 1 : 0;
       } catch (e) {
-        console.error(`Failed to parse axe-a11y report JSON for test ${test.title}:`, e);
+        structuredLogger.error(`Failed to parse axe-a11y report JSON for test ${test.title}:`, e);
         return;
       }
     }
@@ -75,9 +79,9 @@ class AxeA11yReporter implements Reporter {
           rawReports: this.reports,
         };
         await writeFile(path.join(process.cwd(), process.env.AXE_A11Y_REPORT_PATH), JSON.stringify(report, null, 2));
-        console.info(`Axe a11y report written to ${process.env.AXE_A11Y_REPORT_PATH}`);
+        structuredLogger.info(`Axe a11y report written to ${process.env.AXE_A11Y_REPORT_PATH}`);
       } catch (e) {
-        console.error('Failed to write axe-a11y report:', e);
+        structuredLogger.error('Failed to write axe-a11y report:', e);
       }
     }
   }

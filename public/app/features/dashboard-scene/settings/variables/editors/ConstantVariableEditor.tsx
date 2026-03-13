@@ -8,6 +8,9 @@ import { OptionsPaneItemDescriptor } from 'app/features/dashboard/components/Pan
 
 import { ConstantVariableForm } from '../components/ConstantVariableForm';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/settings/variables/editors/ConstantVariableEditor');
+
 interface ConstantVariableEditorProps {
   variable: ConstantVariable;
 }
@@ -24,7 +27,7 @@ export function ConstantVariableEditor({ variable }: ConstantVariableEditorProps
 
 export function getConstantVariableOptions(variable: SceneVariable): OptionsPaneItemDescriptor[] {
   if (!(variable instanceof ConstantVariable)) {
-    console.warn('getConstantVariableOptions: variable is not a ConstantVariable');
+    structuredLogger.warn('getConstantVariableOptions: variable is not a ConstantVariable');
     return [];
   }
 

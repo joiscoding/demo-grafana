@@ -7,12 +7,14 @@ import { BasicValueMatcherOptions } from '../matchers/valueMatchers/types';
 import { transformDataFrame } from '../transformDataFrame';
 
 import {
+
   FilterByValueMatch,
   filterByValueTransformer,
   FilterByValueTransformerOptions,
   FilterByValueType,
 } from './filterByValue';
 import { DataTransformerID } from './ids';
+
 
 const seriesAWithSingleField = toDataFrame({
   name: 'A',
@@ -153,7 +155,7 @@ describe('FilterByValue transformer', () => {
         },
       ]);
 
-      expect(console.warn).toHaveBeenCalledTimes(2);
+      expect(spyConsoleWarn).toHaveBeenCalledTimes(2);
     });
 
     spyConsoleWarn.mockRestore();
@@ -211,7 +213,7 @@ describe('FilterByValue transformer', () => {
         },
       ]);
 
-      expect(console.warn).toHaveBeenCalledTimes(1);
+      expect(spyConsoleWarn).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-runtime/src/utils/chromeHeaderHeight');
+
 type ChromeHeaderHeightHook = () => number;
 
 let chromeHeaderHeightHook: ChromeHeaderHeightHook | undefined = undefined;
@@ -11,7 +14,7 @@ export const useChromeHeaderHeight = () => {
     if (process.env.NODE_ENV !== 'production') {
       throw new Error('useChromeHeaderHeight hook not found in @grafana/runtime');
     }
-    console.error('useChromeHeaderHeight hook not found');
+    structuredLogger.error('useChromeHeaderHeight hook not found');
   }
 
   return chromeHeaderHeightHook?.();

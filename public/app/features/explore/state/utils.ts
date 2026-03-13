@@ -1,6 +1,7 @@
 import { uniq } from 'lodash';
 
 import {
+
   AbsoluteTimeRange,
   DataSourceApi,
   dateMath,
@@ -34,6 +35,9 @@ import { getDatasourceSrv } from '../../plugins/datasource_srv';
 import { loadSupplementaryQueries } from '../utils/supplementaryQueries';
 
 import { DEFAULT_RANGE } from './constants';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/explore/state/utils');
 
 export const MAX_HISTORY_AUTOCOMPLETE_ITEMS = 100;
 
@@ -118,7 +122,7 @@ export async function loadAndInitDatasource(
       instance.init();
     } catch (err) {
       // TODO: should probably be handled better
-      console.error(err);
+      structuredLogger.error(err);
     }
   }
 

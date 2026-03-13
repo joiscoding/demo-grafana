@@ -3,6 +3,7 @@ import { PureComponent } from 'react';
 import { Subscription } from 'rxjs';
 
 import {
+
   AbsoluteTimeRange,
   AnnotationChangeEvent,
   AnnotationEventUIModel,
@@ -56,6 +57,9 @@ import { PanelLoadTimeMonitor } from './PanelLoadTimeMonitor';
 import { seriesVisibilityConfigFactory } from './SeriesVisibilityConfigFactory';
 import { liveTimer } from './liveTimer';
 import { PanelOptionsLogger } from './panelOptionsLogger';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/dashgrid/PanelStateWrapper');
 
 const DEFAULT_PLUGIN_ERROR = 'Error in plugin';
 
@@ -254,7 +258,7 @@ export class PanelStateWrapper extends PureComponent<Props, State> {
       const delta = liveTime.to.valueOf() - data.timeRange.to.valueOf();
       if (delta < 100) {
         // 10hz
-        console.log('Skip tick render', this.props.panel.title, delta);
+        structuredLogger.log('Skip tick render', this.props.panel.title, delta);
         return;
       }
     }

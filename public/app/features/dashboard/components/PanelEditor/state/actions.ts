@@ -10,6 +10,7 @@ import { DashboardModel } from '../../../state/DashboardModel';
 import { PanelModel } from '../../../state/PanelModel';
 
 import {
+
   closeEditor,
   PANEL_EDITOR_UI_STATE_STORAGE_KEY,
   PanelEditorUIState,
@@ -17,6 +18,9 @@ import {
   setPanelEditorUIState,
   updateEditorInitState,
 } from './reducers';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard/components/PanelEditor/state/actions');
 
 export function initPanelEditor(sourcePanel: PanelModel, dashboard: DashboardModel): ThunkResult<void> {
   return async (dispatch) => {
@@ -171,7 +175,7 @@ export function updatePanelEditorUIState(uiState: Partial<PanelEditorUIState>): 
     try {
       store.setObject(PANEL_EDITOR_UI_STATE_STORAGE_KEY, nextState);
     } catch (error) {
-      console.error(error);
+      structuredLogger.error(error);
     }
   };
 }

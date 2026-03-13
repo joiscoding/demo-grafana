@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-prometheus/src/querybuilder/parsing');
+
 // Core Grafana history https://github.com/grafana/grafana/blob/v11.0.0-preview/public/app/plugins/datasource/prometheus/querybuilder/parsing.ts
 import { SyntaxNode } from '@lezer/common';
 import {
@@ -72,7 +75,7 @@ export function buildVisualQueryFromString(expr: string): Omit<Context, 'replace
     handleExpression(replacedExpr, node, context);
   } catch (err) {
     // Not ideal to log it here, but otherwise we would lose the stack trace.
-    console.error(err);
+    structuredLogger.error(err);
     if (err instanceof Error) {
       context.errors.push({
         text: err.message,

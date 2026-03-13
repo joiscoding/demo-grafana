@@ -4,6 +4,7 @@ import { NestedPanelOptions, NestedValueAccess } from '@grafana/data/internal';
 import { t } from '@grafana/i18n';
 import { CanvasElementOptions } from 'app/features/canvas/element';
 import {
+
   canvasElementRegistry,
   DEFAULT_CANVAS_ELEMENT_CONFIG,
   defaultElementItems,
@@ -17,6 +18,9 @@ import { getElementTypes } from '../../utils';
 import { optionBuilder } from '../options';
 
 import { PlacementEditor } from './PlacementEditor';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/canvas/editor/element/elementEditor');
 
 export interface CanvasEditorOptions {
   element: ElementState;
@@ -45,7 +49,7 @@ export function getElementEditor(opts: CanvasEditorOptions): NestedPanelOptions<
         if (path === 'type' && value) {
           const layer = canvasElementRegistry.getIfExists(value);
           if (!layer) {
-            console.warn('layer does not exist', value);
+            structuredLogger.warn('layer does not exist', value);
             return;
           }
           options = {

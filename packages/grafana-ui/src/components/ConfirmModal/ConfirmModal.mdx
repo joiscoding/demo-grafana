@@ -1,6 +1,9 @@
 import { Meta, ArgTypes } from '@storybook/blocks';
 import { ConfirmModal } from './ConfirmModal';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/ConfirmModal/ConfirmModal');
+
 <Meta title="MDX|ConfirmModal" component={ConfirmModal} />
 
 # ConfirmModal
@@ -16,8 +19,8 @@ Used to request user for action confirmation, e.g. deleting items. Triggers prov
   body="Are you sure you want to delete this user?"
   confirmText="Confirm"
   icon="exclamation-triangle"
-  onConfirm={() => console.log('Confirm action')}
-  onDismiss={() => console.log('Dismiss action')}
+  onConfirm={() => structuredLogger.log('Confirm action')}
+  onDismiss={() => structuredLogger.log('Dismiss action')}
 />
 ```
 

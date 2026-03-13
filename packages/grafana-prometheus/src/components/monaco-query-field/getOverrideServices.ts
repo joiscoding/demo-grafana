@@ -1,3 +1,6 @@
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-prometheus/src/components/monaco-query-field/getOverrideServices');
+
 // Core Grafana history https://github.com/grafana/grafana/blob/v11.0.0-preview/public/app/plugins/datasource/prometheus/components/monaco-query-field/getOverrideServices.ts
 import { monacoTypes } from '@grafana/ui';
 
@@ -82,7 +85,7 @@ function makeStorageService() {
     },
 
     logStorage: (): void => {
-      console.log('logStorage: not implemented');
+      structuredLogger.log('logStorage: not implemented');
     },
 
     migrate: (): Promise<void> => {

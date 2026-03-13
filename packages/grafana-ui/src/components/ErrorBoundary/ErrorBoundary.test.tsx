@@ -5,6 +5,9 @@ import { faro } from '@grafana/faro-web-sdk';
 
 import { ErrorBoundary } from './ErrorBoundary';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('packages/grafana-ui/src/components/ErrorBoundary/ErrorBoundary.test');
+
 jest.mock('@grafana/faro-web-sdk', () => ({
   faro: {
     api: {
@@ -17,8 +20,8 @@ const ErrorThrower: FC<{ error: Error }> = ({ error }) => {
   throw error;
 };
 
-// According to this issue https://github.com/facebook/react/issues/15069 componentDidCatch logs errors to console.error unconditionally.
-// Let's make sure we don't output that to console.error in the tests.
+// According to this issue https://github.com/facebook/react/issues/15069 componentDidCatch logs errors to structuredLogger.error unconditionally.
+// Let's make sure we don't output that to structuredLogger.error in the tests.
 let consoleSpy: jest.SpyInstance;
 describe('ErrorBoundary', () => {
   beforeEach(() => {

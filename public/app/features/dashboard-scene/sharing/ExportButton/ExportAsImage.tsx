@@ -16,6 +16,9 @@ import { SceneShareTabState, ShareView } from '../types';
 
 import { generateDashboardImage } from './utils';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/dashboard-scene/sharing/ExportButton/ExportAsImage');
+
 export class ExportAsImage extends SceneObjectBase<SceneShareTabState> implements ShareView {
   static Component = ExportAsImageRenderer;
 
@@ -48,7 +51,7 @@ function ExportAsImageRenderer({ model }: SceneComponentProps<ExportAsImage>) {
 
       return result.blob;
     } catch (error) {
-      console.error('Error exporting image:', error);
+      structuredLogger.error('Error exporting image:', error);
       DashboardInteractions.generateDashboardImageClicked({
         scale: config.rendererDefaultImageScale || 1,
         shareResource: 'dashboard',

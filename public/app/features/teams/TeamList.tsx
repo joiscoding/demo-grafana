@@ -7,6 +7,7 @@ import { DashboardHit } from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
 import { Trans, t } from '@grafana/i18n';
 import { config, reportInteraction } from '@grafana/runtime';
 import {
+
   Avatar,
   CellProps,
   Column,
@@ -38,6 +39,9 @@ import { EnterpriseAuthFeaturesCard } from '../admin/EnterpriseAuthFeaturesCard'
 
 import { TeamDeleteModal } from './TeamDeleteModal';
 import { useDeleteTeam, useGetTeams } from './hooks';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/teams/TeamList');
 
 type Cell<T extends keyof TeamWithRoles = keyof TeamWithRoles> = CellProps<TeamWithRoles, TeamWithRoles[T]>;
 
@@ -236,7 +240,7 @@ const TeamList = () => {
                     'Failed to check if the team owns folders. Please try again.'
                   )
                 );
-                console.error(error);
+                structuredLogger.error(error);
                 return;
               }
 

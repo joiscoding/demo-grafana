@@ -4,6 +4,9 @@ import { FolderDTO } from 'app/types/folders';
 
 import { Options } from './panelcfg.gen';
 
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/plugins/panel/dashlist/migrations');
+
 async function getFolderUID(folderID: number): Promise<string> {
   // folderID 0 is always the fake General/Dashboards folder, which always has a UID of empty string
   if (folderID === 0) {
@@ -67,7 +70,7 @@ export async function dashlistMigrationHandler(panel: PanelModel<Options> & Angu
       newOptions.folderUID = folderUID;
       delete newOptions.folderId;
     } catch (err) {
-      console.warn('Dashlist: Error migrating folder ID to UID', err);
+      structuredLogger.warn('Dashlist: Error migrating folder ID to UID', err);
     }
   }
 

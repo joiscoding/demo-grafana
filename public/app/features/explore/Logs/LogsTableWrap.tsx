@@ -3,6 +3,7 @@ import { Resizable, ResizeCallback } from 're-resizable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
+
   AbsoluteTimeRange,
   DataFrame,
   ExploreLogsPanelState,
@@ -27,6 +28,9 @@ import { parseLogsFrame } from 'app/features/logs/logsFrame';
 
 import { LogsTable } from './LogsTable';
 import { SETTING_KEY_ROOT } from './utils/logs';
+
+import { createStructuredLogger } from '@grafana/data';
+const structuredLogger = createStructuredLogger('public/app/features/explore/Logs/LogsTableWrap');
 
 interface Props {
   logsFrames: DataFrame[];
@@ -385,7 +389,7 @@ export function LogsTableWrap(props: Props) {
   // Toggle a column on or off when the user interacts with an element in the multi-select sidebar
   const toggleColumn = (columnName: FieldName) => {
     if (!columnsWithMeta || !(columnName in columnsWithMeta)) {
-      console.warn('failed to get column', columnsWithMeta);
+      structuredLogger.warn('failed to get column', columnsWithMeta);
       return;
     }
 
