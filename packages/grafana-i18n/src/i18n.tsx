@@ -1,7 +1,6 @@
 import i18n, { InitOptions, ReactOptions, TFunction as I18NextTFunction } from 'i18next';
 import LanguageDetector, { DetectorOptions } from 'i18next-browser-languagedetector';
 import React from 'react';
-
 // eslint-disable-next-line no-restricted-imports
 import { initReactI18next, setDefaults, setI18n, Trans as I18NextTrans, getI18n } from 'react-i18next';
 
