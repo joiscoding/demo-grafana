@@ -23,6 +23,7 @@ describe('createStructuredLogger', () => {
   });
 
   it('records timer duration metadata when timeEnd is called', () => {
+    jest.spyOn(console, 'debug').mockImplementation(() => {});
     const infoSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
     const nowSpy = jest.spyOn(Date, 'now');
     nowSpy.mockReturnValueOnce(100).mockReturnValueOnce(160);
