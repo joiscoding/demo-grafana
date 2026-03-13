@@ -24,7 +24,8 @@ export const DashboardInteractions = {
       Partial<DynamicDashboardsTrackingInformation> &
       Partial<{ version_before_migration: number | undefined }>
   ) => {
-    reportDashboardInteraction('init_dashboard_completed', properties);
+    const { duration, ...rest } = properties;
+    reportDashboardInteraction('init_dashboard_completed', rest);
   },
 
   dashboardCopied: (properties: { name: string; url: string }) => {
@@ -54,6 +55,9 @@ export const DashboardInteractions = {
           panelsByDatasourceType: Record<string, number>;
         } & DashboardLibraryTrackingInfo)
   ) => {
+    if (!isNew) {
+      return;
+    }
     reportDashboardInteraction(isNew ? 'created' : 'saved', properties, 'grafana_dashboard');
   },
 
@@ -296,7 +300,7 @@ export const DashboardInteractions = {
 const reportDashboardInteraction = (
   name: string,
   properties?: Record<string, unknown>,
-  interactionPrefix = 'dashboards'
+  interactionPrefix = 'dashboard'
 ) => {
   const meta = isScenesContextSet ? { scenesView: true } : {};
   const isDynamicDashboard = config.featureToggles?.dashboardNewLayouts ?? false;
