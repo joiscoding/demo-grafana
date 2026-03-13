@@ -40,8 +40,7 @@ type DataSourceCreatedProps = {
  * - v9.1.7 : logging datasource, datasource_uid, grafana version and success
  */
 export const trackDataSourceTested = (props: DataSourceTestedProps) => {
-  const { success, ...rest } = props;
-  reportInteraction('grafana_ds_test_datasource_clicked', rest);
+  reportInteraction('grafana_ds_test_datasource_clicked', props);
 };
 
 type DataSourceTestedProps = {

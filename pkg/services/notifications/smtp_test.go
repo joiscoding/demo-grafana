@@ -344,4 +344,17 @@ func TestSmtpSend(t *testing.T) {
 			assert.True(t, found)
 		}
 	})
+
+	t.Run("returns an error when sending fails", func(t *testing.T) {
+		message := &Message{
+			From:    "from@example.com",
+			To:      []string{"invalid-email-address"},
+			Subject: "subject",
+			Body:    map[string]string{"text/plain": "hello world"},
+		}
+
+		count, err := client.Send(ctx, message)
+		require.Equal(t, 0, count)
+		require.Error(t, err)
+	})
 }

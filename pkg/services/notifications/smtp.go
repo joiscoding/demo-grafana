@@ -58,8 +58,7 @@ func (sc *SmtpClient) Send(ctx context.Context, messages ...*Message) (int, erro
 	for _, msg := range messages {
 		err := sc.sendMessage(ctx, dialer, msg)
 		if err != nil {
-			sentEmailsCount++
-			continue
+			return sentEmailsCount, err
 		}
 
 		sentEmailsCount++

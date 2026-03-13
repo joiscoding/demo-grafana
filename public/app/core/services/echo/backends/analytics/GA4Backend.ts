@@ -2,7 +2,9 @@ import { CurrentUserDTO } from '@grafana/data';
 import {
   EchoBackend,
   EchoEventType,
+  InteractionEchoEvent,
   isInteractionEvent,
+  isPageviewEvent,
   PageviewEchoEvent,
 } from '@grafana/runtime';
 
@@ -20,7 +22,7 @@ export interface GA4EchoBackendOptions {
   user?: CurrentUserDTO;
 }
 
-export class GA4EchoBackend implements EchoBackend<PageviewEchoEvent, GA4EchoBackendOptions> {
+export class GA4EchoBackend implements EchoBackend<PageviewEchoEvent | InteractionEchoEvent, GA4EchoBackendOptions> {
   supportedEvents = [EchoEventType.Pageview, EchoEventType.Interaction];
   googleAnalytics4SendManualPageViews = false;
 
@@ -46,19 +48,18 @@ export class GA4EchoBackend implements EchoBackend<PageviewEchoEvent, GA4EchoBac
     window.gtag('config', options.googleAnalyticsId, configOptions);
   }
 
-  addEvent = (e: PageviewEchoEvent) => {
+  addEvent = (e: PageviewEchoEvent | InteractionEchoEvent) => {
     if (!window.gtag) {
       return;
     }
+
     // this should prevent duplicate events in case enhanced tracking is enabled
-    if (this.googleAnalytics4SendManualPageViews) {
+    if (isPageviewEvent(e) && this.googleAnalytics4SendManualPageViews) {
       window.gtag('event', 'page_view', { page_path: e.payload.page });
     }
 
     if (isInteractionEvent(e)) {
-      window.gtag('event', e.payload.interactionName, {
-        event_category: 'staging',
-      });
+      window.gtag('event', e.payload.interactionName, e.payload.properties);
     }
   };
 
