@@ -227,6 +227,9 @@ func (ns *NotificationService) SendEmailCommandHandler(ctx context.Context, cmd 
 	}
 
 	ns.mailQueue <- message
+	// Reset the message body after queueing to free memory
+	message.To = nil
+	message.Body = nil
 	return nil
 }
 
