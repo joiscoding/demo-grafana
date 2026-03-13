@@ -1,5 +1,4 @@
-import { createStructuredConsole, installStructuredConsole } from './structuredConsole';
-import { MonitoringLogger } from './logging';
+import type { MonitoringLogger } from './logging';
 
 const mockMonitoringLogger: MonitoringLogger = {
   logDebug: jest.fn(),
@@ -13,20 +12,25 @@ jest.mock('./logging', () => ({
   createMonitoringLogger: jest.fn(() => mockMonitoringLogger),
 }));
 
-jest.mock('../config', () => ({
-  config: {
-    buildInfo: {
-      env: 'production',
-    },
-  },
-}));
+const { createStructuredConsole, installStructuredConsole } = require('./structuredConsole') as typeof import('./structuredConsole');
 
 describe('structuredConsole', () => {
   const structuredConsoleKey = '__grafanaStructuredConsole';
+  let consoleWarnSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.clearAllMocks();
     Reflect.deleteProperty(globalThis, structuredConsoleKey);
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'info').mockImplementation(() => undefined);
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'debug').mockImplementation(() => undefined);
+    jest.spyOn(console, 'trace').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   test('sends warning logs with a structured payload', () => {
@@ -40,7 +44,7 @@ describe('structuredConsole', () => {
         console: expect.objectContaining({
           level: 'warn',
           message: 'warning message',
-          args: ['warning message', { userId: 7 }],
+          args: ['warning message', { type: 'Object' }],
           timestamp: expect.any(String),
         }),
       })
@@ -66,6 +70,35 @@ describe('structuredConsole', () => {
         }),
       })
     );
+  });
+
+  test('sanitizes monitoring payloads before sending them to monitoring', () => {
+    const structuredConsole = createStructuredConsole();
+    const originalError = new Error('session_id=secret-session');
+
+    structuredConsole.error(originalError, { token: 'secret-token' }, 'Bearer abc123');
+
+    const [loggedError, context] = (mockMonitoringLogger.logError as jest.Mock).mock.calls[0];
+    expect(loggedError).toBeInstanceOf(Error);
+    expect(loggedError.message).toBe('session_id=[REDACTED]');
+    expect(context).toEqual(
+      expect.objectContaining({
+        console: expect.objectContaining({
+          level: 'error',
+          message: 'session_id=[REDACTED]',
+          args: [{ type: 'Error', name: 'Error' }, { type: 'Object' }, 'Bearer [REDACTED]'],
+        }),
+      })
+    );
+  });
+
+  test('forwards original arguments to the raw browser console', () => {
+    const structuredConsole = createStructuredConsole();
+    const details = { userId: 7 };
+
+    structuredConsole.warn('warning message', details);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith('warning message', details);
   });
 
   test('installs only once and reuses an existing structured console', () => {

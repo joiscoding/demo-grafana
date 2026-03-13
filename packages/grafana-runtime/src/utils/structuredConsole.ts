@@ -1,10 +1,9 @@
 import { LogContext } from '@grafana/faro-web-sdk';
 
-import { config } from '../config';
-
 import { createMonitoringLogger } from './logging';
 
 type StructuredConsoleMethod = 'log' | 'info' | 'warn' | 'error' | 'debug' | 'trace';
+const STRUCTURED_CONSOLE_METHODS: StructuredConsoleMethod[] = ['log', 'info', 'warn', 'error', 'debug', 'trace'];
 
 type StructuredConsolePayload = {
   level: StructuredConsoleMethod;
@@ -18,22 +17,58 @@ export type StructuredConsole = Pick<Console, StructuredConsoleMethod>;
 const STRUCTURED_CONSOLE_KEY = '__grafanaStructuredConsole';
 const monitoringLogger = createMonitoringLogger('core.structured-console');
 const rawConsole = console;
+const REDACTED_VALUE = '[REDACTED]';
+const MAX_MESSAGE_LENGTH = 200;
 
-function normalizeArgument(argument: unknown): unknown {
+function sanitizeString(value: string): string {
+  const sanitized = value
+    .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, REDACTED_VALUE)
+    .replace(/(Bearer\s+)[^\s,;]+/gi, `$1${REDACTED_VALUE}`)
+    .replace(/([?&](?:access_token|auth_token|refresh_token|token|session(?:_id|id)?)=)[^&\s]+/gi, `$1${REDACTED_VALUE}`)
+    .replace(
+      /\b((?:access|auth|refresh|api|session)[-_ ]?(?:token|id))\b\s*[:=]\s*["']?[^"',\s}]+["']?/gi,
+      `$1=${REDACTED_VALUE}`
+    );
+
+  return sanitized.length > MAX_MESSAGE_LENGTH ? `${sanitized.slice(0, MAX_MESSAGE_LENGTH)}...` : sanitized;
+}
+
+function summarizeArgument(argument: unknown): unknown {
+  if (typeof argument === 'string') {
+    return sanitizeString(argument);
+  }
+
   if (argument instanceof Error) {
     return {
+      type: 'Error',
       name: argument.name,
-      message: argument.message,
-      stack: argument.stack,
+    };
+  }
+
+  if (Array.isArray(argument)) {
+    return {
+      type: 'Array',
+      length: argument.length,
     };
   }
 
   if (typeof argument === 'bigint' || typeof argument === 'symbol') {
-    return String(argument);
+    return {
+      type: typeof argument,
+    };
   }
 
   if (typeof argument === 'function') {
-    return `[function ${argument.name || 'anonymous'}]`;
+    return {
+      type: 'Function',
+      name: argument.name || 'anonymous',
+    };
+  }
+
+  if (argument && typeof argument === 'object') {
+    return {
+      type: argument.constructor?.name ?? 'Object',
+    };
   }
 
   return argument;
@@ -43,11 +78,11 @@ function getMessageFromArgs(level: StructuredConsoleMethod, args: unknown[]): st
   const [first] = args;
 
   if (typeof first === 'string' && first.length > 0) {
-    return first;
+    return sanitizeString(first);
   }
 
   if (first instanceof Error && first.message.length > 0) {
-    return first.message;
+    return sanitizeString(first.message);
   }
 
   return `console.${level}`;
@@ -57,7 +92,7 @@ function toPayload(level: StructuredConsoleMethod, args: unknown[]): StructuredC
   return {
     level,
     message: getMessageFromArgs(level, args),
-    args: args.map(normalizeArgument),
+    args: args.map(summarizeArgument),
     timestamp: new Date().toISOString(),
   };
 }
@@ -68,24 +103,24 @@ function toContext(payload: StructuredConsolePayload): LogContext {
   };
 }
 
-function getConsoleError(payload: StructuredConsolePayload): Error {
-  const firstError = payload.args.find((arg): arg is { name?: string; message?: string; stack?: string } => {
-    if (!arg || typeof arg !== 'object') {
-      return false;
-    }
-
-    const candidate = arg as Record<string, unknown>;
-    return typeof candidate.name === 'string' && typeof candidate.message === 'string';
-  });
+function getConsoleError(payload: StructuredConsolePayload, args: unknown[]): Error {
+  const firstError = args.find((arg): arg is Error => arg instanceof Error);
 
   if (firstError) {
-    const error = new Error(firstError.message || payload.message);
+    const error = new Error(payload.message || firstError.name || 'console.error');
     error.name = firstError.name || error.name;
-    error.stack = firstError.stack || error.stack;
     return error;
   }
 
   return new Error(payload.message);
+}
+
+function isStructuredConsole(value: unknown): value is StructuredConsole {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  return STRUCTURED_CONSOLE_METHODS.every((method) => typeof Reflect.get(value, method) === 'function');
 }
 
 function emitStructuredLog(method: StructuredConsoleMethod, args: unknown[]) {
@@ -94,7 +129,7 @@ function emitStructuredLog(method: StructuredConsoleMethod, args: unknown[]) {
 
   switch (method) {
     case 'error':
-      monitoringLogger.logError(getConsoleError(payload), context);
+      monitoringLogger.logError(getConsoleError(payload, args), context);
       break;
     case 'warn':
       monitoringLogger.logWarning(payload.message, context);
@@ -109,9 +144,7 @@ function emitStructuredLog(method: StructuredConsoleMethod, args: unknown[]) {
       break;
   }
 
-  if (config.buildInfo.env === 'development') {
-    (rawConsole[method] as (...items: unknown[]) => void)(payload);
-  }
+  rawConsole[method](...args);
 }
 
 export function createStructuredConsole(): StructuredConsole {
@@ -128,8 +161,8 @@ export function createStructuredConsole(): StructuredConsole {
 export function installStructuredConsole(structuredConsole: StructuredConsole = createStructuredConsole()): StructuredConsole {
   const existing = Reflect.get(globalThis, STRUCTURED_CONSOLE_KEY);
 
-  if (existing) {
-    return existing as StructuredConsole;
+  if (isStructuredConsole(existing)) {
+    return existing;
   }
 
   Reflect.set(globalThis, STRUCTURED_CONSOLE_KEY, structuredConsole);
