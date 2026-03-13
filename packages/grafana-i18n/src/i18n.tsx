@@ -2,16 +2,16 @@ import i18n, { InitOptions, ReactOptions, TFunction as I18NextTFunction } from '
 import LanguageDetector, { DetectorOptions } from 'i18next-browser-languagedetector';
 import React from 'react';
 
-import { createStructuredLogger } from '@grafana/data';
-const structuredLogger = createStructuredLogger('packages/grafana-i18n/src/i18n');
-
 // eslint-disable-next-line no-restricted-imports
 import { initReactI18next, setDefaults, setI18n, Trans as I18NextTrans, getI18n } from 'react-i18next';
 
 import { DEFAULT_LANGUAGE, PSEUDO_LOCALE } from './constants';
 import { initRegionalFormat } from './dates';
 import { LANGUAGES } from './languages';
+import { createStructuredLogger } from './structuredLogging';
 import { ResourceLoader, Resources, TFunction, TransProps, TransType } from './types';
+
+const structuredLogger = createStructuredLogger('packages/grafana-i18n/src/i18n');
 
 let tFunc: I18NextTFunction<string[], undefined> | undefined;
 let transComponent: TransType;
