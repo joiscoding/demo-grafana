@@ -715,6 +715,7 @@ func TestPatchOrgUsersAPIEndpoint_AccessControl(t *testing.T) {
 func TestDeleteOrgUsersAPIEndpoint_AccessControl(t *testing.T) {
 	type testCase struct {
 		name           string
+		url            string
 		permissions    []accesscontrol.Permission
 		isGrafanaAdmin bool
 		expectedCode   int
@@ -722,7 +723,16 @@ func TestDeleteOrgUsersAPIEndpoint_AccessControl(t *testing.T) {
 
 	tests := []testCase{
 		{
-			name: "user with permissions can remove user from org",
+			name: "user with permissions can remove user from org (admin route)",
+			url:  "/api/orgs/1/users/1",
+			permissions: []accesscontrol.Permission{
+				{Action: accesscontrol.ActionOrgUsersRemove, Scope: "users:*"},
+			},
+			expectedCode: http.StatusOK,
+		},
+		{
+			name: "user with permissions can remove user from current org",
+			url:  "/api/org/users/1",
 			permissions: []accesscontrol.Permission{
 				{Action: accesscontrol.ActionOrgUsersRemove, Scope: "users:*"},
 			},
@@ -730,6 +740,12 @@ func TestDeleteOrgUsersAPIEndpoint_AccessControl(t *testing.T) {
 		},
 		{
 			name:         "user without permissions cannot remove user from org",
+			url:          "/api/orgs/1/users/1",
+			expectedCode: http.StatusForbidden,
+		},
+		{
+			name:         "user without permissions cannot remove user from current org",
+			url:          "/api/org/users/1",
 			expectedCode: http.StatusForbidden,
 		},
 	}
@@ -753,7 +769,7 @@ func TestDeleteOrgUsersAPIEndpoint_AccessControl(t *testing.T) {
 
 			u := userWithPermissions(1, tt.permissions)
 			u.IsGrafanaAdmin = tt.isGrafanaAdmin
-			res, err := server.SendJSON(webtest.RequestWithSignedInUser(server.NewRequest(http.MethodDelete, "/api/orgs/1/users/1", nil), u))
+			res, err := server.SendJSON(webtest.RequestWithSignedInUser(server.NewRequest(http.MethodDelete, tt.url, nil), u))
 			require.NoError(t, err)
 			assert.Equal(t, tt.expectedCode, res.StatusCode)
 			require.NoError(t, res.Body.Close())
