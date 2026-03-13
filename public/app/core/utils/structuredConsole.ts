@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { createMonitoringLogger, MonitoringLogger } from '@grafana/runtime';
 
 type ConsoleMethod = 'debug' | 'error' | 'info' | 'log' | 'trace' | 'warn';
@@ -36,7 +37,7 @@ function toSerializableValue(value: unknown): SerializableValue {
   }
 
   try {
-    return JSON.parse(JSON.stringify(value)) as SerializableValue;
+    return JSON.parse(JSON.stringify(value));
   } catch {
     return String(value);
   }

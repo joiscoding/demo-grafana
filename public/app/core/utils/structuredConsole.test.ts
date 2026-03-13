@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const mockLogDebug = jest.fn();
 const mockLogError = jest.fn();
 const mockLogInfo = jest.fn();
