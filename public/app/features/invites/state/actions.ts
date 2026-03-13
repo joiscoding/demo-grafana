@@ -23,3 +23,8 @@ export const revokeInvite = createAsyncThunk('users/revokeInvite', async (code: 
   await getBackendSrv().patch(`/api/org/invites/${code}/revoke`, {});
   return code;
 });
+
+export const resendInvite = createAsyncThunk('users/resendInvite', async (code: string, { dispatch }) => {
+  await getBackendSrv().post(`/api/org/invites/${code}/resend`, {});
+  await dispatch(fetchInvitees());
+});

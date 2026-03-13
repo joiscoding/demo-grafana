@@ -5,10 +5,11 @@ import { t } from '@grafana/i18n';
 import { Button, ClipboardButton } from '@grafana/ui';
 import { Invitee } from 'app/types/user';
 
-import { revokeInvite } from './state/actions';
+import { resendInvite, revokeInvite } from './state/actions';
 
 const mapDispatchToProps = {
   revokeInvite,
+  resendInvite,
 };
 
 const connector = connect(null, mapDispatchToProps);
@@ -19,7 +20,7 @@ interface OwnProps {
 
 export type Props = OwnProps & ConnectedProps<typeof connector>;
 
-const InviteeRow = memo<Props>(({ invitee, revokeInvite }) => {
+const InviteeRow = memo<Props>(({ invitee, revokeInvite, resendInvite }) => {
   return (
     <tr>
       <td>{invitee.email}</td>
@@ -28,6 +29,16 @@ const InviteeRow = memo<Props>(({ invitee, revokeInvite }) => {
         <ClipboardButton icon="copy" variant="secondary" size="sm" getText={() => invitee.url}>
           Copy Invite
         </ClipboardButton>
+        &nbsp;
+        <Button
+          variant="secondary"
+          size="sm"
+          icon="envelope"
+          onClick={() => resendInvite(invitee.code)}
+          aria-label={t('invites.invitee-row.aria-label-resend-invite', 'Resend invite')}
+        >
+          Resend
+        </Button>
         &nbsp;
       </td>
       <td>

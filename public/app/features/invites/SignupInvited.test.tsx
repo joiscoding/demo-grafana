@@ -48,6 +48,51 @@ async function setupTestContext({ get = defaultGet }: { get?: typeof defaultGet 
 }
 
 describe('SignupInvitedPage', () => {
+  describe('when the invite has expired (410 Gone)', () => {
+    it('then it should show the expired invite page', async () => {
+      jest.clearAllMocks();
+
+      const getSpy = jest.spyOn(backendSrv, 'get');
+      getSpy.mockRejectedValue({
+        status: 410,
+        data: {
+          message: 'This invitation has expired',
+          status: 'Expired',
+          email: 'expired@example.com',
+          orgName: 'Expired Org',
+        },
+      });
+
+      render(<SignupInvitedPage />);
+
+      await waitFor(() => expect(getSpy).toHaveBeenCalled());
+
+      expect(await screen.findByText(/invitation expired/i)).toBeInTheDocument();
+      expect(await screen.findByText(/this invitation is no longer valid/i)).toBeInTheDocument();
+      expect(await screen.findByText(/expired org/i)).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /return to login/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('when the invite is not found (404)', () => {
+    it('then it should show the not found page', async () => {
+      jest.clearAllMocks();
+
+      const getSpy = jest.spyOn(backendSrv, 'get');
+      getSpy.mockRejectedValue({
+        status: 404,
+        data: { message: 'Invite not found' },
+      });
+
+      render(<SignupInvitedPage />);
+
+      await waitFor(() => expect(getSpy).toHaveBeenCalled());
+
+      expect(await screen.findByText(/invitation not found/i)).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /return to login/i })).toBeInTheDocument();
+    });
+  });
+
   describe('when initialized but invite data has not been retrieved yet', () => {
     it('then it should not render', async () => {
       await setupTestContext({ get: null });

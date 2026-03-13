@@ -5,8 +5,8 @@ import { useAsync } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
-import { getBackendSrv } from '@grafana/runtime';
-import { Button, Field, Input, useStyles2 } from '@grafana/ui';
+import { getBackendSrv, isFetchError } from '@grafana/runtime';
+import { Alert, Button, Field, Input, LinkButton, Stack, useStyles2 } from '@grafana/ui';
 import { Form } from 'app/core/components/Form/Form';
 import { Page } from 'app/core/components/Page/Page';
 import { getConfig } from 'app/core/config';
@@ -19,6 +19,12 @@ interface FormModel {
   username: string;
   password?: string;
   orgName?: string;
+}
+
+interface ExpiredInviteInfo {
+  email: string;
+  orgName: string;
+  status: string;
 }
 
 const navModel = {
@@ -38,26 +44,112 @@ export const SignupInvitedPage = () => {
   const [initFormModel, setInitFormModel] = useState<FormModel>();
   const [greeting, setGreeting] = useState<string>();
   const [invitedBy, setInvitedBy] = useState<string>();
+  const [expiredInvite, setExpiredInvite] = useState<ExpiredInviteInfo>();
+  const [inviteNotFound, setInviteNotFound] = useState(false);
   const styles = useStyles2(getStyles);
 
   useAsync(async () => {
-    const invite = await getBackendSrv().get(`/api/user/invite/${code}`);
+    try {
+      const invite = await getBackendSrv().get(`/api/user/invite/${code}`);
 
-    setInitFormModel({
-      email: invite.email,
-      name: invite.name,
-      username: invite.email,
-      orgName: invite.orgName,
-    });
+      setInitFormModel({
+        email: invite.email,
+        name: invite.name,
+        username: invite.email,
+        orgName: invite.orgName,
+      });
 
-    setGreeting(invite.name || invite.email || invite.username);
-    setInvitedBy(invite.invitedBy);
+      setGreeting(invite.name || invite.email || invite.username);
+      setInvitedBy(invite.invitedBy);
+    } catch (err) {
+      if (isFetchError(err)) {
+        if (err.status === 410) {
+          setExpiredInvite({
+            email: err.data?.email ?? '',
+            orgName: err.data?.orgName ?? '',
+            status: err.data?.status ?? 'Expired',
+          });
+          return;
+        }
+      }
+      setInviteNotFound(true);
+    }
   }, [code]);
 
   const onSubmit = async (formData: FormModel) => {
     await getBackendSrv().post('/api/user/invite/complete', { ...formData, inviteCode: code });
     window.location.href = getConfig().appSubUrl + '/';
   };
+
+  if (expiredInvite) {
+    return (
+      <Page navModel={navModel}>
+        <Page.Contents>
+          <div className={styles.expiredContainer}>
+            <Stack direction="column" gap={3} alignItems="center">
+              <h2>
+                {t('invites.signup-invited-page.invite-expired-title', 'Invitation Expired')}
+              </h2>
+              <Alert
+                title={t('invites.signup-invited-page.invite-expired-alert', 'This invitation is no longer valid')}
+                severity="warning"
+              >
+                <Trans
+                  i18nKey="invites.signup-invited-page.invite-expired-message"
+                  values={{ orgName: expiredInvite.orgName }}
+                >
+                  {'Your invitation to '}
+                  <strong>{'{{orgName}}'}</strong>
+                  {' has expired. Invitation links are valid for 24 hours.'}
+                </Trans>
+              </Alert>
+              <p className={styles.expiredHelp}>
+                <Trans i18nKey="invites.signup-invited-page.invite-expired-help">
+                  Please contact your organization administrator to request a new invitation.
+                </Trans>
+              </p>
+              <Stack direction="row" gap={2}>
+                <LinkButton href={getConfig().appSubUrl + '/login'} variant="primary">
+                  <Trans i18nKey="invites.signup-invited-page.return-to-login">Return to Login</Trans>
+                </LinkButton>
+              </Stack>
+            </Stack>
+          </div>
+        </Page.Contents>
+      </Page>
+    );
+  }
+
+  if (inviteNotFound) {
+    return (
+      <Page navModel={navModel}>
+        <Page.Contents>
+          <div className={styles.expiredContainer}>
+            <Stack direction="column" gap={3} alignItems="center">
+              <h2>
+                {t('invites.signup-invited-page.invite-not-found-title', 'Invitation Not Found')}
+              </h2>
+              <Alert
+                title={t(
+                  'invites.signup-invited-page.invite-not-found-alert',
+                  'We could not find this invitation'
+                )}
+                severity="error"
+              >
+                <Trans i18nKey="invites.signup-invited-page.invite-not-found-message">
+                  The invitation link may be invalid or has already been used. Please contact your organization
+                  administrator for assistance.
+                </Trans>
+              </Alert>
+              <LinkButton href={getConfig().appSubUrl + '/login'} variant="primary">
+                <Trans i18nKey="invites.signup-invited-page.return-to-login">Return to Login</Trans>
+              </LinkButton>
+            </Stack>
+          </div>
+        </Page.Contents>
+      </Page>
+    );
+  }
 
   if (!initFormModel) {
     return null;
@@ -161,6 +253,14 @@ export const SignupInvitedPage = () => {
 const getStyles = (theme: GrafanaTheme2) => ({
   tagline: css({
     paddingBottom: theme.spacing(3),
+  }),
+  expiredContainer: css({
+    maxWidth: '500px',
+    margin: `${theme.spacing(4)} auto`,
+    textAlign: 'center',
+  }),
+  expiredHelp: css({
+    color: theme.colors.text.secondary,
   }),
 });
 

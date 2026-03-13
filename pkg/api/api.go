@@ -356,6 +356,7 @@ func (hs *HTTPServer) registerRoutes() {
 			orgRoute.Get("/invites", authorize(ac.EvalPermission(ac.ActionOrgUsersAdd)), routing.Wrap(hs.GetPendingOrgInvites))
 			orgRoute.Post("/invites", authorize(ac.EvalPermission(ac.ActionOrgUsersAdd)), quota(user.QuotaTargetSrv), quota(user.QuotaTargetSrv), routing.Wrap(hs.AddOrgInvite))
 			orgRoute.Patch("/invites/:code/revoke", authorize(ac.EvalPermission(ac.ActionOrgUsersAdd)), routing.Wrap(hs.RevokeInvite))
+			orgRoute.Post("/invites/:code/resend", authorize(ac.EvalPermission(ac.ActionOrgUsersAdd)), routing.Wrap(hs.ResendInvite))
 
 			// prefs
 			orgRoute.Get("/preferences", authorize(ac.EvalPermission(ac.ActionOrgsPreferencesRead)), routing.Wrap(hs.GetOrgPreferences))

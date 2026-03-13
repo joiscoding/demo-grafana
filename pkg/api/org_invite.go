@@ -216,9 +216,93 @@ func (hs *HTTPServer) RevokeInvite(c *contextmodel.ReqContext) response.Response
 	return response.Success("Invite revoked")
 }
 
+// swagger:route POST /org/invites/{invitation_code}/resend org invites resendInvite
+//
+// Resend invite.
+//
+// Responses:
+// 200: okResponse
+// 401: unauthorisedError
+// 403: forbiddenError
+// 404: notFoundError
+// 412: SMTPNotEnabledError
+// 500: internalServerError
+func (hs *HTTPServer) ResendInvite(c *contextmodel.ReqContext) response.Response {
+	code := web.Params(c.Req)[":code"]
+	query := tempuser.GetTempUserByCodeQuery{Code: code}
+	queryResult, err := hs.tempUserService.GetTempUserByCode(c.Req.Context(), &query)
+	if err != nil {
+		if errors.Is(err, tempuser.ErrTempUserNotFound) {
+			return response.Error(http.StatusNotFound, "Invite not found", nil)
+		}
+		return response.Error(http.StatusInternalServerError, "Failed to get invite", err)
+	}
+
+	if c.GetOrgID() != queryResult.OrgID && !c.GetIsGrafanaAdmin() {
+		return response.Error(http.StatusForbidden, "Permission denied: not permitted to resend invite", nil)
+	}
+
+	// Revoke the old invite
+	if ok, rsp := hs.updateTempUserStatus(c.Req.Context(), code, tempuser.TmpUserRevoked); !ok {
+		return rsp
+	}
+
+	// Create a new invite with a fresh code
+	newCode, err := util.GetRandomString(30)
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "Could not generate random string", err)
+	}
+
+	cmd := tempuser.CreateTempUserCommand{
+		OrgID:           queryResult.OrgID,
+		Email:           queryResult.Email,
+		Name:            queryResult.Name,
+		Status:          tempuser.TmpUserInvitePending,
+		InvitedByUserID: queryResult.InvitedByID,
+		Code:            newCode,
+		Role:            queryResult.Role,
+		RemoteAddr:      c.RemoteAddr(),
+	}
+
+	cmdResult, err := hs.tempUserService.CreateTempUser(c.Req.Context(), &cmd)
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "Failed to save invite to database", err)
+	}
+
+	// Send the new invite email
+	if util.IsEmail(queryResult.Email) {
+		emailCmd := notifications.SendEmailCommand{
+			To:       []string{queryResult.Email},
+			Template: "new_user_invite",
+			Data: map[string]any{
+				"Name":      util.StringsFallback2(cmd.Name, cmd.Email),
+				"OrgName":   c.GetOrgName(),
+				"Email":     c.GetEmail(),
+				"LinkUrl":   setting.ToAbsUrl("invite/" + newCode),
+				"InvitedBy": c.GetName(),
+			},
+		}
+
+		if err := hs.AlertNG.NotificationService.SendEmailCommandHandler(c.Req.Context(), &emailCmd); err != nil {
+			if errors.Is(err, notifications.ErrSmtpNotEnabled) {
+				return response.Error(http.StatusPreconditionFailed, err.Error(), err)
+			}
+			return response.Error(http.StatusInternalServerError, "Failed to send email invite", err)
+		}
+
+		emailSentCmd := tempuser.UpdateTempUserWithEmailSentCommand{Code: cmdResult.Code}
+		if err := hs.tempUserService.UpdateTempUserWithEmailSent(c.Req.Context(), &emailSentCmd); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update invite with email sent info", err)
+		}
+	}
+
+	return response.Success(fmt.Sprintf("Invite resent to %s", queryResult.Email))
+}
+
 // GetInviteInfoByCode gets a pending user invite corresponding to a certain code.
 // A response containing an InviteInfo object is returned if the invite is found.
 // If a (pending) invite is not found, 404 is returned.
+// If the invite has expired or been revoked, 410 Gone is returned.
 func (hs *HTTPServer) GetInviteInfoByCode(c *contextmodel.ReqContext) response.Response {
 	query := tempuser.GetTempUserByCodeQuery{Code: web.Params(c.Req)[":code"]}
 	queryResult, err := hs.tempUserService.GetTempUserByCode(c.Req.Context(), &query)
@@ -231,6 +315,21 @@ func (hs *HTTPServer) GetInviteInfoByCode(c *contextmodel.ReqContext) response.R
 
 	invite := queryResult
 	if invite.Status != tempuser.TmpUserInvitePending {
+		if invite.Status == tempuser.TmpUserExpired || invite.Status == tempuser.TmpUserRevoked {
+			orgResult, err := hs.orgService.GetByID(c.Req.Context(), &org.GetOrgByIDQuery{
+				ID: invite.OrgID,
+			})
+			orgName := ""
+			if err == nil {
+				orgName = orgResult.Name
+			}
+			return response.JSON(http.StatusGone, util.DynMap{
+				"message": "This invitation has expired",
+				"status":  string(invite.Status),
+				"email":   invite.Email,
+				"orgName": orgName,
+			})
+		}
 		return response.Error(http.StatusNotFound, "Invite not found", nil)
 	}
 
