@@ -16,8 +16,7 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
-    # Milestones are managed in upstream repo; forks often don't mirror release milestones.
-    if: github.repository == 'grafana/grafana' && github.event.pull_request.draft == false
+    if: github.event.pull_request.draft == false
     steps:
       # Note: Github will not trigger other actions from this because it uses
       # the GITHUB_TOKEN token
