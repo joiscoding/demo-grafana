@@ -39,8 +39,6 @@ import (
 	"github.com/grafana/grafana/pkg/services/notifications"
 	"github.com/grafana/grafana/pkg/services/org"
 	"github.com/grafana/grafana/pkg/services/org/orgimpl"
-	"github.com/grafana/grafana/pkg/services/team"
-	"github.com/grafana/grafana/pkg/services/team/teamimpl"
 	"github.com/grafana/grafana/pkg/services/quota/quotatest"
 	"github.com/grafana/grafana/pkg/services/searchusers"
 	"github.com/grafana/grafana/pkg/services/searchusers/filters"
@@ -49,6 +47,8 @@ import (
 	secretsManager "github.com/grafana/grafana/pkg/services/secrets/manager"
 	"github.com/grafana/grafana/pkg/services/sqlstore"
 	"github.com/grafana/grafana/pkg/services/supportbundles/supportbundlestest"
+	"github.com/grafana/grafana/pkg/services/team"
+	"github.com/grafana/grafana/pkg/services/team/teamimpl"
 	tempuser "github.com/grafana/grafana/pkg/services/temp_user"
 	"github.com/grafana/grafana/pkg/services/temp_user/tempuserimpl"
 	"github.com/grafana/grafana/pkg/services/user"
@@ -1392,6 +1392,16 @@ func TestIntegrationSignedInUserCoreLegacy_GetSignedInUserTeamList(t *testing.T)
 		Name: "Test Team", Email: "team@test.com", OrgID: usr.OrgID,
 	})
 	require.NoError(t, err)
+	require.NoError(t, sqlStore.WithDbSession(context.Background(), func(sess *db.Session) error {
+		return teamimpl.AddOrUpdateTeamMemberHook(
+			sess,
+			usr.ID,
+			usr.OrgID,
+			createdTeam.ID,
+			false,
+			team.PermissionTypeMember,
+		)
+	}))
 
 	server := SetupAPITestServer(t, func(hs *HTTPServer) {
 		hs.Cfg = settings
@@ -1414,9 +1424,8 @@ func TestIntegrationSignedInUserCoreLegacy_GetSignedInUserTeamList(t *testing.T)
 	require.Equal(t, http.StatusOK, res.StatusCode)
 	var teams []*team.TeamDTO
 	require.NoError(t, json.NewDecoder(res.Body).Decode(&teams))
-	// User may or may not be in a team depending on permission setup; we just verify the response shape
-	_ = teams
-	_ = createdTeam
+	require.Len(t, teams, 1)
+	require.Equal(t, createdTeam.ID, teams[0].ID)
 }
 
 func TestIntegrationSignedInUserCoreLegacy_UserSetUsingOrg(t *testing.T) {
@@ -1438,10 +1447,10 @@ func TestIntegrationSignedInUserCoreLegacy_UserSetUsingOrg(t *testing.T) {
 		Email: "switch@test.com", Name: "Switch User", Login: "switchuser", IsAdmin: false,
 	})
 	require.NoError(t, err)
-	_, err = orgSvc.GetOrCreate(context.Background(), "Second Org")
+	secondOrgID, err := orgSvc.GetOrCreate(context.Background(), "Second Org")
 	require.NoError(t, err)
 	require.NoError(t, orgSvc.AddOrgUser(context.Background(), &org.AddOrgUserCommand{
-		UserID: usr.ID, Role: org.RoleViewer, OrgID: 2,
+		UserID: usr.ID, Role: org.RoleViewer, OrgID: secondOrgID,
 	}))
 
 	server := SetupAPITestServer(t, func(hs *HTTPServer) {
@@ -1453,7 +1462,7 @@ func TestIntegrationSignedInUserCoreLegacy_UserSetUsingOrg(t *testing.T) {
 		hs.authInfoService = &authinfotest.FakeService{ExpectedError: user.ErrUserNotFound}
 	})
 
-	req := server.NewRequest(http.MethodPost, "/api/user/using/2", nil)
+	req := server.NewRequest(http.MethodPost, fmt.Sprintf("/api/user/using/%d", secondOrgID), nil)
 	req = webtest.RequestWithSignedInUser(req, authedUserWithPermissions(usr.ID, usr.OrgID, nil))
 
 	res, err := server.Send(req)
@@ -1464,5 +1473,5 @@ func TestIntegrationSignedInUserCoreLegacy_UserSetUsingOrg(t *testing.T) {
 	// Verify user's active org was updated
 	updated, err := userSvc.GetByID(context.Background(), &user.GetUserByIDQuery{ID: usr.ID})
 	require.NoError(t, err)
-	require.Equal(t, int64(2), updated.OrgID)
+	require.Equal(t, secondOrgID, updated.OrgID)
 }
