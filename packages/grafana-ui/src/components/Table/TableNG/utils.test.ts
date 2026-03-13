@@ -1887,17 +1887,17 @@ describe('TableNG utils', () => {
     });
 
     it('returns void and does not throw if this is invalid JSON (but it does structuredLogger.error)', () => {
-      jest.spyOn(console, 'error').mockImplementation();
+      jest.spyOn(globalThis['console'], 'error').mockImplementation();
       expect(parseStyleJson('{"mal": "formed}')).toBeUndefined();
-      expect(console.error).toHaveBeenCalled();
+      expect(globalThis['console'].error).toHaveBeenCalled();
     });
 
     it('only calls structuredLogger.error once for a given malformed style', () => {
-      jest.spyOn(console, 'error').mockImplementation();
+      jest.spyOn(globalThis['console'], 'error').mockImplementation();
       for (let i = 0; i < 100; i++) {
         parseStyleJson('{"mal": "formed-in-a-new-way}');
       }
-      expect(console.error).toHaveBeenCalledTimes(1);
+      expect(globalThis['console'].error).toHaveBeenCalledTimes(1);
     });
 
     it('returns an object with invalid style properties, because we do not validate the style properties', () => {

@@ -117,7 +117,7 @@ describe('GrafanaLiveService', () => {
   });
 
   it('should return an empty frame if first message was not a full frame', async () => {
-    jest.spyOn(console, 'warn').mockImplementation(jest.fn);
+    jest.spyOn(globalThis['console'], 'warn').mockImplementation(jest.fn);
     const dummySubject = new Subject<StreamingDataQueryResponse>();
     mockGetDataStream.mockReturnValueOnce(dummySubject);
 
@@ -143,6 +143,6 @@ describe('GrafanaLiveService', () => {
     const frame: StreamingDataFrame = response?.data[0];
     expect(frame).toBeInstanceOf(StreamingDataFrame);
     expect(frame.fields).toEqual([]);
-    expect(console.warn).toHaveBeenCalled();
+    expect(globalThis['console'].warn).toHaveBeenCalled();
   });
 });

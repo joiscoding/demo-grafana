@@ -155,7 +155,7 @@ test('Tracks grouped queries', () => {
 describe('onDashboardLoadedHandler', () => {
   beforeEach(() => {
     jest.mocked(reportInteraction).mockClear();
-    jest.spyOn(console, 'error');
+    jest.spyOn(globalThis['console'], 'error');
   });
   test('Reports dashboard loaded interactions', () => {
     const event = new DashboardLoadedEvent({
@@ -170,7 +170,7 @@ describe('onDashboardLoadedHandler', () => {
     onDashboardLoadedHandler(event);
 
     expect(reportInteraction).toHaveBeenCalled();
-    expect(console.error).not.toHaveBeenCalled();
+    expect(globalThis['console'].error).not.toHaveBeenCalled();
   });
 
   test('Does not report or fails when the dashboard id has no queries', () => {
@@ -186,6 +186,6 @@ describe('onDashboardLoadedHandler', () => {
     onDashboardLoadedHandler(event);
 
     expect(reportInteraction).not.toHaveBeenCalled();
-    expect(console.error).not.toHaveBeenCalled();
+    expect(globalThis['console'].error).not.toHaveBeenCalled();
   });
 });

@@ -47,11 +47,11 @@ describe('ElasticsearchQueryContext', () => {
   // the following applies to all hooks in ElasticsearchQueryContext as they all share the same code.
   describe('useQuery Hook', () => {
     it('Should throw when used outside of ElasticsearchQueryContext', () => {
-      jest.spyOn(console, 'error').mockImplementation(() => {});
+      jest.spyOn(globalThis['console'], 'error').mockImplementation(() => {});
       expect(() => {
         renderHook(() => useQuery());
       }).toThrow();
-      expect(console.error).toHaveBeenCalled();
+      expect(globalThis['console'].error).toHaveBeenCalled();
     });
 
     it('Should return the current query object', () => {

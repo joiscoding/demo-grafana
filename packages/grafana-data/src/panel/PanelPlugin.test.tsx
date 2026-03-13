@@ -525,7 +525,7 @@ describe('PanelPlugin', () => {
     });
 
     it('should not throw for the old syntax, but also should not register suggestions', () => {
-      jest.spyOn(console, 'warn').mockImplementation();
+      jest.spyOn(globalThis['console'], 'warn').mockImplementation();
 
       class DeprecatedSuggestionsSupplier {
         getSuggestionsForData(builder: VisualizationSuggestionsBuilder): void {
@@ -546,7 +546,7 @@ describe('PanelPlugin', () => {
       expect(() => {
         panel.setSuggestionsSupplier(new DeprecatedSuggestionsSupplier());
       }).not.toThrow();
-      expect(console.warn).toHaveBeenCalled();
+      expect(globalThis['console'].warn).toHaveBeenCalled();
       expect(
         panel.getSuggestions(
           getPanelDataSummary([
@@ -559,7 +559,7 @@ describe('PanelPlugin', () => {
     });
 
     it('should support the deprecated pattern of getSuggestionsSupplier with builder', () => {
-      jest.spyOn(console, 'warn').mockImplementation();
+      jest.spyOn(globalThis['console'], 'warn').mockImplementation();
 
       const panel = new PanelPlugin(() => <div>Panel</div>).setSuggestionsSupplier((ds) => {
         if (!ds.hasFieldType(FieldType.number)) {
