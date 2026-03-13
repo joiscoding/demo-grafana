@@ -1412,10 +1412,10 @@ func TestIntegrationSignedInUserCoreLegacy_GetSignedInUserTeamList(t *testing.T)
 		hs.authInfoService = &authinfotest.FakeService{ExpectedError: user.ErrUserNotFound}
 	})
 
-	// Add user to team - requires team permissions service
-	// For now, teams list may be empty if user is not in any team; the test validates the endpoint works
 	req := server.NewGetRequest("/api/user/teams")
-	req = webtest.RequestWithSignedInUser(req, authedUserWithPermissions(usr.ID, usr.OrgID, nil))
+	req = webtest.RequestWithSignedInUser(req, authedUserWithPermissions(usr.ID, usr.OrgID, []accesscontrol.Permission{
+		{Action: accesscontrol.ActionTeamsRead, Scope: fmt.Sprintf("teams:id:%d", createdTeam.ID)},
+	}))
 
 	res, err := server.Send(req)
 	require.NoError(t, err)
