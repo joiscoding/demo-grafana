@@ -58,7 +58,6 @@ describe('installStructuredConsoleLogging', () => {
       'warning message',
       expect.objectContaining({
         consoleMethod: 'warn',
-        arguments: ['warning message', { requestId: '123' }],
       })
     );
     expect(warnSpy).toHaveBeenCalledWith('warning message', { requestId: '123' });
@@ -77,7 +76,6 @@ describe('installStructuredConsoleLogging', () => {
     expect(error.message).toBe('something failed');
     expect(context).toMatchObject({
       consoleMethod: 'error',
-      arguments: ['something failed', { path: '/api/health' }],
     });
     expect(errorSpy).toHaveBeenCalledWith('something failed', { path: '/api/health' });
   });

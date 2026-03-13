@@ -3,45 +3,11 @@ import { createMonitoringLogger, MonitoringLogger } from '@grafana/runtime';
 
 type ConsoleMethod = 'debug' | 'error' | 'info' | 'log' | 'trace' | 'warn';
 
-type SerializableValue = boolean | number | string | null | SerializableValue[] | { [key: string]: SerializableValue };
-
 const monitoringLogger: MonitoringLogger = createMonitoringLogger('frontend.console');
 const consoleMethods: ConsoleMethod[] = ['log', 'info', 'warn', 'error', 'debug', 'trace'];
 
 let structuredConsoleInstalled = false;
 let forwardingLog = false;
-
-function toSerializableValue(value: unknown): SerializableValue {
-  if (value === null || value === undefined) {
-    return null;
-  }
-
-  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-    return value;
-  }
-
-  if (typeof value === 'bigint' || typeof value === 'symbol' || typeof value === 'function') {
-    return String(value);
-  }
-
-  if (value instanceof Error) {
-    return {
-      name: value.name,
-      message: value.message,
-      stack: value.stack ?? '',
-    };
-  }
-
-  if (Array.isArray(value)) {
-    return value.map((item) => toSerializableValue(item));
-  }
-
-  try {
-    return JSON.parse(JSON.stringify(value));
-  } catch {
-    return String(value);
-  }
-}
 
 function createLogMessage(method: ConsoleMethod, args: unknown[]): string {
   if (typeof args[0] === 'string' && args[0].length > 0) {
@@ -55,10 +21,10 @@ function createLogMessage(method: ConsoleMethod, args: unknown[]): string {
   return `console.${method}`;
 }
 
-function createLogContext(method: ConsoleMethod, args: unknown[]): Record<string, SerializableValue> {
+/** Returns flat Record<string, string> as required by Faro. Does not include raw args to avoid PII leakage. */
+function createLogContext(method: ConsoleMethod): Record<string, string> {
   return {
     consoleMethod: method,
-    arguments: args.map((arg) => toSerializableValue(arg)),
   };
 }
 
@@ -69,7 +35,7 @@ function toError(args: unknown[], fallbackMessage: string): Error {
 
 function forwardToStructuredLogger(method: ConsoleMethod, args: unknown[]) {
   const message = createLogMessage(method, args);
-  const context = createLogContext(method, args);
+  const context = createLogContext(method);
 
   switch (method) {
     case 'error':
