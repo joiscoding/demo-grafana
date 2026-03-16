@@ -1,5 +1,5 @@
 ---
-name: grafana-storybook
+name: start-storybook
 description: >-
   Starts Grafana @grafana/ui Storybook on localhost without the Go backend.
   Use when the user wants frontend-only UI, Storybook, design system preview,
