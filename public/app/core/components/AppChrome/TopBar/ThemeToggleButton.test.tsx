@@ -17,7 +17,7 @@ describe('ThemeToggleButton', () => {
   const originalTheme = config.theme2;
 
   beforeEach(() => {
-    config.theme2 = { ...config.theme2, isDark: false };
+    config.theme2 = { ...config.theme2, colors: { ...config.theme2.colors, mode: 'light' } };
   });
 
   afterEach(() => {
@@ -32,7 +32,7 @@ describe('ThemeToggleButton', () => {
   });
 
   it('shows a light mode label when current mode is dark', () => {
-    config.theme2 = { ...config.theme2, isDark: true };
+    config.theme2 = { ...config.theme2, colors: { ...config.theme2.colors, mode: 'dark' } };
 
     render(<ThemeToggleButton />);
 
@@ -44,7 +44,9 @@ describe('ThemeToggleButton', () => {
     expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeInTheDocument();
 
     act(() => {
-      appEvents.publish(new ThemeChangedEvent({ ...config.theme2, isDark: true }));
+      appEvents.publish(
+        new ThemeChangedEvent({ ...config.theme2, colors: { ...config.theme2.colors, mode: 'dark' } })
+      );
     });
 
     await waitFor(() => {
