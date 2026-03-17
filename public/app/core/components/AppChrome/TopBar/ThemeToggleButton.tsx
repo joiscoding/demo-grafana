@@ -1,12 +1,22 @@
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import { t } from '@grafana/i18n';
-import { ToolbarButton, useTheme2 } from '@grafana/ui';
+import { ThemeChangedEvent, config } from '@grafana/runtime';
+import { ToolbarButton } from '@grafana/ui';
+import { appEvents } from 'app/core/app_events';
 import { toggleTheme } from 'app/core/services/theme';
 
 export const ThemeToggleButton = memo(function ThemeToggleButton() {
-  const theme = useTheme2();
-  const isDarkMode = theme.isDark;
+  const [isDarkMode, setIsDarkMode] = useState(config.theme2.isDark);
+
+  useEffect(() => {
+    const sub = appEvents.subscribe(ThemeChangedEvent, (event) => {
+      setIsDarkMode(event.payload.isDark);
+    });
+
+    return () => sub.unsubscribe();
+  }, []);
+
   const label = isDarkMode
     ? t('navigation.theme.toggle-to-light.aria-label', 'Switch to light mode')
     : t('navigation.theme.toggle-to-dark.aria-label', 'Switch to dark mode');
