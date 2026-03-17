@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'test/test-utils';
 
@@ -43,7 +43,9 @@ describe('ThemeToggleButton', () => {
     render(<ThemeToggleButton />);
     expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeInTheDocument();
 
-    appEvents.publish(new ThemeChangedEvent({ ...config.theme2, isDark: true }));
+    act(() => {
+      appEvents.publish(new ThemeChangedEvent({ ...config.theme2, isDark: true }));
+    });
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Switch to light mode' })).toBeInTheDocument();
