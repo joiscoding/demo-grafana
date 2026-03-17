@@ -63,6 +63,9 @@ var (
 	_ registry.CanBeDisabled     = (*service)(nil)
 )
 
+// playlistGrafanaHTTPAPIPrefix is the Grafana HTTP API path for the playlist app (proxied to /apis/playlist.grafana.app).
+const playlistGrafanaHTTPAPIPrefix = "/api/playlist.grafana.app"
+
 const MaxRequestBodyBytes = 16 * 1024 * 1024 // 16MB - determined by the size of `mediumtext` on mysql, which is used to save dashboard data
 
 type Service interface {
@@ -171,44 +174,63 @@ func ProvideService(
 	// TODO: this is very hacky
 	// We need to register the routes in ProvideService to make sure
 	// the routes are registered before the Grafana HTTP server starts.
-	proxyHandler := func(k8sRoute routing.RouteRegister) {
-		handler := func(c *contextmodel.ReqContext) {
-			if err := s.AwaitRunning(c.Req.Context()); err != nil {
-				c.Resp.WriteHeader(http.StatusInternalServerError)
-				_, _ = c.Resp.Write([]byte(http.StatusText(http.StatusInternalServerError)))
-				return
-			}
-
-			if s.handler == nil {
-				c.Resp.WriteHeader(http.StatusNotFound)
-				_, _ = c.Resp.Write([]byte(http.StatusText(http.StatusNotFound)))
-				return
-			}
-
-			req := c.Req
-			if req.URL.Path == "" {
-				req.URL.Path = "/"
-			}
-
-			if c.SignedInUser != nil {
-				// For unauthenticated requests, we set the namespace to the requested one
-				if !c.IsSignedIn {
-					useNamespaceFromPath(req.URL.Path, c.SignedInUser)
+	newProxyHandler := func(rewritePath func(string) string) func(k8sRoute routing.RouteRegister) {
+		return func(k8sRoute routing.RouteRegister) {
+			handler := func(c *contextmodel.ReqContext) {
+				if err := s.AwaitRunning(c.Req.Context()); err != nil {
+					c.Resp.WriteHeader(http.StatusInternalServerError)
+					_, _ = c.Resp.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+					return
 				}
 
-				ctx := identity.WithRequester(req.Context(), c.SignedInUser)
-				req = req.WithContext(ctx)
-			}
+				if s.handler == nil {
+					c.Resp.WriteHeader(http.StatusNotFound)
+					_, _ = c.Resp.Write([]byte(http.StatusText(http.StatusNotFound)))
+					return
+				}
 
-			resp := responsewriter.WrapForHTTP1Or2(c.Resp)
-			s.handler.ServeHTTP(resp, req)
+				req := c.Req
+				if req.URL.Path == "" {
+					req.URL.Path = "/"
+				}
+
+				if rewritePath != nil {
+					if p := rewritePath(req.URL.Path); p != req.URL.Path {
+						u := *req.URL
+						u.Path = p
+						req = req.Clone(req.Context())
+						req.URL = &u
+					}
+				}
+
+				if c.SignedInUser != nil {
+					// For unauthenticated requests, we set the namespace to the requested one
+					if !c.IsSignedIn {
+						useNamespaceFromPath(req.URL.Path, c.SignedInUser)
+					}
+
+					ctx := identity.WithRequester(req.Context(), c.SignedInUser)
+					req = req.WithContext(ctx)
+				}
+
+				resp := responsewriter.WrapForHTTP1Or2(c.Resp)
+				s.handler.ServeHTTP(resp, req)
+			}
+			k8sRoute.Any("/features.grafana.app/v0alpha1/*", handler)
+			k8sRoute.Any("/", middleware.ReqSignedIn, handler)
+			k8sRoute.Any("/*", middleware.ReqSignedIn, handler)
 		}
-		k8sRoute.Any("/features.grafana.app/v0alpha1/*", handler)
-		k8sRoute.Any("/", middleware.ReqSignedIn, handler)
-		k8sRoute.Any("/*", middleware.ReqSignedIn, handler)
 	}
 
+	proxyHandler := newProxyHandler(nil)
+
 	s.rr.Group("/apis", proxyHandler)
+	s.rr.Group(playlistGrafanaHTTPAPIPrefix, newProxyHandler(func(p string) string {
+		if strings.HasPrefix(p, playlistGrafanaHTTPAPIPrefix) {
+			return "/apis/playlist.grafana.app" + strings.TrimPrefix(p, playlistGrafanaHTTPAPIPrefix)
+		}
+		return p
+	}))
 	s.rr.Group("/livez", proxyHandler)
 	s.rr.Group("/readyz", proxyHandler)
 	s.rr.Group("/healthz", proxyHandler)

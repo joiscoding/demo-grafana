@@ -23,7 +23,7 @@ import (
 
 func (hs *HTTPServer) registerPlaylistAPI(apiRoute routing.RouteRegister) {
 	// Register the actual handlers
-	// Deprecated: use /apis/playlist.grafana.app/ instead
+	// Deprecated: use /api/playlist.grafana.app/{version}/namespaces/{namespace}/playlists (Kubernetes payloads) or /apis/playlist.grafana.app/ instead
 	apiRoute.Group("/playlists", func(playlistRoute routing.RouteRegister) {
 		// Use k8s client to implement legacy API
 		handler := newPlaylistK8sHandler(hs)
@@ -155,7 +155,7 @@ func newPlaylistK8sHandler(hs *HTTPServer) *playlistK8sHandler {
 //
 // Get playlists.
 //
-// Please refer to [new API](?api=playlist.grafana.app-v1).
+// Please refer to [new API](?api=playlist.grafana.app-v1) at `/api/playlist.grafana.app/v1/namespaces/{namespace}/playlists`.
 //
 // Deprecated: true
 //

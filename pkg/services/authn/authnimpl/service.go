@@ -507,11 +507,12 @@ func (s *Service) orgIDFromRequest(r *authn.Request) (int64, error) {
 }
 
 func (s *Service) orgIDFromNamespace(req *http.Request) (int64, error) {
-	if !strings.HasPrefix(req.URL.Path, "/apis") {
+	path := req.URL.Path
+	if !strings.HasPrefix(path, "/apis") && !strings.HasPrefix(path, "/api/playlist.grafana.app") {
 		return 0, nil
 	}
 
-	namespace := parseNamespace(req.URL.Path)
+	namespace := parseNamespace(path)
 	if namespace == "" {
 		return 0, nil
 	}

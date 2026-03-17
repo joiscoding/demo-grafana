@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"slices"
 	"strings"
@@ -446,6 +447,22 @@ func TestIntegrationPlaylist(t *testing.T) {
 }
 
 func doPlaylistTests(t *testing.T, helper *apis.K8sTestHelper) *apis.K8sTestHelper {
+	t.Run("Grafana HTTP API path /api/playlist.grafana.app proxies to aggregated API", func(t *testing.T) {
+		ns := helper.Namespacer(helper.Org1.Editor.Identity.GetOrgID())
+		apiPath := fmt.Sprintf("/api/playlist.grafana.app/v1/namespaces/%s/playlists", ns)
+		var decoded struct {
+			Kind  string `json:"kind"`
+			Items []any  `json:"items"`
+		}
+		rsp := apis.DoRequest(helper, apis.RequestParams{
+			User:   helper.Org1.Editor,
+			Method: http.MethodGet,
+			Path:   apiPath,
+		}, &decoded)
+		require.Equal(t, http.StatusOK, rsp.Response.StatusCode, "body=%s", string(rsp.Body))
+		require.Equal(t, "PlaylistList", decoded.Kind)
+	})
+
 	t.Run("Check direct List permissions from different org users", func(t *testing.T) {
 		// Check view permissions
 		rsp := helper.List(helper.Org1.Viewer, "default", gvr)
