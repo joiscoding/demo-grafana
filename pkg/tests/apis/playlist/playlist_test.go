@@ -39,6 +39,8 @@ var gvr = schema.GroupVersionResource{
 
 var RESOURCEGROUP = gvr.GroupResource().String()
 
+const playlistAPIPath = "/api/playlist.grafana.app/playlists"
+
 func TestIntegrationPlaylist(t *testing.T) {
 	testutil.SkipIntegrationTestInShortMode(t)
 
@@ -540,7 +542,7 @@ func doPlaylistTests(t *testing.T, helper *apis.K8sTestHelper) *apis.K8sTestHelp
 		require.Equal(t, metav1.StatusReasonForbidden, statusError.Status().Reason)
 	})
 
-	t.Run("Check playlist CRUD in legacy API appears in k8s apis", func(t *testing.T) {
+	t.Run("Check playlist CRUD in grouped API path appears in k8s apis", func(t *testing.T) {
 		client := helper.GetResourceClient(apis.ResourceClientArgs{
 			User: helper.Org1.Editor,
 			GVR:  gvr,
@@ -576,7 +578,7 @@ func doPlaylistTests(t *testing.T, helper *apis.K8sTestHelper) *apis.K8sTestHelp
 		legacyCreate := apis.DoRequest(helper, apis.RequestParams{
 			User:   client.Args.User,
 			Method: http.MethodPost,
-			Path:   "/api/playlists",
+			Path:   playlistAPIPath,
 			Body:   []byte(legacyPayload),
 		}, &playlist.Playlist{})
 		require.Equal(t, 200, legacyCreate.Response.StatusCode)
@@ -629,7 +631,7 @@ func doPlaylistTests(t *testing.T, helper *apis.K8sTestHelper) *apis.K8sTestHelp
 		dtoResponse := apis.DoRequest(helper, apis.RequestParams{
 			User:   client.Args.User,
 			Method: http.MethodPut,
-			Path:   "/api/playlists/" + uid,
+			Path:   playlistAPIPath + "/" + uid,
 			Body:   []byte(legacyPayload),
 		}, &playlist.PlaylistDTO{})
 		require.Equal(t, 200, dtoResponse.Response.StatusCode)
@@ -683,7 +685,7 @@ func doPlaylistTests(t *testing.T, helper *apis.K8sTestHelper) *apis.K8sTestHelp
 		deleteResponse := apis.DoRequest(helper, apis.RequestParams{
 			User:   client.Args.User,
 			Method: http.MethodDelete,
-			Path:   "/api/playlists/" + uid,
+			Path:   playlistAPIPath + "/" + uid,
 			Body:   []byte(legacyPayload),
 		}, &playlist.PlaylistDTO{}) // response is empty
 		require.Equal(t, 200, deleteResponse.Response.StatusCode)
@@ -732,7 +734,7 @@ func doPlaylistTests(t *testing.T, helper *apis.K8sTestHelper) *apis.K8sTestHelp
 		searchResponse := apis.DoRequest(helper, apis.RequestParams{
 			User:   client.Args.User,
 			Method: http.MethodGet,
-			Path:   "/api/playlists",
+			Path:   playlistAPIPath,
 		}, &playlist.Playlists{})
 		require.NotNil(t, searchResponse.Result)
 		require.Equal(t, uids, SortSlice(Map(*searchResponse.Result, func(item *playlist.Playlist) string {
@@ -832,7 +834,7 @@ func getFromBothAPIs(t *testing.T,
 	dto := apis.DoRequest(helper, apis.RequestParams{
 		User:   client.Args.User,
 		Method: http.MethodGet,
-		Path:   "/api/playlists/" + uid,
+		Path:   playlistAPIPath + "/" + uid,
 	}, &playlist.PlaylistDTO{}).Result
 	require.NotNil(t, dto)
 	require.Equal(t, uid, dto.Uid)

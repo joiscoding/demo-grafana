@@ -22,18 +22,29 @@ import (
 )
 
 func (hs *HTTPServer) registerPlaylistAPI(apiRoute routing.RouteRegister) {
-	// Register the actual handlers
-	// Deprecated: use /apis/playlist.grafana.app/ instead
+	// Register the actual handlers.
+	// Deprecated: use /apis/playlist.grafana.app/ instead.
+	handler := newPlaylistK8sHandler(hs)
+
 	apiRoute.Group("/playlists", func(playlistRoute routing.RouteRegister) {
-		// Use k8s client to implement legacy API
-		handler := newPlaylistK8sHandler(hs)
-		playlistRoute.Get("/", handler.searchPlaylists)
-		playlistRoute.Get("/:uid", handler.getPlaylist)
-		playlistRoute.Get("/:uid/items", handler.getPlaylistItems)
-		playlistRoute.Delete("/:uid", handler.deletePlaylist)
-		playlistRoute.Put("/:uid", handler.updatePlaylist)
-		playlistRoute.Post("/", handler.createPlaylist)
+		registerPlaylistRoutes(playlistRoute, handler)
 	})
+
+	// Transitional route for callers migrating to the API group based path under /api.
+	apiRoute.Group("/playlist.grafana.app", func(groupRoute routing.RouteRegister) {
+		groupRoute.Group("/playlists", func(playlistRoute routing.RouteRegister) {
+			registerPlaylistRoutes(playlistRoute, handler)
+		})
+	})
+}
+
+func registerPlaylistRoutes(playlistRoute routing.RouteRegister, handler *playlistK8sHandler) {
+	playlistRoute.Get("/", handler.searchPlaylists)
+	playlistRoute.Get("/:uid", handler.getPlaylist)
+	playlistRoute.Get("/:uid/items", handler.getPlaylistItems)
+	playlistRoute.Delete("/:uid", handler.deletePlaylist)
+	playlistRoute.Put("/:uid", handler.updatePlaylist)
+	playlistRoute.Post("/", handler.createPlaylist)
 }
 
 // swagger:parameters searchPlaylists
