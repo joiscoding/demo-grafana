@@ -44,6 +44,16 @@ describe('ThemeToggleButton', () => {
     expect(screen.getByRole('button', { name: 'Switch to light mode' })).toBeInTheDocument();
   });
 
+  it('updates the label when theme mode changes', () => {
+    const { rerender } = render(<ThemeToggleButton />);
+    expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeInTheDocument();
+
+    mockedUseTheme2.mockReturnValue({ isDark: true } as any);
+    rerender(<ThemeToggleButton />);
+
+    expect(screen.getByRole('button', { name: 'Switch to light mode' })).toBeInTheDocument();
+  });
+
   it('toggles persisted user theme when clicked', async () => {
     render(<ThemeToggleButton />);
     await userEvent.click(screen.getByRole('button', { name: 'Switch to dark mode' }));

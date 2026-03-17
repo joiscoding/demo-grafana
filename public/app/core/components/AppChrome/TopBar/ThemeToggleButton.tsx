@@ -13,6 +13,7 @@ export const ThemeToggleButton = memo(function ThemeToggleButton() {
 
   return (
     <ToolbarButton
+      key={isDarkMode ? 'dark' : 'light'}
       iconOnly
       icon={isDarkMode ? 'toggle-on' : 'toggle-off'}
       aria-label={label}
