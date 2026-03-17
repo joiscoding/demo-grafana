@@ -12,6 +12,11 @@ export const getAPIBaseURL = (group: string, version: string) => {
   return `/apis/${group}/${version}/namespaces/${getAPINamespace()}` as const;
 };
 
+/** Base URL for playlist under Grafana HTTP API (`/api/...`), proxied to the aggregated apiserver. */
+export const getPlaylistAppHTTPAPIBaseURL = (version: string) => {
+  return `/api/playlist.grafana.app/${version}/namespaces/${getAPINamespace()}` as const;
+};
+
 /**
  * Normalize error from various error formats into a string message
  * @param e the raw error

@@ -21,7 +21,9 @@ export function createBaseQuery({ baseURL }: CreateBaseQueryOptions): BaseQueryF
         ...requestOptions.headers,
       };
 
-      if (requestOptions.method?.toUpperCase() === 'PATCH' && baseURL?.startsWith('/apis/')) {
+      const isK8sStyleBaseURL =
+        baseURL?.startsWith('/apis/') || baseURL?.startsWith('/api/playlist.grafana.app/');
+      if (requestOptions.method?.toUpperCase() === 'PATCH' && isK8sStyleBaseURL) {
         // If we're trying to do some `json-patch` operation, set Content-Type header accordingly
         if (requestOptions.body && Array.isArray(requestOptions.body) && requestOptions.body.some((item) => item.op)) {
           headers['Content-Type'] = 'application/json-patch+json';

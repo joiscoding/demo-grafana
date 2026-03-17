@@ -22,7 +22,11 @@ title: 'Playlist HTTP API '
 
 To learn more about the API structure, refer to [API overview](https://grafana.com/docs/grafana/<GRAFANA_VERSION>/developers/http_api/apis/).
 
+The playlist Kubernetes API is also available under the Grafana HTTP API prefix as `/api/playlist.grafana.app/{version}/namespaces/{namespace}/...`. That path is proxied to `/apis/playlist.grafana.app/{version}/namespaces/{namespace}/...` and returns the same Kubernetes resource payloads.
+
 ## List Playlists
+
+`GET /api/playlist.grafana.app/v1/namespaces/:namespace/playlists`
 
 `GET /apis/playlist.grafana.app/v1/namespaces/:namespace/playlists`
 
@@ -33,7 +37,7 @@ Lists all playlists in the specified namespace.
 **Example Request**:
 
 ```http
-GET /apis/playlist.grafana.app/v1/namespaces/default/playlists HTTP/1.1
+GET /api/playlist.grafana.app/v1/namespaces/default/playlists HTTP/1.1
 Accept: application/json
 Authorization: Bearer eyJrIjoiT0tTcG1pUlY2RnVKZTFVaDFsNFZXdE9ZWmNrMkZYbk
 ```

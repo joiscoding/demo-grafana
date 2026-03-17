@@ -3,13 +3,13 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { isFetchError } from '@grafana/runtime';
 
-import { getAPIBaseURL } from '../../../../utils/utils';
+import { getPlaylistAppHTTPAPIBaseURL } from '../../../../utils/utils';
 import { createBaseQuery, type RequestOptions } from '../../createBaseQuery';
 
 export const API_GROUP = 'playlist.grafana.app' as const;
 export const API_VERSION = 'v1' as const;
-export const BASE_URL = getAPIBaseURL(API_GROUP, API_VERSION);
-const BASE_URL_V0ALPHA1 = getAPIBaseURL(API_GROUP, 'v0alpha1');
+export const BASE_URL = getPlaylistAppHTTPAPIBaseURL(API_VERSION);
+const BASE_URL_V0ALPHA1 = getPlaylistAppHTTPAPIBaseURL('v0alpha1');
 
 /**
  * fall back to v0alpha1 if v1 is not implemented to provide backwards
