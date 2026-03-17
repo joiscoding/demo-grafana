@@ -18,9 +18,7 @@ export const ThemeToggleButton = memo(function ThemeToggleButton() {
   }, []);
 
   const isDarkMode = mode === 'dark';
-  const label = isDarkMode
-    ? t('navigation.theme.toggle-to-light.aria-label', 'Switch to light mode')
-    : t('navigation.theme.toggle-to-dark.aria-label', 'Switch to dark mode');
+  const label = t('navigation.theme.toggle.aria-label', 'Toggle dark and light mode');
 
   return (
     <ToolbarButton
@@ -28,6 +26,7 @@ export const ThemeToggleButton = memo(function ThemeToggleButton() {
       iconOnly
       icon={isDarkMode ? 'toggle-on' : 'toggle-off'}
       aria-label={label}
+      aria-pressed={isDarkMode}
       variant={isDarkMode ? 'active' : 'default'}
       onClick={() => void toggleTheme(false)}
     />

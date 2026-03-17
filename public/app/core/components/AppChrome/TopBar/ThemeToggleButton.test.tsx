@@ -25,23 +25,25 @@ describe('ThemeToggleButton', () => {
     jest.clearAllMocks();
   });
 
-  it('shows a dark mode label when current mode is light', () => {
+  it('renders light mode state when current mode is light', () => {
     render(<ThemeToggleButton />);
 
-    expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Toggle dark and light mode' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('icon-toggle-off')).toBeInTheDocument();
   });
 
-  it('shows a light mode label when current mode is dark', () => {
+  it('renders dark mode state when current mode is dark', () => {
     config.theme2 = { ...config.theme2, colors: { ...config.theme2.colors, mode: 'dark' } };
 
     render(<ThemeToggleButton />);
 
-    expect(screen.getByRole('button', { name: 'Switch to light mode' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Toggle dark and light mode' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('icon-toggle-on')).toBeInTheDocument();
   });
 
-  it('updates the label when theme mode changes', async () => {
+  it('updates the button state when theme mode changes', async () => {
     render(<ThemeToggleButton />);
-    expect(screen.getByRole('button', { name: 'Switch to dark mode' })).toBeInTheDocument();
+    expect(screen.getByTestId('icon-toggle-off')).toBeInTheDocument();
 
     act(() => {
       appEvents.publish(
@@ -50,13 +52,14 @@ describe('ThemeToggleButton', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Switch to light mode' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Toggle dark and light mode' })).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByTestId('icon-toggle-on')).toBeInTheDocument();
     });
   });
 
   it('toggles persisted user theme when clicked', async () => {
     render(<ThemeToggleButton />);
-    await userEvent.click(screen.getByRole('button', { name: 'Switch to dark mode' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Toggle dark and light mode' }));
 
     expect(toggleTheme).toHaveBeenCalledWith(false);
   });
