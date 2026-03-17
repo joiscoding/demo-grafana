@@ -1018,6 +1018,9 @@ export const versionedComponents = {
     commandPaletteTrigger: {
       '11.5.0': 'data-testid Command palette trigger',
     },
+    themeToggle: {
+      '12.6.0': 'data-testid Nav toolbar theme toggle',
+    },
     shareDashboard: {
       '11.1.0': 'data-testid Share dashboard',
     },

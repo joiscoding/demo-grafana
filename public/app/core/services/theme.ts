@@ -52,5 +52,5 @@ export async function changeTheme(themeId: string, runtimeOnly?: boolean) {
 
 export async function toggleTheme(runtimeOnly: boolean) {
   const currentTheme = config.theme2;
-  changeTheme(currentTheme.isDark ? 'light' : 'dark', runtimeOnly);
+  await changeTheme(currentTheme.isDark ? 'light' : 'dark', runtimeOnly);
 }

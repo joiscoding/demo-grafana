@@ -22,6 +22,7 @@ import { NavToolbarSeparator } from '../NavToolbar/NavToolbarSeparator';
 import { QuickAdd } from '../QuickAdd/QuickAdd';
 
 import { HelpTopBarButton } from './HelpTopBarButton';
+import { ThemeToggleTopBarButton } from './ThemeToggleTopBarButton';
 import { InviteUserButton } from './InviteUserButton';
 import { ProfileButton } from './ProfileButton';
 import { SignInLink } from './SignInLink';
@@ -95,6 +96,7 @@ export const SingleTopBar = memo(function SingleTopBar({
           <TopBarExtensionPoint />
           <TopSearchBarCommandPaletteTrigger />
           {!isSmallScreen && <QuickAdd />}
+          <ThemeToggleTopBarButton />
           <HelpTopBarButton isSmallScreen={isSmallScreen} />
           <NavToolbarSeparator />
           {!isSmallScreen && <ExtensionToolbarItem compact={isSmallScreen} />}
