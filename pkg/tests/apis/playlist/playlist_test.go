@@ -695,7 +695,6 @@ func doPlaylistTests(t *testing.T, helper *apis.K8sTestHelper) *apis.K8sTestHelp
 	})
 
 	t.Run("Do CRUD via k8s (and check that legacy api still works)", func(t *testing.T) {
-		t.Skip()
 		client := helper.GetResourceClient(apis.ResourceClientArgs{
 			User: helper.Org1.Editor,
 			GVR:  gvr,
