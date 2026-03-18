@@ -253,6 +253,8 @@ export const availableIconsIndex = {
   'sort-amount-up': true,
   'square-shape': true,
   star: true,
+  sun: true,
+  moon: true,
   'step-backward': true,
   stopwatch: true,
   'stopwatch-slash': true,
