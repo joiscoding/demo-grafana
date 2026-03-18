@@ -1,8 +1,9 @@
 import { css } from '@emotion/css';
 
 import { GrafanaTheme2 } from '@grafana/data';
-import { Trans } from '@grafana/i18n';
-import { TextLink, useStyles2 } from '@grafana/ui';
+import { Trans, t } from '@grafana/i18n';
+import { IconButton, TextLink, useStyles2, useTheme2 } from '@grafana/ui';
+import { toggleTheme } from 'app/core/services/theme';
 
 const helpOptions = [
   { value: 0, label: 'Documentation', href: 'https://grafana.com/docs/grafana/latest' },
@@ -13,12 +14,28 @@ const helpOptions = [
 
 export const WelcomeBanner = () => {
   const styles = useStyles2(getStyles);
+  const theme = useTheme2();
+  const themeToggleLabel = theme.isDark
+    ? t('welcome.welcome-banner.switch-to-light-theme', 'Switch to light theme')
+    : t('welcome.welcome-banner.switch-to-dark-theme', 'Switch to dark theme');
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>
-        <Trans i18nKey="welcome.welcome-banner.welcome-to-grafana">Welcome to Grafana</Trans>
-      </h1>
+      <div className={styles.titleRow}>
+        <h1 className={styles.title}>
+          <Trans i18nKey="welcome.welcome-banner.welcome-to-grafana">Welcome to Grafana</Trans>
+        </h1>
+        <IconButton
+          name="adjust-circle"
+          tooltip={themeToggleLabel}
+          size="xl"
+          variant="secondary"
+          type="button"
+          onClick={() => {
+            void toggleTheme(false);
+          }}
+        />
+      </div>
       <div className={styles.help}>
         <h2 className={styles.helpText}>
           <Trans i18nKey="welcome.welcome-banner.need-help">Need help?</Trans>
@@ -61,12 +78,22 @@ const getStyles = (theme: GrafanaTheme2) => {
         padding: theme.spacing(0, 1),
       },
     }),
-    title: css({
-      marginBottom: 0,
+    titleRow: css({
+      display: 'flex',
+      alignItems: 'center',
+      gap: theme.spacing(1),
+      flex: '1 1 auto',
+      minWidth: 0,
+      flexWrap: 'wrap',
 
       [theme.breakpoints.down('lg')]: {
         marginBottom: theme.spacing(1),
       },
+    }),
+    title: css({
+      marginBottom: 0,
+      flex: '1 1 auto',
+      minWidth: 0,
 
       [theme.breakpoints.down('md')]: {
         fontSize: theme.typography.h2.fontSize,

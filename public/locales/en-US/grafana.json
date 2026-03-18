@@ -16005,6 +16005,8 @@
   "welcome": {
     "welcome-banner": {
       "need-help": "Need help?",
+      "switch-to-dark-theme": "Switch to dark theme",
+      "switch-to-light-theme": "Switch to light theme",
       "welcome-to-grafana": "Welcome to Grafana"
     }
   },
