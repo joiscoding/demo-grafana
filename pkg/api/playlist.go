@@ -22,18 +22,20 @@ import (
 )
 
 func (hs *HTTPServer) registerPlaylistAPI(apiRoute routing.RouteRegister) {
-	// Register the actual handlers
-	// Deprecated: use /apis/playlist.grafana.app/ instead
-	apiRoute.Group("/playlists", func(playlistRoute routing.RouteRegister) {
-		// Use k8s client to implement legacy API
-		handler := newPlaylistK8sHandler(hs)
+	// Legacy HTTP API (JSON shapes preserved). Kubernetes-native API:
+	// /apis/playlist.grafana.app/v1/namespaces/{ns}/playlists
+	handler := newPlaylistK8sHandler(hs)
+	registerPlaylistLegacyRoutes := func(playlistRoute routing.RouteRegister) {
 		playlistRoute.Get("/", handler.searchPlaylists)
 		playlistRoute.Get("/:uid", handler.getPlaylist)
 		playlistRoute.Get("/:uid/items", handler.getPlaylistItems)
 		playlistRoute.Delete("/:uid", handler.deletePlaylist)
 		playlistRoute.Put("/:uid", handler.updatePlaylist)
 		playlistRoute.Post("/", handler.createPlaylist)
-	})
+	}
+	apiRoute.Group("/playlists", registerPlaylistLegacyRoutes)
+	// Singular alias for clients that still call /api/playlist
+	apiRoute.Group("/playlist", registerPlaylistLegacyRoutes)
 }
 
 // swagger:parameters searchPlaylists
