@@ -180,6 +180,7 @@ pkg/services/quota/quotaimpl/storage/storage.json
 
 # Ignore frontend build manifest
 manifest.json
+manifest-react19.json
 /packages/grafana-data/src/themes/schema.generated.json
 
 # Ignore go local build dependencies
