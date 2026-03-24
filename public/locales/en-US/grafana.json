@@ -11799,7 +11799,13 @@
       "aria-label": "New",
       "new-template-dashboard-button": "Dashboard from template"
     },
-    "rss-button": "Latest from the blog"
+    "rss-button": "Latest from the blog",
+    "theme-toggle": {
+      "switch-to-dark-aria": "Switch to dark mode",
+      "switch-to-dark-tooltip": "Switch to dark mode",
+      "switch-to-light-aria": "Switch to light mode",
+      "switch-to-light-tooltip": "Switch to light mode"
+    }
   },
   "news": {
     "category-news": "News",
