@@ -1,0 +1,10 @@
+---
+name: super-test-dummy
+description: A placeholder skill for testing. Does nothing useful; use only to verify tooling or wiring.
+---
+
+# Super test dummy
+
+This skill intentionally has no real behavior. If you see it invoked, treat it as a no-op smoke test unless the user explicitly asks for dummy output.
+
+**When to use:** Never for production tasks—only when testing skill loading, parsing, or agent routing.
