@@ -2,10 +2,12 @@ import { css } from '@emotion/css';
 import * as React from 'react';
 
 import { GrafanaTheme2, NavModelItem } from '@grafana/data';
+import { t } from '@grafana/i18n';
 import { usePluginComponents, usePluginLinks } from '@grafana/runtime';
-import { useStyles2 } from '@grafana/ui';
+import { InlineSwitch, useStyles2, useTheme2 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { useNavModel } from 'app/core/hooks/useNavModel';
+import { toggleTheme } from 'app/core/services/theme';
 
 import { NavLandingPageCard } from './NavLandingPageCard';
 
@@ -19,6 +21,7 @@ const CARDS_EXTENSION_ID = (nodeId: string) => `grafana/dynamic/nav-landing-page
 
 export function NavLandingPage({ navId, header }: Props) {
   const { node } = useNavModel(navId);
+  const theme = useTheme2();
   const styles = useStyles2(getStyles);
   const children = node.children?.filter((child) => !child.hideFromTabs);
 
@@ -55,6 +58,18 @@ export function NavLandingPage({ navId, header }: Props) {
           components.map((Component, idx) => <Component key={idx} node={node} />)
         ) : (
           <div className={styles.content}>
+            <div className={styles.toolbar}>
+              <InlineSwitch
+                id="nav-landing-page-theme-toggle"
+                showLabel
+                transparent
+                value={theme.isDark}
+                label={t('navigation.landing-page.dark-theme-label', 'Dark theme')}
+                onChange={() => {
+                  toggleTheme(false);
+                }}
+              />
+            </div>
             {header}
             {children && children.length > 0 && (
               <section className={styles.grid}>
@@ -90,6 +105,10 @@ const getStyles = (theme: GrafanaTheme2) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: theme.spacing(2),
+  }),
+  toolbar: css({
+    display: 'flex',
+    justifyContent: 'flex-end',
   }),
   grid: css({
     display: 'grid',
