@@ -11777,6 +11777,9 @@
     "kiosk": {
       "tv-alert": "Press ESC to exit kiosk mode"
     },
+    "landing-page": {
+      "dark-theme-label": "Dark theme"
+    },
     "megamenu": {
       "close": "Close menu",
       "dialog-label": "Navigation",

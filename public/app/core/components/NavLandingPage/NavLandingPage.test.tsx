@@ -79,6 +79,14 @@ describe('NavLandingPage', () => {
     expect(screen.getByText(mockSectionSubtitle)).toBeInTheDocument();
   });
 
+  it('renders a light and dark theme toggle', () => {
+    setup();
+    const toggle = document.getElementById('nav-landing-page-theme-toggle');
+    expect(toggle).toBeInTheDocument();
+    expect(toggle).toHaveAttribute('role', 'switch');
+    expect(screen.getByText('Dark theme')).toBeInTheDocument();
+  });
+
   it('renders a link for each direct child', () => {
     setup();
     expect(screen.getByRole('link', { name: mockChild1.text })).toBeInTheDocument();
