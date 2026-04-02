@@ -2404,7 +2404,8 @@
       "metadata": {
         "name": "kubernetesAuthzApis",
         "resourceVersion": "1771434338561",
-        "creationTimestamp": "2025-06-18T07:43:01Z"
+        "creationTimestamp": "2025-06-18T07:43:01Z",
+        "deletionTimestamp": "2026-04-02T14:05:05Z"
       },
       "spec": {
         "description": "Deprecated: Use kubernetesAuthzCoreRolesApi, kubernetesAuthzRolesApi, and kubernetesAuthzRoleBindingsApi instead",
