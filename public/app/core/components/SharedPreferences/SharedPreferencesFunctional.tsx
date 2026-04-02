@@ -171,7 +171,7 @@ export const SharedPreferencesFunctional = memo((props: Props) => {
             disabled={state.isLoading}
             label={t('shared-preferences.fields.theme-label', 'Interface theme')}
             description={
-              config.featureToggles.grafanaconThemes && config.feedbackLinksEnabled ? (
+              config.feedbackLinksEnabled ? (
                 <Trans i18nKey="shared-preferences.fields.theme-description">
                   Enjoying the experimental themes? Tell us what you&apos;d like to see{' '}
                   <TextLink

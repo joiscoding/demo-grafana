@@ -175,7 +175,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
             disabled={isLoading}
             label={t('shared-preferences.fields.theme-label', 'Interface theme')}
             description={
-              config.featureToggles.grafanaconThemes && config.feedbackLinksEnabled ? (
+              config.feedbackLinksEnabled ? (
                 <Trans i18nKey="shared-preferences.fields.theme-description">
                   Enjoying the experimental themes? Tell us what you'd like to see{' '}
                   <TextLink
