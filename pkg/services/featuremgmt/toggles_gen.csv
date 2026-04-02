@@ -142,7 +142,6 @@ Created,Name,Stage,Owner,requiresDevMode,RequiresRestart,FrontendOnly
 2024-10-25,reloadDashboardsOnParamsChange,experimental,@grafana/dashboards-squad,false,false,false
 2024-11-06,enableScopesInMetricsExplore,experimental,@grafana/dashboards-squad,false,false,false
 2024-06-27,cloudWatchRoundUpEndTime,GA,@grafana/aws-datasources,false,false,false
-2022-05-30,prometheusAzureOverrideAudience,deprecated,@grafana/partner-datasources,false,false,false
 2024-09-11,alertingFilterV2,experimental,@grafana/alerting-squad,false,false,false
 2024-08-09,dataplaneAggregator,experimental,@grafana/grafana-app-platform-squad,false,true,false
 2025-08-01,vizActionsAuth,preview,@grafana/dataviz-squad,false,false,true
