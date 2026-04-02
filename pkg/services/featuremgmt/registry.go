@@ -1777,14 +1777,6 @@ var (
 			Expression:   "false",
 		},
 		{
-			Name:         "kubernetesAuthZHandlerRedirect",
-			Description:  "Deprecated: Use kubernetesAuthZResourcePermissionsRedirect and kubernetesAuthZRolesRedirect instead",
-			Stage:        FeatureStageDeprecated,
-			Owner:        identityAccessTeam,
-			HideFromDocs: true,
-			Expression:   "false",
-		},
-		{
 			Name:         "kubernetesAuthZResourcePermissionsRedirect",
 			Description:  "Redirects the traffic from the legacy resource permissions endpoints to the new K8s AuthZ endpoints",
 			Stage:        FeatureStageExperimental,
