@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { omit } from 'lodash';
 
 import { selectors as e2eSelectors } from '@grafana/e2e-selectors';
-import { config } from '@grafana/runtime';
 
 import Datasource from '../../datasource';
 import { selectors } from '../../e2e/selectors';
@@ -29,9 +28,7 @@ jest.mock('@grafana/runtime', () => ({
     },
   }),
   config: {
-    featureToggles: {
-      azureResourcePickerUpdates: true,
-    },
+    featureToggles: {},
   },
 }));
 
@@ -98,7 +95,6 @@ const defaultProps = {
 describe('AzureMonitor ResourcePicker', () => {
   beforeEach(() => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    config.featureToggles.azureResourcePickerUpdates = false;
   });
   it('should pre-load subscriptions when there is no existing selection', async () => {
     render(<ResourcePicker {...defaultProps} resources={[noResourceURI]} />);
@@ -407,25 +403,20 @@ describe('AzureMonitor ResourcePicker', () => {
   });
 
   describe('filters', () => {
-    beforeEach(() => {
-      config.featureToggles.azureResourcePickerUpdates = true;
-    });
-    it('should not render filters if feature toggle disabled', async () => {
-      config.featureToggles.azureResourcePickerUpdates = false;
+    it('should render filters for metrics query type', async () => {
       render(<ResourcePicker {...defaultProps} queryType="metrics" />);
 
-      // wait for search to be visible to allow for async operations
-      await screen.findByLabelText('Resource search');
+      await waitFor(() => {
+        expect(defaultProps.datasource.getSubscriptions).toHaveBeenCalled();
+      });
 
       expect(
-        screen.queryByTestId(selectors.components.queryEditor.resourcePicker.filters.subscription.input)
-      ).not.toBeInTheDocument();
+        await screen.findByTestId(selectors.components.queryEditor.resourcePicker.filters.subscription.input)
+      ).toBeInTheDocument();
+      expect(await screen.findByTestId(selectors.components.queryEditor.resourcePicker.filters.type.input)).toBeInTheDocument();
       expect(
-        screen.queryByTestId(selectors.components.queryEditor.resourcePicker.filters.type.input)
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByTestId(selectors.components.queryEditor.resourcePicker.filters.location.input)
-      ).not.toBeInTheDocument();
+        await screen.findByTestId(selectors.components.queryEditor.resourcePicker.filters.location.input)
+      ).toBeInTheDocument();
     });
 
     it('should render subscription filter and load subscription options', async () => {
@@ -555,20 +546,8 @@ describe('AzureMonitor ResourcePicker', () => {
 
   describe('recent resources', () => {
     beforeEach(() => {
-      config.featureToggles.azureResourcePickerUpdates = true;
       window.localStorage.clear();
     });
-    it('should not render tabbed view if feature toggle disabled', async () => {
-      config.featureToggles.azureResourcePickerUpdates = false;
-      render(<ResourcePicker {...defaultProps} />);
-
-      // wait for search to be visible to allow for async operations
-      await screen.findByLabelText('Resource search');
-
-      expect(screen.queryByTestId(e2eSelectors.components.Tab.title('Browse'))).not.toBeInTheDocument();
-      expect(screen.queryByTestId(e2eSelectors.components.Tab.title('Recent'))).not.toBeInTheDocument();
-    });
-
     it('should render tabbed view', async () => {
       render(<ResourcePicker {...defaultProps} />);
 

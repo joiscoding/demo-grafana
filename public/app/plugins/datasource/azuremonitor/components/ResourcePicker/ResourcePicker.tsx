@@ -6,7 +6,7 @@ import { useEffectOnce } from 'react-use';
 
 import { LocalStorageValueProvider } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
-import { config, reportInteraction } from '@grafana/runtime';
+import { reportInteraction } from '@grafana/runtime';
 import {
   Alert,
   Button,
@@ -145,9 +145,7 @@ const ResourcePicker = ({
 
   useEffectOnce(() => {
     loadInitialData();
-    if (config.featureToggles.azureResourcePickerUpdates) {
-      loadFilterOptions();
-    }
+    loadFilterOptions();
   });
 
   // Avoid using empty resources
@@ -217,7 +215,6 @@ const ResourcePicker = ({
     }
   }, [queryType, internalSelected, onApply]);
 
-  // Once the azureResourcePickerUpdates feature toggle is removed this will replace handleApply above
   const handleApplyWithLocalStorage = useCallback(
     (recentResources: ResourceRowGroup, onRecentResourcesSave: (value: ResourceRowGroup) => void) => {
       if (internalSelected) {
@@ -424,70 +421,65 @@ const ResourcePicker = ({
     );
   };
 
-  const baseResourcePicker = (
-    recentResources?: ResourceRowGroup,
-    localStorageSave?: (value: ResourceRowGroup) => void
-  ) => {
+  const baseResourcePicker = (recentResources: ResourceRowGroup, localStorageSave: (value: ResourceRowGroup) => void) => {
     return (
       <>
         <Search searchFn={handleSearch} />
-        {config.featureToggles.azureResourcePickerUpdates && (
-          <Stack direction={'row'} alignItems="flex-start" justifyContent={'space-between'} gap={1}>
+        <Stack direction={'row'} alignItems="flex-start" justifyContent={'space-between'} gap={1}>
+          <Field
+            label={t('components.resource-picker.subscriptions-filter', 'Subscriptions')}
+            noMargin
+            className={styles.filterInput(queryType)}
+          >
+            <MultiCombobox
+              aria-label={t('components.resource-picker.subscriptions-filter', 'Subscriptions')}
+              value={filters.subscriptions}
+              options={subscriptions}
+              onChange={(value) => updateFilters(value, 'subscriptions')}
+              isClearable
+              enableAllOption
+              loading={isLoadingSubscriptions}
+              data-testid={selectors.components.queryEditor.resourcePicker.filters.subscription.input}
+              placeholder={t('components.resource-picker.subscriptions-filter-placeholder', 'Select a subscription')}
+            />
+          </Field>
+          {queryType === 'metrics' && (
             <Field
-              label={t('components.resource-picker.subscriptions-filter', 'Subscriptions')}
+              label={t('components.resource-picker.types-filter', 'Resource Types')}
               noMargin
               className={styles.filterInput(queryType)}
             >
               <MultiCombobox
-                aria-label={t('components.resource-picker.subscriptions-filter', 'Subscriptions')}
-                value={filters.subscriptions}
-                options={subscriptions}
-                onChange={(value) => updateFilters(value, 'subscriptions')}
+                aria-label={t('components.resource-picker.types-filter', 'Resource Types')}
+                value={filters.types}
+                options={namespaces}
+                onChange={(value) => updateFilters(value, 'types')}
                 isClearable
                 enableAllOption
-                loading={isLoadingSubscriptions}
-                data-testid={selectors.components.queryEditor.resourcePicker.filters.subscription.input}
-                placeholder={t('components.resource-picker.subscriptions-filter-placeholder', 'Select a subscription')}
+                loading={isLoadingNamespaces}
+                data-testid={selectors.components.queryEditor.resourcePicker.filters.type.input}
+                placeholder={t('components.resource-picker.types-filter-placeholder', 'Select a resource type')}
               />
             </Field>
-            {queryType === 'metrics' && (
-              <Field
-                label={t('components.resource-picker.types-filter', 'Resource Types')}
-                noMargin
-                className={styles.filterInput(queryType)}
-              >
-                <MultiCombobox
-                  aria-label={t('components.resource-picker.types-filter', 'Resource Types')}
-                  value={filters.types}
-                  options={namespaces}
-                  onChange={(value) => updateFilters(value, 'types')}
-                  isClearable
-                  enableAllOption
-                  loading={isLoadingNamespaces}
-                  data-testid={selectors.components.queryEditor.resourcePicker.filters.type.input}
-                  placeholder={t('components.resource-picker.types-filter-placeholder', 'Select a resource type')}
-                />
-              </Field>
-            )}
-            <Field
-              label={t('components.resource-picker.locations-filter', 'Locations')}
-              noMargin
-              className={styles.filterInput(queryType)}
-            >
-              <MultiCombobox
-                aria-label={t('components.resource-picker.locations-filter', 'Locations')}
-                value={filters.locations}
-                options={locations}
-                onChange={(value) => updateFilters(value, 'locations')}
-                isClearable
-                enableAllOption
-                loading={isLoadingLocations}
-                data-testid={selectors.components.queryEditor.resourcePicker.filters.location.input}
-                placeholder={t('components.resource-picker.locations-filter-placeholder', 'Select a location')}
-              />
-            </Field>
-          </Stack>
-        )}
+          )}
+          <Field
+            label={t('components.resource-picker.locations-filter', 'Locations')}
+            noMargin
+            className={styles.filterInput(queryType)}
+          >
+            <MultiCombobox
+              aria-label={t('components.resource-picker.locations-filter', 'Locations')}
+              value={filters.locations}
+              options={locations}
+              onChange={(value) => updateFilters(value, 'locations')}
+              isClearable
+              enableAllOption
+              loading={isLoadingLocations}
+              data-testid={selectors.components.queryEditor.resourcePicker.filters.location.input}
+              placeholder={t('components.resource-picker.locations-filter-placeholder', 'Select a location')}
+            />
+          </Field>
+        </Stack>
         {shouldShowLimitFlag ? (
           <p className={styles.resultLimit}>
             <Trans
@@ -509,11 +501,7 @@ const ResourcePicker = ({
           </Button>
           <Button
             disabled={!!errorMessage || !internalSelected.every(isValid)}
-            onClick={
-              localStorageSave && recentResources
-                ? () => handleApplyWithLocalStorage(recentResources, localStorageSave)
-                : handleApply
-            }
+            onClick={() => handleApplyWithLocalStorage(recentResources, localStorageSave)}
             data-testid={selectors.components.queryEditor.resourcePicker.apply.button}
           >
             <Trans i18nKey="components.resource-picker.button-apply">Apply</Trans>
@@ -523,7 +511,6 @@ const ResourcePicker = ({
     );
   };
 
-  // Once the azureResourcePickerUpdates feature toggle is removed, baseResourcePicker can be merged into this function
   const tabbedResourcePicker = () => {
     return (
       <LocalStorageValueProvider<ResourceRowGroup> storageKey={RECENT_RESOURCES_KEY(queryType)} defaultValue={[]}>
@@ -577,7 +564,7 @@ const ResourcePicker = ({
     );
   };
 
-  return config.featureToggles.azureResourcePickerUpdates ? tabbedResourcePicker() : baseResourcePicker();
+  return tabbedResourcePicker();
 };
 
 export default ResourcePicker;
