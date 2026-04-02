@@ -1953,14 +1953,6 @@ var (
 			Expression:   "false",
 		},
 		{
-			Name:         "sharingDashboardImage",
-			Description:  "Enables image sharing functionality for dashboards",
-			Stage:        FeatureStageGeneralAvailability,
-			Owner:        grafanaSharingSquad,
-			FrontendOnly: true,
-			Expression:   "true",
-		},
-		{
 			Name:        "preferLibraryPanelTitle",
 			Description: "Prefer library panel title over viz panel title.",
 			Stage:       FeatureStagePrivatePreview,
