@@ -447,10 +447,6 @@ const (
 	// Enables improved support for OAuth external sessions. After enabling this feature, users might need to re-authenticate themselves.
 	FlagImprovedExternalSessionHandling = "improvedExternalSessionHandling"
 
-	// FlagUseSessionStorageForRedirection
-	// Use session storage for handling the redirection after login
-	FlagUseSessionStorageForRedirection = "useSessionStorageForRedirection"
-
 	// FlagRolePickerDrawer
 	// Enables the new role picker drawer design
 	FlagRolePickerDrawer = "rolePickerDrawer"

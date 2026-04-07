@@ -790,11 +790,6 @@ export interface FeatureToggles {
   */
   improvedExternalSessionHandling?: boolean;
   /**
-  * Use session storage for handling the redirection after login
-  * @default true
-  */
-  useSessionStorageForRedirection?: boolean;
-  /**
   * Enables the new role picker drawer design
   * @default false
   */
