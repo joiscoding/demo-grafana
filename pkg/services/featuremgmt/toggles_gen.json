@@ -4596,7 +4596,8 @@
       "metadata": {
         "name": "useSessionStorageForRedirection",
         "resourceVersion": "1771434338561",
-        "creationTimestamp": "2024-09-23T09:31:23Z"
+        "creationTimestamp": "2024-09-23T09:31:23Z",
+        "deletionTimestamp": "2026-04-07T14:08:49Z"
       },
       "spec": {
         "description": "Use session storage for handling the redirection after login",

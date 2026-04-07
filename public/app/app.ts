@@ -240,9 +240,7 @@ export class GrafanaApp {
         getVariablesUrlParams: getVariablesUrlParams,
       });
 
-      if (config.featureToggles.useSessionStorageForRedirection) {
-        handleRedirectTo();
-      }
+      handleRedirectTo();
 
       // intercept anchor clicks and forward it to custom history instead of relying on browser's history
       document.addEventListener('click', interceptLinkClicks);
