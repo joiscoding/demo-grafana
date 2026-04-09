@@ -1788,7 +1788,8 @@
       "metadata": {
         "name": "exploreLogsShardSplitting",
         "resourceVersion": "1771434338561",
-        "creationTimestamp": "2024-08-29T13:55:59Z"
+        "creationTimestamp": "2024-08-29T13:55:59Z",
+        "deletionTimestamp": "2026-04-09T14:10:21Z"
       },
       "spec": {
         "description": "Deprecated. Replace with lokiShardSplitting. Used in Logs Drilldown to split queries into multiple queries based on the number of shards",
@@ -2404,7 +2405,8 @@
       "metadata": {
         "name": "kubernetesAuthzApis",
         "resourceVersion": "1771434338561",
-        "creationTimestamp": "2025-06-18T07:43:01Z"
+        "creationTimestamp": "2025-06-18T07:43:01Z",
+        "deletionTimestamp": "2026-04-09T14:10:21Z"
       },
       "spec": {
         "description": "Deprecated: Use kubernetesAuthzCoreRolesApi, kubernetesAuthzRolesApi, and kubernetesAuthzRoleBindingsApi instead",

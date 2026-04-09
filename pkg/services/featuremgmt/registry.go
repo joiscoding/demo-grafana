@@ -1193,14 +1193,6 @@ var (
 			Expression:   "false",
 		},
 		{
-			Name:         "exploreLogsShardSplitting",
-			Description:  "Deprecated. Replace with lokiShardSplitting. Used in Logs Drilldown to split queries into multiple queries based on the number of shards",
-			Stage:        FeatureStageExperimental,
-			FrontendOnly: true,
-			Owner:        grafanaObservabilityLogsSquad,
-			Expression:   "false",
-		},
-		{
 			Name:         "exploreLogsAggregatedMetrics",
 			Description:  "Used in Logs Drilldown to query by aggregated metrics",
 			Stage:        FeatureStageExperimental,
@@ -1767,22 +1759,6 @@ var (
 			Owner:        grafanaAlertingSquad,
 			HideFromDocs: true,
 			Expression:   "true", // enabled by default
-		},
-		{
-			Name:         "kubernetesAuthzApis",
-			Description:  "Deprecated: Use kubernetesAuthzCoreRolesApi, kubernetesAuthzRolesApi, and kubernetesAuthzRoleBindingsApi instead",
-			Stage:        FeatureStageDeprecated,
-			Owner:        identityAccessTeam,
-			HideFromDocs: true,
-			Expression:   "false",
-		},
-		{
-			Name:         "kubernetesAuthZHandlerRedirect",
-			Description:  "Deprecated: Use kubernetesAuthZResourcePermissionsRedirect and kubernetesAuthZRolesRedirect instead",
-			Stage:        FeatureStageDeprecated,
-			Owner:        identityAccessTeam,
-			HideFromDocs: true,
-			Expression:   "false",
 		},
 		{
 			Name:         "kubernetesAuthZResourcePermissionsRedirect",
