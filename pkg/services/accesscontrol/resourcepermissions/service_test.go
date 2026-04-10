@@ -199,14 +199,14 @@ func TestIntegrationService_SetPermissions(t *testing.T) {
 		{
 			desc: "should return error for invalid permission",
 			options: Options{
-				Resource: "dashboards",
+				Resource: "teams",
 				Assignments: Assignments{
 					Users:        true,
 					Teams:        true,
 					BuiltInRoles: true,
 				},
 				PermissionsToActions: map[string][]string{
-					"View": {"dashboards:read"},
+					"View": {"teams:read"},
 				},
 			},
 			commands: []accesscontrol.SetResourcePermissionCommand{
