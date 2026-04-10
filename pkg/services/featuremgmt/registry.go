@@ -2260,15 +2260,6 @@ var (
 			Expression:   "true",
 		},
 		{
-			Name:         "onlyStoreActionSets",
-			Description:  "When storing dashboard and folder resource permissions, only store action sets and not the full list of underlying permission",
-			Stage:        FeatureStageGeneralAvailability,
-			FrontendOnly: false,
-			HideFromDocs: true,
-			Owner:        identityAccessTeam,
-			Expression:   "true",
-		},
-		{
 			Name:         "excludeRedundantManagedPermissions",
 			Description:  "Exclude redundant individual dashboard/folder permissions from managed roles at query time",
 			Stage:        FeatureStageExperimental,

@@ -3280,7 +3280,8 @@
       "metadata": {
         "name": "onlyStoreActionSets",
         "resourceVersion": "1771434338561",
-        "creationTimestamp": "2025-10-20T15:02:56Z"
+        "creationTimestamp": "2025-10-20T15:02:56Z",
+        "deletionTimestamp": "2026-04-10T14:05:31Z"
       },
       "spec": {
         "description": "When storing dashboard and folder resource permissions, only store action sets and not the full list of underlying permission",
