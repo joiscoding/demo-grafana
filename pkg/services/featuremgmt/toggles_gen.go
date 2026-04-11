@@ -602,10 +602,6 @@ const (
 	// Enables the unified storage grpc connection pool
 	FlagUnifiedStorageGrpcConnectionPool = "unifiedStorageGrpcConnectionPool"
 
-	// FlagAlertingRuleRecoverDeleted
-	// Enables the UI functionality to recover and view deleted alert rules
-	FlagAlertingRuleRecoverDeleted = "alertingRuleRecoverDeleted"
-
 	// FlagMultiTenantTempCredentials
 	// use multi-tenant path for awsTempCredentials
 	FlagMultiTenantTempCredentials = "multiTenantTempCredentials"

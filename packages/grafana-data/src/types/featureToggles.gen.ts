@@ -1005,11 +1005,6 @@ export interface FeatureToggles {
   */
   scopeSearchAllLevels?: boolean;
   /**
-  * Enables the alert rule version history restore feature
-  * @default true
-  */
-  alertingRuleVersionHistoryRestore?: boolean;
-  /**
   * Enables the report creation drawer in a dashboard
   * @default false
   */
@@ -1065,16 +1060,6 @@ export interface FeatureToggles {
   * @default false
   */
   unifiedStorageGrpcConnectionPool?: boolean;
-  /**
-  * Enables UI functionality to permanently delete alert rules
-  * @default true
-  */
-  alertingRulePermanentlyDelete?: boolean;
-  /**
-  * Enables the UI functionality to recover and view deleted alert rules
-  * @default true
-  */
-  alertingRuleRecoverDeleted?: boolean;
   /**
   * use multi-tenant path for awsTempCredentials
   * @default false

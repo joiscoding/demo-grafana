@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { Trans, t } from '@grafana/i18n';
-import { config } from '@grafana/runtime';
 import { Alert, Button, EmptyState, LoadingPlaceholder, Stack, Text, Tooltip } from '@grafana/ui';
 import { RuleGroupIdentifierV2, RuleIdentifier } from 'app/types/unified-alerting';
 import { GrafanaRuleDefinition, RulerGrafanaRuleDTO } from 'app/types/unified-alerting-dto';
@@ -64,8 +63,7 @@ export function AlertVersionHistory({ rule }: AlertVersionHistoryProps) {
     groupOrigin: 'grafana',
   };
   const [restoreSupported, restoreAllowed] = useRulerRuleAbility(rule, groupIdentifier, AlertRuleAction.Restore);
-  const canRestore =
-    restoreAllowed && restoreSupported && Boolean(config.featureToggles.alertingRuleVersionHistoryRestore);
+  const canRestore = restoreAllowed && restoreSupported;
 
   //tracking functions for restore action
   const onRestoreSuccess = useCallback(
