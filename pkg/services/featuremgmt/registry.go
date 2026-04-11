@@ -1577,15 +1577,6 @@ var (
 			Expression:   "false",
 		},
 		{
-			Name:         "alertingRuleVersionHistoryRestore",
-			Description:  "Enables the alert rule version history restore feature",
-			FrontendOnly: true,
-			Stage:        FeatureStageGeneralAvailability,
-			Owner:        grafanaAlertingSquad,
-			HideFromDocs: true,
-			Expression:   "true", // enabled by default
-		},
-		{
 			Name:         "newShareReportDrawer",
 			Description:  "Enables the report creation drawer in a dashboard",
 			Stage:        FeatureStagePublicPreview,
@@ -1670,24 +1661,6 @@ var (
 			Owner:        grafanaSearchAndStorageSquad,
 			HideFromDocs: true,
 			Expression:   "false",
-		},
-		{
-			Name:         "alertingRulePermanentlyDelete",
-			Description:  "Enables UI functionality to permanently delete alert rules",
-			FrontendOnly: true,
-			Stage:        FeatureStageGeneralAvailability,
-			Owner:        grafanaAlertingSquad,
-			HideFromDocs: true,
-			Expression:   "true", // enabled by default
-		},
-		{
-			Name:         "alertingRuleRecoverDeleted",
-			Description:  "Enables the UI functionality to recover and view deleted alert rules",
-			FrontendOnly: false, // changes navtree from the backend
-			Stage:        FeatureStageGeneralAvailability,
-			Owner:        grafanaAlertingSquad,
-			HideFromDocs: true,
-			Expression:   "true", // enabled by default
 		},
 		{
 			Name:         "multiTenantTempCredentials",

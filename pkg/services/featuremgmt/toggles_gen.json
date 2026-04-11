@@ -611,7 +611,8 @@
       "metadata": {
         "name": "alertingRulePermanentlyDelete",
         "resourceVersion": "1771434338561",
-        "creationTimestamp": "2025-04-03T11:18:25Z"
+        "creationTimestamp": "2025-04-03T11:18:25Z",
+        "deletionTimestamp": "2026-04-11T14:04:57Z"
       },
       "spec": {
         "description": "Enables UI functionality to permanently delete alert rules",
@@ -626,7 +627,8 @@
       "metadata": {
         "name": "alertingRuleRecoverDeleted",
         "resourceVersion": "1771434338561",
-        "creationTimestamp": "2025-03-27T14:39:26Z"
+        "creationTimestamp": "2025-03-27T14:39:26Z",
+        "deletionTimestamp": "2026-04-11T14:04:57Z"
       },
       "spec": {
         "description": "Enables the UI functionality to recover and view deleted alert rules",
@@ -640,7 +642,8 @@
       "metadata": {
         "name": "alertingRuleVersionHistoryRestore",
         "resourceVersion": "1771434338561",
-        "creationTimestamp": "2025-02-17T12:25:32Z"
+        "creationTimestamp": "2025-02-17T12:25:32Z",
+        "deletionTimestamp": "2026-04-11T14:04:57Z"
       },
       "spec": {
         "description": "Enables the alert rule version history restore feature",
