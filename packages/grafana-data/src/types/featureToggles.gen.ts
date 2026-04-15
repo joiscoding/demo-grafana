@@ -1433,11 +1433,6 @@ export interface FeatureToggles {
   */
   newPanelPadding?: boolean;
   /**
-  * When storing dashboard and folder resource permissions, only store action sets and not the full list of underlying permission
-  * @default true
-  */
-  onlyStoreActionSets?: boolean;
-  /**
   * Exclude redundant individual dashboard/folder permissions from managed roles at query time
   * @default false
   */
