@@ -1298,11 +1298,6 @@ export interface FeatureToggles {
   */
   alertmanagerRemoteSecondaryWithRemoteState?: boolean;
   /**
-  * Enables sharing a list of APIs with a list of plugins
-  * @default true
-  */
-  restrictedPluginApis?: boolean;
-  /**
   * Enable favorite datasources
   * @default false
   */
