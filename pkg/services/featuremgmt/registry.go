@@ -2043,15 +2043,6 @@ var (
 			Expression:   "false",
 		},
 		{
-			Name:         "restrictedPluginApis",
-			Description:  "Enables sharing a list of APIs with a list of plugins",
-			Stage:        FeatureStageGeneralAvailability,
-			Owner:        grafanaPluginsPlatformSquad,
-			HideFromDocs: true,
-			FrontendOnly: true,
-			Expression:   "true",
-		},
-		{
 			Name:         "favoriteDatasources",
 			Description:  "Enable favorite datasources",
 			Stage:        FeatureStageExperimental,
