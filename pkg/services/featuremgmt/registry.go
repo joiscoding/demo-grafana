@@ -556,6 +556,22 @@ var (
 			Expression:      "false",
 		},
 		{
+			Name:            "kubernetesAnnotations",
+			Description:     "Registers the annotation.grafana.app resource on the Grafana apiserver.",
+			Stage:           FeatureStageExperimental,
+			Owner:           grafanaAppPlatformSquad,
+			RequiresRestart: true,
+			Expression:      "false",
+		},
+		{
+			Name:            "annotationsRerouteLegacyCRUDAPIs",
+			Description:     "Handle annotation CRUD requests to the legacy /api/annotations* routes by calling the annotation.grafana.app/v0alpha1 resource API.",
+			Stage:           FeatureStageExperimental,
+			Owner:           grafanaAppPlatformSquad,
+			RequiresRestart: true,
+			Expression:      "false",
+		},
+		{
 			Name:        "cloudWatchBatchQueries",
 			Description: "Runs CloudWatch metrics queries as separate batches",
 			Stage:       FeatureStageGeneralAvailability,

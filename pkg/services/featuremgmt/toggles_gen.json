@@ -882,6 +882,20 @@
     },
     {
       "metadata": {
+        "name": "annotationsRerouteLegacyCRUDAPIs",
+        "resourceVersion": "1776758380185",
+        "creationTimestamp": "2026-04-21T07:59:40Z"
+      },
+      "spec": {
+        "description": "Handle annotation CRUD requests to the legacy /api/annotations* routes by calling the annotation.grafana.app/v0alpha1 resource API.",
+        "stage": "experimental",
+        "codeowner": "@grafana/grafana-app-platform-squad",
+        "requiresRestart": true,
+        "expression": "false"
+      }
+    },
+    {
+      "metadata": {
         "name": "appPlatformGrpcClientAuth",
         "resourceVersion": "1771434338561",
         "creationTimestamp": "2024-10-14T10:47:18Z"
@@ -2318,14 +2332,18 @@
     {
       "metadata": {
         "name": "kubernetesAnnotations",
-        "resourceVersion": "1771434338561",
+        "resourceVersion": "1776758380185",
         "creationTimestamp": "2025-11-06T18:22:20Z",
-        "deletionTimestamp": "2026-02-19T21:17:23Z"
+        "deletionTimestamp": "2026-02-19T21:17:23Z",
+        "annotations": {
+          "grafana.app/updatedTimestamp": "2026-04-21 07:59:40.185131778 +0000 UTC"
+        }
       },
       "spec": {
-        "description": "Enables app platform API for annotations",
+        "description": "Registers the annotation.grafana.app resource on the Grafana apiserver.",
         "stage": "experimental",
-        "codeowner": "@grafana/grafana-backend-services-squad",
+        "codeowner": "@grafana/grafana-app-platform-squad",
+        "requiresRestart": true,
         "expression": "false"
       }
     },

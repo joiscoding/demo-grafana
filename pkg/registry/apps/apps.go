@@ -107,7 +107,8 @@ func ProvideAppInstallers(
 	//
 	// Developers are encouraged to explore the built-in functionality of the App Platform
 	// to control the app registration (see `docs/apps/example/README.md`).
-	if cfg.AnnotationAppPlatform.Enabled {
+	//nolint:staticcheck // not yet migrated to OpenFeature
+	if cfg.AnnotationAppPlatform.Enabled || features.IsEnabledGlobally(featuremgmt.FlagKubernetesAnnotations) {
 		installers = append(installers, annotationAppInstaller)
 	}
 	return installers
