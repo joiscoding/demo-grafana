@@ -364,6 +364,16 @@ export interface FeatureToggles {
   */
   datasourcesApiServerEnableResourceEndpointFrontend?: boolean;
   /**
+  * Registers the annotation.grafana.app resource on the Grafana apiserver.
+  * @default false
+  */
+  kubernetesAnnotations?: boolean;
+  /**
+  * Handle annotation CRUD requests to the legacy /api/annotations* routes by calling the annotation.grafana.app/v0alpha1 resource API.
+  * @default false
+  */
+  annotationsRerouteLegacyCRUDAPIs?: boolean;
+  /**
   * Runs CloudWatch metrics queries as separate batches
   * @default false
   */

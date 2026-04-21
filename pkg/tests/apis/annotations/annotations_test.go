@@ -140,3 +140,114 @@ func TestIntegrationAnnotations(t *testing.T) {
 		})
 	}
 }
+
+// TestIntegrationAnnotationsReroute verifies that when
+// annotationsRerouteLegacyCRUDAPIs is enabled the legacy /api/annotations*
+// surface serves clients by dispatching to the App Platform resource.
+// Responses must match the legacy JSON shape.
+func TestIntegrationAnnotationsReroute(t *testing.T) {
+	testutil.SkipIntegrationTestInShortMode(t)
+
+	helper := apis.NewK8sTestHelper(t, testinfra.GrafanaOpts{
+		DisableAnonymous: true,
+		EnableFeatureToggles: []string{
+			featuremgmt.FlagKubernetesAnnotations,
+			featuremgmt.FlagAnnotationsRerouteLegacyCRUDAPIs,
+		},
+		UnifiedStorageConfig: map[string]setting.UnifiedStorageConfig{
+			"annotation.annotation.grafana.app": {
+				DualWriterMode: grafanarest.Mode0,
+			},
+		},
+	})
+
+	user := helper.Org1.Admin
+
+	// Create via the legacy POST /api/annotations, which should now flow
+	// through the reroute and create an App Platform Annotation resource.
+	legacyCreateBody, err := json.Marshal(map[string]any{
+		"text": "reroute-create",
+		"time": int64(1700000010000),
+		"tags": []string{"reroute-tag"},
+	})
+	require.NoError(t, err)
+
+	create := apis.DoRequest(helper, apis.RequestParams{
+		User:   user,
+		Method: http.MethodPost,
+		Path:   "/api/annotations",
+		Body:   legacyCreateBody,
+	}, &map[string]any{})
+	require.Equal(t, http.StatusOK, create.Response.StatusCode, "reroute should accept legacy create")
+	require.Equal(t, "Annotation added", (*create.Result)["message"], "legacy response shape preserved")
+
+	idRaw, ok := (*create.Result)["id"].(float64)
+	require.True(t, ok, "legacy response should contain numeric id")
+	id := int64(idRaw)
+
+	// Legacy GET by id should return the Annotation in the legacy shape.
+	get := apis.DoRequest(helper, apis.RequestParams{
+		User:   user,
+		Method: http.MethodGet,
+		Path:   fmt.Sprintf("/api/annotations/%d", id),
+	}, &map[string]any{})
+	require.Equal(t, http.StatusOK, get.Response.StatusCode, "reroute should serve legacy GET by id")
+	require.Equal(t, "reroute-create", (*get.Result)["text"])
+	require.Equal(t, float64(id), (*get.Result)["id"])
+
+	// Legacy list should include the just-created annotation.
+	list := apis.DoRequest(helper, apis.RequestParams{
+		User:   user,
+		Method: http.MethodGet,
+		Path:   "/api/annotations?limit=100",
+	}, &[]map[string]any{})
+	require.Equal(t, http.StatusOK, list.Response.StatusCode, "reroute should serve legacy list")
+	foundInList := false
+	for _, item := range *list.Result {
+		if idVal, ok := item["id"].(float64); ok && int64(idVal) == id {
+			foundInList = true
+			break
+		}
+	}
+	require.True(t, foundInList, "reroute list should include rerouted annotation")
+
+	// Legacy tags endpoint should report the reroute-tag.
+	tagsRsp := apis.DoRequest(helper, apis.RequestParams{
+		User:   user,
+		Method: http.MethodGet,
+		Path:   "/api/annotations/tags",
+	}, &map[string]any{})
+	require.Equal(t, http.StatusOK, tagsRsp.Response.StatusCode, "reroute should serve legacy tags")
+	result, ok := (*tagsRsp.Result)["result"].(map[string]any)
+	require.True(t, ok, "tags response should be wrapped in 'result'")
+	tags, ok := result["tags"].([]any)
+	require.True(t, ok, "tags response should include tags array")
+	foundTag := false
+	for _, raw := range tags {
+		tagItem, ok := raw.(map[string]any)
+		if !ok {
+			continue
+		}
+		if tagName, ok := tagItem["tag"].(string); ok && tagName == "reroute-tag" {
+			foundTag = true
+			break
+		}
+	}
+	require.True(t, foundTag, "reroute-tag should be returned by legacy tags endpoint")
+
+	// Legacy DELETE should also work and remove the resource from App Platform.
+	deleteRsp := apis.DoRequest(helper, apis.RequestParams{
+		User:   user,
+		Method: http.MethodDelete,
+		Path:   fmt.Sprintf("/api/annotations/%d", id),
+	}, &map[string]any{})
+	require.Equal(t, http.StatusOK, deleteRsp.Response.StatusCode, "reroute should serve legacy DELETE")
+
+	// After deletion the legacy GET should return 404.
+	getAfter := apis.DoRequest(helper, apis.RequestParams{
+		User:   user,
+		Method: http.MethodGet,
+		Path:   fmt.Sprintf("/api/annotations/%d", id),
+	}, &map[string]any{})
+	require.Equal(t, http.StatusNotFound, getAfter.Response.StatusCode, "rerouted GET should 404 after delete")
+}

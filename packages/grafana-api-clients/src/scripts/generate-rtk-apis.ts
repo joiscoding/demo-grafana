@@ -99,6 +99,7 @@ const config: ConfigFile = {
       filterEndpoints: ['starDashboardByUid', 'unstarDashboardByUid'],
     },
     ...createAPIConfig('advisor', 'v0alpha1'),
+    ...createAPIConfig('annotation', 'v0alpha1'),
     ...createAPIConfig('correlations', 'v0alpha1'),
     ...createAPIConfig('dashboard', 'v0alpha1'),
     ...createAPIConfig('dashboard', 'v1beta1'),

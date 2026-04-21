@@ -525,17 +525,17 @@ func (hs *HTTPServer) registerRoutes() {
 			hs.GetAlertNotifiers()),
 		)
 
-		apiRoute.Get("/annotations", authorize(ac.EvalPermission(ac.ActionAnnotationsRead)), routing.Wrap(hs.GetAnnotations))
-		apiRoute.Post("/annotations/mass-delete", authorize(ac.EvalPermission(ac.ActionAnnotationsDelete)), routing.Wrap(hs.MassDeleteAnnotations))
+		apiRoute.Get("/annotations", authorize(ac.EvalPermission(ac.ActionAnnotationsRead)), hs.getK8sAnnotationsListHandler())
+		apiRoute.Post("/annotations/mass-delete", authorize(ac.EvalPermission(ac.ActionAnnotationsDelete)), hs.postK8sMassDeleteAnnotationsHandler())
 
 		apiRoute.Group("/annotations", func(annotationsRoute routing.RouteRegister) {
-			annotationsRoute.Post("/", authorize(ac.EvalPermission(ac.ActionAnnotationsCreate)), routing.Wrap(hs.PostAnnotation))
-			annotationsRoute.Get("/:annotationId", authorize(ac.EvalPermission(ac.ActionAnnotationsRead, ac.ScopeAnnotationsID)), routing.Wrap(hs.GetAnnotationByID))
-			annotationsRoute.Delete("/:annotationId", authorize(ac.EvalPermission(ac.ActionAnnotationsDelete, ac.ScopeAnnotationsID)), routing.Wrap(hs.DeleteAnnotationByID))
-			annotationsRoute.Put("/:annotationId", authorize(ac.EvalPermission(ac.ActionAnnotationsWrite, ac.ScopeAnnotationsID)), routing.Wrap(hs.UpdateAnnotation))
-			annotationsRoute.Patch("/:annotationId", authorize(ac.EvalPermission(ac.ActionAnnotationsWrite, ac.ScopeAnnotationsID)), routing.Wrap(hs.PatchAnnotation))
-			annotationsRoute.Post("/graphite", authorize(ac.EvalPermission(ac.ActionAnnotationsCreate, ac.ScopeAnnotationsTypeOrganization)), routing.Wrap(hs.PostGraphiteAnnotation))
-			annotationsRoute.Get("/tags", authorize(ac.EvalPermission(ac.ActionAnnotationsRead)), routing.Wrap(hs.GetAnnotationTags))
+			annotationsRoute.Post("/", authorize(ac.EvalPermission(ac.ActionAnnotationsCreate)), hs.postK8sAnnotationHandler())
+			annotationsRoute.Get("/:annotationId", authorize(ac.EvalPermission(ac.ActionAnnotationsRead, ac.ScopeAnnotationsID)), hs.getK8sAnnotationHandler())
+			annotationsRoute.Delete("/:annotationId", authorize(ac.EvalPermission(ac.ActionAnnotationsDelete, ac.ScopeAnnotationsID)), hs.deleteK8sAnnotationHandler())
+			annotationsRoute.Put("/:annotationId", authorize(ac.EvalPermission(ac.ActionAnnotationsWrite, ac.ScopeAnnotationsID)), hs.putK8sAnnotationHandler())
+			annotationsRoute.Patch("/:annotationId", authorize(ac.EvalPermission(ac.ActionAnnotationsWrite, ac.ScopeAnnotationsID)), hs.patchK8sAnnotationHandler())
+			annotationsRoute.Post("/graphite", authorize(ac.EvalPermission(ac.ActionAnnotationsCreate, ac.ScopeAnnotationsTypeOrganization)), hs.postK8sGraphiteAnnotationHandler())
+			annotationsRoute.Get("/tags", authorize(ac.EvalPermission(ac.ActionAnnotationsRead)), hs.getK8sAnnotationTagsHandler())
 		})
 
 		apiRoute.Post("/frontend-metrics", routing.Wrap(hs.PostFrontendMetrics))

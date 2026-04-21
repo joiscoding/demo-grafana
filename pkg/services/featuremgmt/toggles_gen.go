@@ -223,6 +223,14 @@ const (
 	// Send Datsource resource requests to K8s /apis/ API routes instead of the legacy /api/datasources/uid/{uid}/resources/{path} routes.
 	FlagDatasourcesApiServerEnableResourceEndpointFrontend = "datasourcesApiServerEnableResourceEndpointFrontend"
 
+	// FlagKubernetesAnnotations
+	// Registers the annotation.grafana.app resource on the Grafana apiserver.
+	FlagKubernetesAnnotations = "kubernetesAnnotations"
+
+	// FlagAnnotationsRerouteLegacyCRUDAPIs
+	// Handle annotation CRUD requests to the legacy /api/annotations* routes by calling the annotation.grafana.app/v0alpha1 resource API.
+	FlagAnnotationsRerouteLegacyCRUDAPIs = "annotationsRerouteLegacyCRUDAPIs"
+
 	// FlagCloudWatchBatchQueries
 	// Runs CloudWatch metrics queries as separate batches
 	FlagCloudWatchBatchQueries = "cloudWatchBatchQueries"

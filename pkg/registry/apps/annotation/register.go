@@ -215,6 +215,7 @@ var (
 	_ rest.Scoper               = (*k8sRESTAdapter)(nil)
 	_ rest.SingularNameProvider = (*k8sRESTAdapter)(nil)
 	_ rest.Getter               = (*k8sRESTAdapter)(nil)
+	_ rest.Lister               = (*k8sRESTAdapter)(nil)
 	_ rest.Storage              = (*k8sRESTAdapter)(nil)
 	_ rest.Creater              = (*k8sRESTAdapter)(nil)
 	_ rest.Updater              = (*k8sRESTAdapter)(nil)
@@ -396,5 +397,7 @@ func (s *k8sRESTAdapter) Delete(ctx context.Context, name string, deleteValidati
 }
 
 func (s *k8sRESTAdapter) DeleteCollection(ctx context.Context, deleteValidation rest.ValidateObjectFunc, options *metav1.DeleteOptions, listOptions *internalversion.ListOptions) (runtime.Object, error) {
-	return nil, fmt.Errorf("DeleteCollection for annotation is not available")
+	kind := annotationV0.AnnotationKind()
+	gr := schema.GroupResource{Group: kind.Group(), Resource: kind.Plural()}
+	return nil, apierrors.NewMethodNotSupported(gr, "deletecollection")
 }
