@@ -16004,6 +16004,12 @@
   },
   "welcome": {
     "welcome-banner": {
+      "help-options": {
+        "community": "Community",
+        "documentation": "Documentation",
+        "public-slack": "Public Slack",
+        "tutorials": "Tutorials"
+      },
       "need-help": "Need help?",
       "welcome-to-grafana": "Welcome to Grafana"
     }

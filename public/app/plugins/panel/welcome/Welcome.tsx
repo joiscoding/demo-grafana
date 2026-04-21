@@ -1,29 +1,41 @@
 import { css } from '@emotion/css';
 
 import { GrafanaTheme2 } from '@grafana/data';
-import { Trans } from '@grafana/i18n';
-import { TextLink, useStyles2 } from '@grafana/ui';
-
-const helpOptions = [
-  { value: 0, label: 'Documentation', href: 'https://grafana.com/docs/grafana/latest' },
-  { value: 1, label: 'Tutorials', href: 'https://grafana.com/tutorials' },
-  { value: 2, label: 'Community', href: 'https://community.grafana.com' },
-  { value: 3, label: 'Public Slack', href: 'http://slack.grafana.com' },
-];
+import { t, Trans } from '@grafana/i18n';
+import { Stack, TextLink, useStyles2 } from '@grafana/ui';
 
 export const WelcomeBanner = () => {
   const styles = useStyles2(getStyles);
+
+  const helpOptions = [
+    {
+      label: t('welcome.welcome-banner.help-options.documentation', 'Documentation'),
+      href: 'https://grafana.com/docs/grafana/latest',
+    },
+    {
+      label: t('welcome.welcome-banner.help-options.tutorials', 'Tutorials'),
+      href: 'https://grafana.com/tutorials',
+    },
+    {
+      label: t('welcome.welcome-banner.help-options.community', 'Community'),
+      href: 'https://community.grafana.com',
+    },
+    {
+      label: t('welcome.welcome-banner.help-options.public-slack', 'Public Slack'),
+      href: 'http://slack.grafana.com',
+    },
+  ];
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>
         <Trans i18nKey="welcome.welcome-banner.welcome-to-grafana">Welcome to Grafana</Trans>
       </h1>
-      <div className={styles.help}>
+      <Stack direction="row" alignItems="baseline" gap={2}>
         <h2 className={styles.helpText}>
           <Trans i18nKey="welcome.welcome-banner.need-help">Need help?</Trans>
         </h2>
-        <div className={styles.helpLinks}>
+        <Stack direction="row" gap={2} wrap="wrap">
           {helpOptions.map((option, index) => (
             <TextLink
               key={`${option.label}-${index}`}
@@ -34,8 +46,8 @@ export const WelcomeBanner = () => {
               {option.label}
             </TextLink>
           ))}
-        </div>
-      </div>
+        </Stack>
+      </Stack>
     </div>
   );
 };
@@ -75,13 +87,8 @@ const getStyles = (theme: GrafanaTheme2) => {
         fontSize: theme.typography.h3.fontSize,
       },
     }),
-    help: css({
-      display: 'flex',
-      alignItems: 'baseline',
-    }),
     helpText: css({
       ...theme.typography.h3,
-      marginRight: theme.spacing(2),
       marginBottom: 0,
 
       [theme.breakpoints.down('md')]: {
@@ -90,16 +97,6 @@ const getStyles = (theme: GrafanaTheme2) => {
 
       [theme.breakpoints.down('sm')]: {
         display: 'none',
-      },
-    }),
-    helpLinks: css({
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: theme.spacing(2),
-      textWrap: 'nowrap',
-
-      [theme.breakpoints.down('sm')]: {
-        gap: theme.spacing(1),
       },
     }),
   };
