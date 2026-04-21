@@ -1,5 +1,11 @@
 package api
 
+// TODO(annotations-reroute): Delete this file once the
+// `annotationsRerouteLegacyCRUDAPIs` feature flag defaults to on and all
+// internal callers exercise the App Platform-backed handlers from
+// annotations_k8s.go. The factories in annotations_k8s.go should then return
+// only the k8s-backed implementations.
+
 import (
 	"context"
 	"errors"
