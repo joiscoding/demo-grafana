@@ -14,7 +14,6 @@ import (
 
 func TestConfigureAzureAuthentication(t *testing.T) {
 	azureSettings := &azsettings.AzureSettings{}
-	testLogger := log.NewNullLogger()
 
 	t.Run("should set Azure middleware when JsonData contains valid credentials", func(t *testing.T) {
 		settings := backend.DataSourceInstanceSettings{
