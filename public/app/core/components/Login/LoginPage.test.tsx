@@ -42,6 +42,7 @@ describe('Login Page', () => {
   it('renders correctly', () => {
     render(<LoginPage />);
 
+    expect(screen.getByRole('button', { name: /Switch to (light|dark) mode/ })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Welcome to Grafana' })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Email or username' })).toBeInTheDocument();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
