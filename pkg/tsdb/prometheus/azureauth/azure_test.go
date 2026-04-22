@@ -7,7 +7,6 @@ import (
 	"github.com/grafana/grafana-azure-sdk-go/v2/azsettings"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
-	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
