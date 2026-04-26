@@ -734,12 +734,6 @@ export interface FeatureToggles {
   */
   cloudWatchRoundUpEndTime?: boolean;
   /**
-  * Deprecated. Allow override default AAD audience for Azure Prometheus endpoint. Enabled by default. This feature should no longer be used and will be removed in the future.
-  * @deprecated
-  * @default true
-  */
-  prometheusAzureOverrideAudience?: boolean;
-  /**
   * Enable the new alerting search experience
   * @default false
   */

@@ -68,11 +68,9 @@ func extendClientOpts(ctx context.Context, settings backend.DataSourceInstanceSe
 		return fmt.Errorf("failed to read Azure settings from Grafana: %v", err)
 	}
 
-	audienceOverride := backend.GrafanaConfigFromContext(ctx).FeatureToggles().IsEnabled("prometheusAzureOverrideAudience")
-
 	// Set Azure authentication
 	if azureSettings.AzureAuthEnabled {
-		err = azureauth.ConfigureAzureAuthentication(settings, azureSettings, clientOpts, audienceOverride, plog)
+		err = azureauth.ConfigureAzureAuthentication(settings, azureSettings, clientOpts)
 		if err != nil {
 			return fmt.Errorf("error configuring Azure auth: %v", err)
 		}
