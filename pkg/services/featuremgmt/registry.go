@@ -304,13 +304,6 @@ var (
 			Owner:       awsDatasourcesSquad,
 		},
 		{
-			Name:        "queryCacheRequestDeduplication",
-			Description: "Enable request deduplication when query caching is enabled. Requests issuing the same query will be deduplicated, only the first request to arrive will be executed and the response will be shared with requests arriving while there is a request in-flight",
-			Stage:       FeatureStageExperimental,
-			Expression:  "false", // enabled by default
-			Owner:       grafanaOperatorExperienceSquad,
-		},
-		{
 			Name:            "configurableSchedulerTick",
 			Description:     "Enable changing the scheduler base interval via configuration option unified_alerting.scheduler_tick_interval",
 			Stage:           FeatureStageExperimental,
@@ -1913,22 +1906,6 @@ var (
 			Expression:   "false",
 		},
 		{
-			Name:         "alertEnrichmentMultiStep",
-			Description:  "Allow multiple steps per enrichment.",
-			Stage:        FeatureStageExperimental,
-			Owner:        grafanaAlertingSquad,
-			HideFromDocs: true,
-			Expression:   "false",
-		},
-		{
-			Name:         "alertEnrichmentConditional",
-			Description:  "Enable conditional alert enrichment steps.",
-			Stage:        FeatureStageExperimental,
-			Owner:        grafanaAlertingSquad,
-			HideFromDocs: true,
-			Expression:   "false",
-		},
-		{
 			Name:         "alertingImportAlertmanagerAPI",
 			Description:  "Enables the API to import Alertmanager configuration",
 			Stage:        FeatureStageExperimental,
@@ -2068,14 +2045,6 @@ var (
 			Expression:   "false",
 		},
 		{
-			Name:         "newClickhouseConfigPageDesign",
-			Description:  "Enables new design for the Clickhouse data source configuration page",
-			Stage:        FeatureStagePrivatePreview,
-			FrontendOnly: false,
-			Owner:        grafanaPartnerPluginsSquad,
-			Expression:   "false",
-		},
-		{
 			Name:         "teamFolders",
 			Description:  "Enables team folders functionality",
 			Stage:        FeatureStageExperimental,
@@ -2139,22 +2108,6 @@ var (
 			Owner:           grafanaPluginsPlatformSquad,
 			Expression:      "false",
 			RequiresRestart: true,
-		},
-		{
-			Name:         "cdnPluginsLoadFirst",
-			Description:  "Prioritize loading plugins from the CDN before other sources",
-			Stage:        FeatureStageExperimental,
-			FrontendOnly: false,
-			Owner:        grafanaPluginsPlatformSquad,
-			Expression:   "false",
-		},
-		{
-			Name:         "cdnPluginsUrls",
-			Description:  "Enable loading plugins via declarative URLs",
-			Stage:        FeatureStageExperimental,
-			FrontendOnly: false,
-			Owner:        grafanaPluginsPlatformSquad,
-			Expression:   "false",
 		},
 		{
 			Name:         "pluginInstallAPISync",

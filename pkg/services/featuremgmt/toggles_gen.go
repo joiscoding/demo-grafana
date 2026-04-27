@@ -115,10 +115,6 @@ const (
 	// Enable caching for async queries for Redshift and Athena. Requires that the datasource has caching and async query support enabled
 	FlagAwsAsyncQueryCaching = "awsAsyncQueryCaching"
 
-	// FlagQueryCacheRequestDeduplication
-	// Enable request deduplication when query caching is enabled. Requests issuing the same query will be deduplicated, only the first request to arrive will be executed and the response will be shared with requests arriving while there is a request in-flight
-	FlagQueryCacheRequestDeduplication = "queryCacheRequestDeduplication"
-
 	// FlagConfigurableSchedulerTick
 	// Enable changing the scheduler base interval via configuration option unified_alerting.scheduler_tick_interval
 	FlagConfigurableSchedulerTick = "configurableSchedulerTick"
@@ -682,14 +678,6 @@ const (
 	// Enable configuration of alert enrichments in Grafana Cloud.
 	FlagAlertEnrichment = "alertEnrichment"
 
-	// FlagAlertEnrichmentMultiStep
-	// Allow multiple steps per enrichment.
-	FlagAlertEnrichmentMultiStep = "alertEnrichmentMultiStep"
-
-	// FlagAlertEnrichmentConditional
-	// Enable conditional alert enrichment steps.
-	FlagAlertEnrichmentConditional = "alertEnrichmentConditional"
-
 	// FlagAlertingImportAlertmanagerAPI
 	// Enables the API to import Alertmanager configuration
 	FlagAlertingImportAlertmanagerAPI = "alertingImportAlertmanagerAPI"
@@ -722,10 +710,6 @@ const (
 	// Starts Grafana in remote secondary mode pulling the latest state from the remote Alertmanager to avoid duplicate notifications.
 	FlagAlertmanagerRemoteSecondaryWithRemoteState = "alertmanagerRemoteSecondaryWithRemoteState"
 
-	// FlagNewClickhouseConfigPageDesign
-	// Enables new design for the Clickhouse data source configuration page
-	FlagNewClickhouseConfigPageDesign = "newClickhouseConfigPageDesign"
-
 	// FlagTeamFolders
 	// Enables team folders functionality
 	FlagTeamFolders = "teamFolders"
@@ -749,14 +733,6 @@ const (
 	// FlagPluginContainers
 	// Enables running plugins in containers
 	FlagPluginContainers = "pluginContainers"
-
-	// FlagCdnPluginsLoadFirst
-	// Prioritize loading plugins from the CDN before other sources
-	FlagCdnPluginsLoadFirst = "cdnPluginsLoadFirst"
-
-	// FlagCdnPluginsUrls
-	// Enable loading plugins via declarative URLs
-	FlagCdnPluginsUrls = "cdnPluginsUrls"
 
 	// FlagPluginInstallAPISync
 	// Enable syncing plugin installations to the installs API
