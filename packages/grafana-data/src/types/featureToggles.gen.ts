@@ -204,11 +204,6 @@ export interface FeatureToggles {
   */
   awsAsyncQueryCaching?: boolean;
   /**
-  * Enable request deduplication when query caching is enabled. Requests issuing the same query will be deduplicated, only the first request to arrive will be executed and the response will be shared with requests arriving while there is a request in-flight
-  * @default false
-  */
-  queryCacheRequestDeduplication?: boolean;
-  /**
   * Enable changing the scheduler base interval via configuration option unified_alerting.scheduler_tick_interval
   * @default false
   */
@@ -1218,16 +1213,6 @@ export interface FeatureToggles {
   */
   alertEnrichment?: boolean;
   /**
-  * Allow multiple steps per enrichment.
-  * @default false
-  */
-  alertEnrichmentMultiStep?: boolean;
-  /**
-  * Enable conditional alert enrichment steps.
-  * @default false
-  */
-  alertEnrichmentConditional?: boolean;
-  /**
   * Enables the API to import Alertmanager configuration
   * @default false
   */
@@ -1313,11 +1298,6 @@ export interface FeatureToggles {
   */
   newLogContext?: boolean;
   /**
-  * Enables new design for the Clickhouse data source configuration page
-  * @default false
-  */
-  newClickhouseConfigPageDesign?: boolean;
-  /**
   * Enables team folders functionality
   * @default false
   */
@@ -1357,16 +1337,6 @@ export interface FeatureToggles {
   * @default false
   */
   pluginContainers?: boolean;
-  /**
-  * Prioritize loading plugins from the CDN before other sources
-  * @default false
-  */
-  cdnPluginsLoadFirst?: boolean;
-  /**
-  * Enable loading plugins via declarative URLs
-  * @default false
-  */
-  cdnPluginsUrls?: boolean;
   /**
   * Enable syncing plugin installations to the installs API
   * @default false
