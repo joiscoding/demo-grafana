@@ -4,7 +4,8 @@ import * as React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
-import { useStyles2 } from '@grafana/ui';
+import { useStyles2, useTheme2, IconButton } from '@grafana/ui';
+import { toggleTheme } from 'app/core/services/theme';
 
 import { Branding } from '../Branding/Branding';
 import { BrandingSettings } from '../Branding/types';
@@ -26,6 +27,7 @@ export interface LoginLayoutProps {
 
 export const LoginLayout = ({ children, branding, isChangingPassword }: React.PropsWithChildren<LoginLayoutProps>) => {
   const loginStyles = useStyles2(getLoginStyles);
+  const theme = useTheme2();
   const [startAnim, setStartAnim] = useState(false);
   const subTitle = branding?.loginSubtitle ?? Branding.GetLoginSubTitle();
   const loginTitle = branding?.loginTitle ?? Branding.LoginTitle;
@@ -39,6 +41,16 @@ export const LoginLayout = ({ children, branding, isChangingPassword }: React.Pr
     <Branding.LoginBackground
       className={cx(loginStyles.container, startAnim && loginStyles.loginAnim, branding?.loginBackground)}
     >
+      <div className={loginStyles.themeSwitcher}>
+        <IconButton
+          name="adjust-circle"
+          onClick={() => toggleTheme(false)}
+          size="xl"
+          tooltip="Toggle theme"
+          tooltipPlacement="left"
+          variant="secondary"
+        />
+      </div>
       <div className={loginStyles.loginMain}>
         <div className={cx(loginStyles.loginContent, loginBoxBackground, 'login-content-box')}>
           <div className={loginStyles.loginLogoWrapper}>
@@ -77,6 +89,12 @@ to{
 
 export const getLoginStyles = (theme: GrafanaTheme2) => {
   return {
+    themeSwitcher: css({
+      position: 'absolute',
+      top: theme.spacing(2),
+      right: theme.spacing(2),
+      zIndex: 10,
+    }),
     loginMain: css({
       flexGrow: 1,
       display: 'flex',
