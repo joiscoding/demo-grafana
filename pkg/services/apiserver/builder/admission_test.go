@@ -94,6 +94,14 @@ func TestBuilderAdmission_Validate(t *testing.T) {
 	}
 }
 
+func TestBuilderAdmission_Handles(t *testing.T) {
+	b := builder.NewAdmission(nil, nil)
+	require.True(t, b.Handles(admission.Create))
+	require.True(t, b.Handles(admission.Update))
+	require.True(t, b.Handles(admission.Delete))
+	require.True(t, b.Handles(admission.Connect))
+}
+
 func TestNewAdmissionFromBuilders(t *testing.T) {
 	gvk := schema.GroupVersionKind{
 		Group:   "example.grafana.app",
