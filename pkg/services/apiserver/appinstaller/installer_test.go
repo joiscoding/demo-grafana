@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/grafana/grafana-app-sdk/app"
 	appsdkapiserver "github.com/grafana/grafana-app-sdk/k8s/apiserver"
 	"github.com/stretchr/testify/require"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -122,6 +123,7 @@ func TestRegisterAuthorizers(t *testing.T) {
 type mockAppInstaller struct {
 	appsdkapiserver.AppInstaller // Embed the interface
 	groupVersions                []schema.GroupVersion
+	manifestData                 *app.ManifestData
 }
 
 func (m *mockAppInstaller) GroupVersions() []schema.GroupVersion {
